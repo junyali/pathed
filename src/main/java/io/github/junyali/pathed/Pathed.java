@@ -1,6 +1,9 @@
 package io.github.junyali.pathed;
 
 import io.github.junyali.pathed.attachment.PathedAttachments;
+import io.github.junyali.pathed.network.OpenClassSelectPacket;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -20,10 +23,20 @@ public class Pathed {
 
     public Pathed(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(this::registerPackets);
 
         PathedAttachments.register(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
+    }
+
+    private void registerPackets(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar(MODID);
+        registrar.playToClient(
+                OpenClassSelectPacket.TYPE,
+                OpenClassSelectPacket.STREAM_CODEC,
+                OpenClassSelectPacket::handle
+        );
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
