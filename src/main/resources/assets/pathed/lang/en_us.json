@@ -1,0 +1,13 @@
+{
+  "itemGroup.pathed": "Example Mod Tab",
+  "block.pathed.example_block": "Example Block",
+  "item.pathed.example_item": "Example Item",
+
+  "pathed.configuration.title": "Pathed Configs",
+  "pathed.configuration.section.pathed.common.toml": "Pathed Configs",
+  "pathed.configuration.section.pathed.common.toml.title": "Pathed Configs",
+  "pathed.configuration.items": "Item List",
+  "pathed.configuration.logDirtBlock": "Log Dirt Block",
+  "pathed.configuration.magicNumberIntroduction": "Magic Number Text",
+  "pathed.configuration.magicNumber": "Magic Number"
+}
