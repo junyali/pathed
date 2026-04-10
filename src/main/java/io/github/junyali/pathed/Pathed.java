@@ -1,5 +1,6 @@
 package io.github.junyali.pathed;
 
+import io.github.junyali.pathed.attachment.PathedAttachments;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -19,6 +20,8 @@ public class Pathed {
 
     public Pathed(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
+
+        PathedAttachments.register(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
     }

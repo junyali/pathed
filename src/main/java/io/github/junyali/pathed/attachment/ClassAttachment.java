@@ -5,12 +5,13 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
+import org.jetbrains.annotations.NotNull;
 
-public class PathedAttachment {
+public class ClassAttachment {
 	private PathedClass pathedClass;
 	private boolean hasChosen;
 
-	public PathedAttachment() {
+	public ClassAttachment() {
 		this.pathedClass = PathedClass.NONE;
 		this.hasChosen = false;
 	}
@@ -28,17 +29,17 @@ public class PathedAttachment {
 		return hasChosen;
 	}
 
-	public static class Serializer implements IAttachmentSerializer<CompoundTag, PathedAttachment> {
+	public static class Serializer implements IAttachmentSerializer<CompoundTag, ClassAttachment> {
 		@Override
-		public PathedAttachment read (IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-			PathedAttachment attachment = new PathedAttachment();
-			attachment.pathedClass = PathedClass.valueOf(String.valueOf(tag.getString("class")));
+		public @NotNull ClassAttachment read(@NotNull IAttachmentHolder iAttachmentHolder, CompoundTag tag, HolderLookup.@NotNull Provider provider) {
+			ClassAttachment attachment = new ClassAttachment();
+			attachment.pathedClass = PathedClass.valueOf(tag.getString("class"));
 			attachment.hasChosen = tag.getBoolean("hasChosen");
 			return attachment;
 		}
 
 		@Override
-		public CompoundTag write(PathedAttachment attachment, HolderLookup.Provider provider) {
+		public CompoundTag write(ClassAttachment attachment, HolderLookup.@NotNull Provider provider) {
 			CompoundTag tag = new CompoundTag();
 			tag.putString("class", attachment.pathedClass.name());
 			tag.putBoolean("hasChosen", attachment.hasChosen);
