@@ -1,6 +1,8 @@
 package io.github.junyali.pathed.network;
 
 import io.github.junyali.pathed.Pathed;
+import io.github.junyali.pathed.screen.custom.ClassSelectionScreen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -22,7 +24,7 @@ public record OpenClassSelectPacket() implements CustomPacketPayload {
 
 	public static void handle(OpenClassSelectPacket packet, IPayloadContext context) {
 		context.enqueueWork(() -> {
-			//Minecraft.getInstance().setScreen(screenclass);
+			Minecraft.getInstance().setScreen(new ClassSelectionScreen());
 		});
 	}
 }
