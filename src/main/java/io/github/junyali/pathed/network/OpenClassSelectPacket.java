@@ -2,8 +2,6 @@ package io.github.junyali.pathed.network;
 
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.PathedClient;
-import io.github.junyali.pathed.screen.custom.ClassSelectionScreen;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

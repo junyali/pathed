@@ -1,4 +1,4 @@
-package io.github.junyali.pathed.screen.custom;
+package io.github.junyali.pathed.screen;
 
 import io.github.junyali.pathed.classsystem.PathedClass;
 import net.minecraft.client.gui.components.Button;

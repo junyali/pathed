@@ -1,6 +1,6 @@
 package io.github.junyali.pathed;
 
-import io.github.junyali.pathed.screen.custom.ClassSelectionScreen;
+import io.github.junyali.pathed.screen.ClassSelectionScreen;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
