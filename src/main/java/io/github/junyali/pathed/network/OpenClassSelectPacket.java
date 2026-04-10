@@ -1,6 +1,7 @@
 package io.github.junyali.pathed.network;
 
 import io.github.junyali.pathed.Pathed;
+import io.github.junyali.pathed.PathedClient;
 import io.github.junyali.pathed.screen.custom.ClassSelectionScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -24,7 +25,7 @@ public record OpenClassSelectPacket() implements CustomPacketPayload {
 
 	public static void handle(OpenClassSelectPacket packet, IPayloadContext context) {
 		context.enqueueWork(() -> {
-			Minecraft.getInstance().setScreen(new ClassSelectionScreen());
+			PathedClient.shouldShowClassSelection = true;
 		});
 	}
 }

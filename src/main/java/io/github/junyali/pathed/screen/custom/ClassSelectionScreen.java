@@ -1,6 +1,7 @@
 package io.github.junyali.pathed.screen.custom;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,9 @@ public class ClassSelectionScreen extends Screen {
 
 	@Override
 	public void onClose() {
-
+		if (this.minecraft != null) {
+			this.minecraft.setScreen(new PauseScreen(true));
+		}
 	}
 
 	@Override
