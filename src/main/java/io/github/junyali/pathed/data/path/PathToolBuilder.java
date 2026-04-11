@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.Unbreakable;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 import java.util.List;
 
@@ -18,7 +19,10 @@ public class PathToolBuilder {
 		ItemStack stack = new ItemStack(item);
 
 		stack.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
-		stack.set(DataComponents.ENCHANTMENTS, null);
+		// TODO: make path tools completely unenchantable
+		// below implementation technically still allows for the tool to be enchanted :/
+		stack.set(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+		stack.set(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
 		stack.set(DataComponents.CUSTOM_NAME,
 				Component.translatable(translationKey + ".name")
 						.withStyle(Style.EMPTY.withColor(nameColour).withBold(true).withItalic(false))
