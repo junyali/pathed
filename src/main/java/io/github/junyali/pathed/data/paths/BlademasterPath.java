@@ -12,7 +12,7 @@ import net.minecraft.world.item.Items;
 
 public class BlademasterPath extends Path {
 	public BlademasterPath() {
-		super(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "blademaster"), true, 0);
+		super(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "blademaster"), true, 1);
 	}
 
 	@Override
