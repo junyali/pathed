@@ -33,7 +33,7 @@ public class PathSelectionScreen extends PathedScreens {
 	public PathSelectionScreen(boolean showDirtBackground) {
 		super(Component.translatable("pathed.gui.choose_path.title"), showDirtBackground);
 		this.selectablePaths = PathRegistry.selectable();
-		if (this.selectablePaths.isEmpty()) {
+		if (!this.selectablePaths.isEmpty()) {
 			this.showPath(this.selectablePaths.getFirst());
 		}
 	}
@@ -43,7 +43,7 @@ public class PathSelectionScreen extends PathedScreens {
 		super.init();
 		this.calculatedTop = (this.height - CHOICES_HEIGHT) / 2;
 		this.calculatedLeft = (this.width - 405) / 2;
-		this.guiTop = (this.height - CHOICES_HEIGHT) / 2;
+		this.guiTop = (this.height - WINDOW_HEIGHT) / 2;
 		this.guiLeft = this.calculatedLeft + CHOICES_WIDTH + 10;
 
 		int x = 0;
@@ -67,7 +67,7 @@ public class PathSelectionScreen extends PathedScreens {
 			x++;
 		}
 
-		if (this.selectablePaths.isEmpty()) {
+		if (!this.selectablePaths.isEmpty()) {
 			this.addRenderableWidget(Button.builder(
 					Component.translatable("pathed.gui.choose_path.select"),
 					btn -> {
@@ -75,7 +75,7 @@ public class PathSelectionScreen extends PathedScreens {
 						// packet choose class
 						this.onClose();
 					}
-			).bounds(this.guiLeft + 88 - 50, this.guiTop + CHOICES_HEIGHT + 5, 100, 200).build());
+			).bounds(this.guiLeft + 88 - 50, this.guiTop + CHOICES_HEIGHT + 5, 100, 20).build());
 		}
 	}
 
