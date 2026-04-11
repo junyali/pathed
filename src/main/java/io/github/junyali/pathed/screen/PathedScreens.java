@@ -5,11 +5,14 @@ import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.data.path.PathIcon;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -105,10 +108,18 @@ public class PathedScreens extends Screen {
 	}
 
 	protected void renderPathIcon(GuiGraphics guiGraphics, PathIcon icon, int x, int y) {
-		if (icon.isItem()) {
-			guiGraphics.renderItem(icon.getItem(), x, y);
+		if (icon.isPlayerHead()) {
+			ItemStack head = new ItemStack(Items.PLAYER_HEAD);
+			if (minecraft != null && minecraft.player != null) {
+				head.set(DataComponents.PROFILE, new ResolvableProfile(minecraft.player.getGameProfile()));
+			}
+			guiGraphics.renderItem(head, x, y);
 		} else {
-			icon.getTexture().ifPresent(texture -> guiGraphics.blit(texture, x, y, 0, 0, 16, 16, 16, 16));
+			if (icon.isItem()) {
+				guiGraphics.renderItem(icon.getItem(), x, y);
+			} else {
+				icon.getTexture().ifPresent(texture -> guiGraphics.blit(texture, x, y, 0, 0, 16, 16, 16, 16));
+			}
 		}
 	}
 
