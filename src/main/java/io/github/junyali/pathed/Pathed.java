@@ -2,6 +2,7 @@ package io.github.junyali.pathed;
 
 import io.github.junyali.pathed.attachment.PathedAttachments;
 import io.github.junyali.pathed.data.path.PathRegistry;
+import io.github.junyali.pathed.item.PathedItems;
 import io.github.junyali.pathed.network.OpenPathSelectPacket;
 import io.github.junyali.pathed.screen.PathedMenuTypes;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -29,6 +30,7 @@ public class Pathed {
 
         PathedAttachments.register(modEventBus);
         PathedMenuTypes.register(modEventBus);
+        PathedItems.register(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
     }
