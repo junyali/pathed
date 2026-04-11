@@ -1,13 +1,15 @@
 package io.github.junyali.pathed.screen;
 
 import io.github.junyali.pathed.Pathed;
-import io.github.junyali.pathed.classsystem.PathedClass;
+import io.github.junyali.pathed.data.path.Path;
+import io.github.junyali.pathed.data.path.PathIcon;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +28,7 @@ public class PathedScreens extends Screen {
 
 	protected final boolean showDirtBackground;
 
-	private PathedClass currentClass;
+	private Path currentPath;
 	private int currentMaxScroll = 0;
 
 	protected int guiTop, guiLeft;
@@ -37,8 +39,8 @@ public class PathedScreens extends Screen {
 		this.showDirtBackground = showDirtBackground;
 	}
 
-	public void showClass(PathedClass pathedClass) {
-		this.currentClass = pathedClass;
+	public void showPath(Path path) {
+		this.currentPath = path;
 		this.scrollPos = 0;
 	}
 
@@ -76,13 +78,13 @@ public class PathedScreens extends Screen {
 		return super.mouseScrolled(x, y, horizontal, vertical);
 	}
 
-	public PathedClass getCurrentClass() {
-		return this.currentClass;
+	public Path getCurrentPath() {
+		return this.currentPath;
 	}
 
 	protected void renderClassWindow(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 		guiGraphics.blit(WINDOW_BACKGROUND, this.guiLeft, this.guiTop, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-		if (this.currentClass != null) {
+		if (this.currentPath != null) {
 			guiGraphics.enableScissor(this.guiLeft, this.guiTop, this.guiLeft + WINDOW_WIDTH, this.guiTop + WINDOW_HEIGHT);
 			this.renderClassContent(guiGraphics);
 			guiGraphics.disableScissor();
@@ -90,16 +92,24 @@ public class PathedScreens extends Screen {
 
 		guiGraphics.blit(WINDOW_BORDER, this.guiLeft, this.guiTop, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 		guiGraphics.blit(WINDOW_NAME_PLATE, this.guiLeft + 10, this.guiTop + 10, 0, 0, 150, 26);
-		if (this.currentClass != null) {
-			this.renderClassName(guiGraphics);
+		if (this.currentPath != null) {
+			this.renderPathName(guiGraphics);
 			guiGraphics.drawCenteredString(this.font, this.getTitle(), this.width / 2, this.guiTop - 15, 0xFFFFFF);
 		}
 	}
 
-	protected void renderClassName(GuiGraphics guiGraphics) {
-		Component name = Component.translatable(this.currentClass.getTranslatableName());
+	protected void renderPathName(GuiGraphics guiGraphics) {
+		Component name = this.currentPath.getName();
 		guiGraphics.drawString(this.font, name, this.guiLeft + 38, this.guiTop + 18, 0xFFFFFF);
-		guiGraphics.renderItem(this.currentClass.getStartingTool(), this.guiLeft + 15, this.guiTop + 15);
+		this.renderPathIcon(guiGraphics, this.currentPath.getIcon(), this.guiLeft + 15, this.guiTop + 15);
+	}
+
+	protected void renderPathIcon(GuiGraphics guiGraphics, PathIcon icon, int x, int y) {
+		if (icon.isItem()) {
+			guiGraphics.renderItem(icon.getItem(), x, y);
+		} else {
+			icon.getTexture().ifPresent(texture -> guiGraphics.blit(texture, x, y, 0, 0, 16, 16, 16, 16));
+		}
 	}
 
 	protected void renderClassContent(GuiGraphics guiGraphics) {
@@ -107,17 +117,30 @@ public class PathedScreens extends Screen {
 		int x = this.guiLeft + 18;
 		int y = this.guiTop + 45 - this.scrollPos;
 
-		for (FormattedCharSequence line : this.font.split(Component.literal(this.currentClass.getDescription()), textWidthLimit)) {
+		for (FormattedCharSequence line : this.font.split(this.currentPath.getDescription(), textWidthLimit)) {
 			guiGraphics.drawString(this.font, line, x + 2, y, 0xCCCCCC);
 			y += 12;
 		}
 
 		y += 12;
 
-		guiGraphics.drawString(this.font, Component.literal("Starting Tool").withStyle(s -> s.withUnderlined(true)), x, y, 0xFFFFFF);
-		y += 14;
-		guiGraphics.renderItem(this.currentClass.getStartingTool(), x + 2, y);
-		y += this.scrollPos + 30;
+		var startingItems = this.currentPath.getStartingItems().getItems();
+		if (!startingItems.isEmpty()) {
+			guiGraphics.drawString(this.font, Component.translatable("pathed.gui.choose_path.starting_kit").withStyle(s -> s.withUnderlined(true)), x, y, 0xFFFFFF);
+			y += 14;
+
+			int itemX = x + 2;
+			for (ItemStack stack : startingItems) {
+				guiGraphics.renderItem(stack, itemX, y);
+				itemX += 18;
+				if (itemX > x + textWidthLimit - 16) {
+					itemX = x + 2;
+					y += 18;
+				}
+			}
+			y += 18;
+		}
+		y += this.scrollPos + 12;
 		this.currentMaxScroll = Math.max(0, y - 14 - (this.guiTop + 158));
 	}
 }
