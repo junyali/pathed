@@ -1,7 +1,8 @@
 package io.github.junyali.pathed.screen;
 
 import io.github.junyali.pathed.Pathed;
-import io.github.junyali.pathed.classsystem.PathedClass;
+import io.github.junyali.pathed.data.path.Path;
+import io.github.junyali.pathed.data.path.PathRegistry;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -12,8 +13,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 @OnlyIn(Dist.CLIENT)
-public class ClassSelectionScreen extends PathedScreens {
+public class PathSelectionScreen extends PathedScreens {
 	// GUI Selection Screen inspired by UltrusBot/AltOriginGui, code ported to NeoForge
 	// SOURCE: https://github.com/UltrusBot/AltOriginGui
 
@@ -22,16 +25,16 @@ public class ClassSelectionScreen extends PathedScreens {
 	private static final int CHOICES_HEIGHT = 182;
 	private static final int PATH_ICON_SIZE = 26;
 
-	private final PathedClass[] selectableClasses;
-	private int currentClassIndex = 0;
+	private final List<Path> selectablePaths;
+	private int currentPathIndex = 0;
 	private int calculatedTop;
 	private int calculatedLeft;
 
-	public ClassSelectionScreen(boolean showDirtBackground) {
+	public PathSelectionScreen(boolean showDirtBackground) {
 		super(Component.translatable("pathed.gui.choose_path.title"), showDirtBackground);
-		this.selectableClasses = PathedClass.selectableValues();
-		if (this.selectableClasses.length > 0) {
-			this.showClass(this.selectableClasses[0]);
+		this.selectablePaths = PathRegistry.selectable();
+		if (this.selectablePaths.isEmpty()) {
+			this.showPath(this.selectablePaths.getFirst());
 		}
 	}
 
@@ -46,7 +49,7 @@ public class ClassSelectionScreen extends PathedScreens {
 		int x = 0;
 		int y = 0;
 
-		for (int i = 0; i < this.selectableClasses.length; i++) {
+		for (int i = 0; i < this.selectablePaths.size(); i++) {
 			if (x > 6) {
 				x = 0;
 				y++;
@@ -57,18 +60,18 @@ public class ClassSelectionScreen extends PathedScreens {
 			int finalI = i;
 
 			this.addRenderableWidget(Button.builder(Component.empty(), btn -> {
-				this.currentClassIndex = finalI;
-				this.showClass(this.selectableClasses[finalI]);
+				this.currentPathIndex = finalI;
+				this.showPath(this.selectablePaths.get(finalI));
 			}).pos(actualX, actualY).size(PATH_ICON_SIZE, PATH_ICON_SIZE).build());
 
 			x++;
 		}
 
-		if (this.selectableClasses.length > 0) {
+		if (this.selectablePaths.isEmpty()) {
 			this.addRenderableWidget(Button.builder(
-					Component.translatable("pathed.gui.select"),
+					Component.translatable("pathed.gui.choose_path.select"),
 					btn -> {
-						PathedClass selected = this.getCurrentClass();
+						Path selected = this.getCurrentPath();
 						// packet choose class
 						this.onClose();
 					}
@@ -79,7 +82,7 @@ public class ClassSelectionScreen extends PathedScreens {
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 		super.render(guiGraphics, mouseX, mouseY, delta);
-		this.renderClassChoicesBox(guiGraphics, mouseX, mouseY);
+		this.renderPathChoicesBox(guiGraphics, mouseX, mouseY);
 	}
 
 	@Override
@@ -94,13 +97,13 @@ public class ClassSelectionScreen extends PathedScreens {
 		}
 	}
 
-	private void renderClassChoicesBox(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+	private void renderPathChoicesBox(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 		guiGraphics.blit(PATH_CHOICES, this.calculatedLeft, this.calculatedTop, 0, 0, CHOICES_WIDTH, CHOICES_HEIGHT);
 
 		int x = 0;
 		int y = 0;
 
-		for (int i = 0; i < this.selectableClasses.length; i++) {
+		for (int i = 0; i < this.selectablePaths.size(); i++) {
 			if (x > 6) {
 				x = 0;
 				y++;
@@ -109,17 +112,17 @@ public class ClassSelectionScreen extends PathedScreens {
 			int actualX = 12 + x * 28 + this.calculatedLeft;
 			int actualY = 10 + y * 30 + this.calculatedTop;
 
-			PathedClass pathedClass = this.selectableClasses[i];
-			boolean selected = (i == this.currentClassIndex);
+			Path path = this.selectablePaths.get(i);
+			boolean selected = (i == this.currentPathIndex);
 
-			this.renderClassWidget(guiGraphics, mouseX, mouseY, actualX, actualY, selected, pathedClass);
-			guiGraphics.renderItem(pathedClass.getStartingTool(), actualX + 5, actualY);
+			this.renderClassWidget(guiGraphics, mouseX, mouseY, actualX, actualY, selected, path);
+			this.renderPathIcon(guiGraphics, path.getIcon(), actualX + 5, actualY + 5);
 
 			x++;
 		}
 	}
 
-	private void renderClassWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, int x, int y, boolean selected, PathedClass pathedClass) {
+	private void renderClassWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, int x, int y, boolean selected, Path path) {
 		boolean mouseHovering = mouseX >= x && mouseY >= y && mouseX < x + PATH_ICON_SIZE && mouseY < y + PATH_ICON_SIZE;
 
 		GuiEventListener focused = this.getFocused();
@@ -129,8 +132,7 @@ public class ClassSelectionScreen extends PathedScreens {
 		guiGraphics.blit(PATH_CHOICES, x, y, 230, u, PATH_ICON_SIZE, PATH_ICON_SIZE);
 
 		if (mouseHovering) {
-			Component text = Component.translatable(pathedClass.getTranslatableName());
-			guiGraphics.renderTooltip(this.font, text, mouseX, mouseY);
+			guiGraphics.renderTooltip(this.font, path.getName(), mouseX, mouseY);
 		}
 	}
 }
