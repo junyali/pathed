@@ -12,10 +12,10 @@ public class PathedAttachments {
 	public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
 			DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Pathed.MODID);
 
-	public static final Supplier<AttachmentType<ClassAttachment>> CLASS_ATTACHMENT =
-			ATTACHMENT_TYPES.register("class_data", () ->
-					AttachmentType.builder(ClassAttachment::new)
-							.serialize(new ClassAttachment.Serializer())
+	public static final Supplier<AttachmentType<PathAttachment>> PATH_ATTACHMENT =
+			ATTACHMENT_TYPES.register("path_data", () ->
+					AttachmentType.builder(PathAttachment::new)
+							.serialize(new PathAttachment.Serializer())
 							.build()
 			);
 

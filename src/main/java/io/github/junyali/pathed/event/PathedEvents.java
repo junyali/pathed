@@ -1,9 +1,9 @@
 package io.github.junyali.pathed.event;
 
 import io.github.junyali.pathed.Pathed;
-import io.github.junyali.pathed.attachment.ClassAttachment;
+import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.attachment.PathedAttachments;
-import io.github.junyali.pathed.network.OpenClassSelectPacket;
+import io.github.junyali.pathed.network.OpenPathSelectPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -16,10 +16,10 @@ public class PathedEvents {
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-		ClassAttachment attachment = player.getData(PathedAttachments.CLASS_ATTACHMENT);
+		PathAttachment attachment = player.getData(PathedAttachments.PATH_ATTACHMENT);
 
 		if (!attachment.hasChosen()) {
-			PacketDistributor.sendToPlayer(player, new OpenClassSelectPacket());
+			PacketDistributor.sendToPlayer(player, new OpenPathSelectPacket());
 		}
 	}
 }

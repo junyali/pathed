@@ -1,6 +1,6 @@
 package io.github.junyali.pathed;
 
-import io.github.junyali.pathed.screen.ClassSelectionScreen;
+import io.github.junyali.pathed.screen.PathSelectionScreen;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -19,7 +19,7 @@ public class PathedClient {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
 
-    public static boolean shouldShowClassSelection = false;
+    public static boolean shouldShowPathSelection = false;
 
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
@@ -29,9 +29,9 @@ public class PathedClient {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (shouldShowClassSelection && minecraft.level != null && minecraft.player != null && minecraft.screen == null) {
-            minecraft.setScreen(new ClassSelectionScreen(true));
-            shouldShowClassSelection = false;
+        if (shouldShowPathSelection && minecraft.level != null && minecraft.player != null && minecraft.screen == null) {
+            minecraft.setScreen(new PathSelectionScreen(true));
+            shouldShowPathSelection = false;
         }
     }
 }

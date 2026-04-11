@@ -9,21 +9,21 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public record OpenClassSelectPacket() implements CustomPacketPayload {
-	public static final CustomPacketPayload.Type<OpenClassSelectPacket> TYPE =
+public record OpenPathSelectPacket() implements CustomPacketPayload {
+	public static final CustomPacketPayload.Type<OpenPathSelectPacket> TYPE =
 			new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "open_class_select"));
 
-	public static final StreamCodec<RegistryFriendlyByteBuf, OpenClassSelectPacket> STREAM_CODEC =
-			StreamCodec.unit(new OpenClassSelectPacket());
+	public static final StreamCodec<RegistryFriendlyByteBuf, OpenPathSelectPacket> STREAM_CODEC =
+			StreamCodec.unit(new OpenPathSelectPacket());
 
 	@Override
 	public CustomPacketPayload.@NotNull Type<? extends CustomPacketPayload> type() {
 		return TYPE;
 	}
 
-	public static void handle(OpenClassSelectPacket packet, IPayloadContext context) {
+	public static void handle(OpenPathSelectPacket packet, IPayloadContext context) {
 		context.enqueueWork(() -> {
-			PathedClient.shouldShowClassSelection = true;
+			PathedClient.shouldShowPathSelection = true;
 		});
 	}
 }

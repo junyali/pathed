@@ -2,7 +2,7 @@ package io.github.junyali.pathed;
 
 import io.github.junyali.pathed.attachment.PathedAttachments;
 import io.github.junyali.pathed.data.path.PathRegistry;
-import io.github.junyali.pathed.network.OpenClassSelectPacket;
+import io.github.junyali.pathed.network.OpenPathSelectPacket;
 import io.github.junyali.pathed.screen.PathedMenuTypes;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -36,9 +36,9 @@ public class Pathed {
     private void registerPackets(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(MODID);
         registrar.playToClient(
-                OpenClassSelectPacket.TYPE,
-                OpenClassSelectPacket.STREAM_CODEC,
-                OpenClassSelectPacket::handle
+                OpenPathSelectPacket.TYPE,
+                OpenPathSelectPacket.STREAM_CODEC,
+                OpenPathSelectPacket::handle
         );
     }
 
