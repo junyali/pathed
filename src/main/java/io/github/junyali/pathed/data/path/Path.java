@@ -29,9 +29,9 @@ public abstract class Path {
 		return Component.translatable(id.toLanguageKey("path", "description"));
 	}
 
-	public abstract ItemStack getIcon();
+	public abstract PathIcon getIcon();
 
-	public abstract List<ItemStack> getStartingItems();
+	public abstract StartingKit getStartingItems();
 
 	public boolean isSelectable() {
 		return selectable;
