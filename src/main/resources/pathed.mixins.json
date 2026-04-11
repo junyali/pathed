@@ -2,7 +2,9 @@
   "required": true,
   "package": "io.github.junyali.pathed.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "ItemStackMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },
