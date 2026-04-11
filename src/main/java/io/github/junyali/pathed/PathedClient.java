@@ -30,7 +30,7 @@ public class PathedClient {
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
         if (shouldShowClassSelection && minecraft.level != null && minecraft.player != null && minecraft.screen == null) {
-            minecraft.setScreen(new ClassSelectionScreen());
+            minecraft.setScreen(new ClassSelectionScreen(true));
             shouldShowClassSelection = false;
         }
     }
