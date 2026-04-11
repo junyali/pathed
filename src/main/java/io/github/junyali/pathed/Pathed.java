@@ -1,6 +1,7 @@
 package io.github.junyali.pathed;
 
 import io.github.junyali.pathed.attachment.PathedAttachments;
+import io.github.junyali.pathed.data.path.PathRegistry;
 import io.github.junyali.pathed.network.OpenClassSelectPacket;
 import io.github.junyali.pathed.screen.PathedMenuTypes;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -43,6 +44,7 @@ public class Pathed {
 
     private void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("HELLO FROM COMMON SETUP");
+        PathRegistry.init();
     }
 
     @SubscribeEvent
