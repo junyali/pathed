@@ -1,12 +1,15 @@
 package io.github.junyali.pathed.data.path;
 
 import io.github.junyali.pathed.Pathed;
+import io.github.junyali.pathed.data.paths.BlademasterPath;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.*;
 
 public class PathRegistry {
 	private static final Map<ResourceLocation, Path> PATHS = new LinkedHashMap<>();
+
+	public static final Path BLADEMASTER = register(new BlademasterPath());
 
 	private PathRegistry() {}
 
