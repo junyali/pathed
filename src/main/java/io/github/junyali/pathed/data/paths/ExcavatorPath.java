@@ -8,14 +8,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-public class HumanPath extends Path {
-	public HumanPath() {
-		super(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "human"), true, 0);
+public class ExcavatorPath extends Path {
+	public ExcavatorPath() {
+		super(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "excavator"), true, 4);
 	}
 
 	@Override
 	public PathIcon getIcon() {
-		return PathIcon.ofPlayerHead();
+		return PathIcon.ofItem(new ItemStack(Items.STONE_SHOVEL));
 	}
 
 	@Override

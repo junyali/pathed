@@ -8,14 +8,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-public class HumanPath extends Path {
-	public HumanPath() {
-		super(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "human"), true, 0);
+public class SpelunkerPath extends Path {
+	public SpelunkerPath() {
+		super(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "spelunker"), true, 2);
 	}
 
 	@Override
 	public PathIcon getIcon() {
-		return PathIcon.ofPlayerHead();
+		return PathIcon.ofItem(new ItemStack(Items.NETHERITE_PICKAXE));
 	}
 
 	@Override

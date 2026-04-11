@@ -8,14 +8,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-public class HumanPath extends Path {
-	public HumanPath() {
-		super(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "human"), true, 0);
+public class CultivatorPath extends Path {
+	public CultivatorPath() {
+		super(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "cultivator"), true, 5);
 	}
 
 	@Override
 	public PathIcon getIcon() {
-		return PathIcon.ofPlayerHead();
+		return PathIcon.ofItem(new ItemStack(Items.IRON_HOE));
 	}
 
 	@Override

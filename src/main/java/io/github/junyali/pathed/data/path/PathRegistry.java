@@ -1,8 +1,7 @@
 package io.github.junyali.pathed.data.path;
 
 import io.github.junyali.pathed.Pathed;
-import io.github.junyali.pathed.data.paths.BlademasterPath;
-import io.github.junyali.pathed.data.paths.HumanPath;
+import io.github.junyali.pathed.data.paths.*;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.*;
@@ -12,6 +11,10 @@ public class PathRegistry {
 
 	public static final Path HUMAN = register(new HumanPath());
 	public static final Path BLADEMASTER = register(new BlademasterPath());
+	public static final Path SPELUNKER = register(new SpelunkerPath());
+	public static final Path LUMBERJACK = register(new LumberjackPath());
+	public static final Path EXCAVATOR = register(new ExcavatorPath());
+	public static final Path CULTIVATOR = register(new CultivatorPath());
 
 	private PathRegistry() {}
 

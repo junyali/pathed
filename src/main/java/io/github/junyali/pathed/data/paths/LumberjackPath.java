@@ -8,14 +8,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-public class HumanPath extends Path {
-	public HumanPath() {
-		super(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "human"), true, 0);
+public class LumberjackPath extends Path {
+	public LumberjackPath() {
+		super(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "lumberjack"), true, 3);
 	}
 
 	@Override
 	public PathIcon getIcon() {
-		return PathIcon.ofPlayerHead();
+		return PathIcon.ofItem(new ItemStack(Items.GOLDEN_AXE));
 	}
 
 	@Override
