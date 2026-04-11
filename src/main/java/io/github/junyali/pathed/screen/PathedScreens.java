@@ -22,17 +22,25 @@ public class PathedScreens extends Screen {
 	// Code taken from Origins NeoForge port
 	// SOURCE: https://github.com/UltrusBot/AltOriginGui
 
-	private static final ResourceLocation WINDOW_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "textures/gui/sprites/background.png");
-	private static final ResourceLocation WINDOW_BORDER = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "textures/gui/sprites/border.png");
-	private static final ResourceLocation WINDOW_NAME_PLATE = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "textures/gui/sprites/name_plate.png");
+	private static final ResourceLocation WINDOW_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "choose_path/background");
+	private static final ResourceLocation WINDOW_BORDER = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "choose_path/border");
+	private static final ResourceLocation WINDOW_NAME_PLATE = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "choose_path/name_plate");
+	private static final ResourceLocation WINDOW_SCROLL_BAR = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "choose_path/scroll_bar");
+	private static final ResourceLocation WINDOW_SCROLL_BAR_PRESSED = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "choose_path/scroll_bar/pressed");
+	private static final ResourceLocation WINDOW_SCROLL_BAR_SLOT = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "choose_path/scroll_bar/slot");
 
 	protected static final int WINDOW_WIDTH = 176;
 	protected static final int WINDOW_HEIGHT = 182;
 
 	protected final boolean showDirtBackground;
 
+	private boolean dragScrolling = false;
+
+	private double mouseDragStart = 0;
+
 	private Path currentPath;
 	private int currentMaxScroll = 0;
+	private int scrollDragStart = 0;
 
 	protected int guiTop, guiLeft;
 	protected int scrollPos = 0;
@@ -71,7 +79,39 @@ public class PathedScreens extends Screen {
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 		super.render(guiGraphics, mouseX, mouseY, delta);
-		this.renderClassWindow(guiGraphics, mouseX, mouseY, delta);
+		this.renderPathWindow(guiGraphics, mouseX, mouseY, delta);
+	}
+
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		this.dragScrolling = false;
+		return super.mouseReleased(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		boolean mouseClicked = super.mouseClicked(mouseX, mouseY, button);
+		if (this.cannotScroll()) return mouseClicked;
+		this.dragScrolling = false;
+		int scrollBarY = 36;
+		int maxScrollBarOffset = 141;
+		scrollBarY += (int) ((maxScrollBarOffset - scrollBarY) * (this.scrollPos / (float) this.currentMaxScroll));
+		if (!this.canDragScroll(mouseX, mouseY, scrollBarY)) return mouseClicked;
+		this.dragScrolling = true;
+		this.scrollDragStart = scrollBarY;
+		this.mouseDragStart = mouseY;
+		return true;
+	}
+
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+		boolean mouseDragged = super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+		if (!this.dragScrolling) return mouseDragged;
+		int delta = (int) (mouseY - this.mouseDragStart);
+		int newScrollPos = Math.max(36, Math.min(141, this.scrollDragStart + delta));
+		float part = (newScrollPos - 36) / (float) (141 - 36);
+		this.scrollPos = (int) (part * this.currentMaxScroll);
+		return mouseDragged;
 	}
 
 	@Override
@@ -85,19 +125,47 @@ public class PathedScreens extends Screen {
 		return this.currentPath;
 	}
 
-	protected void renderClassWindow(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-		guiGraphics.blit(WINDOW_BACKGROUND, this.guiLeft, this.guiTop, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	protected void renderScrollbar(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		if (this.cannotScroll()) return;
+		guiGraphics.blitSprite(WINDOW_SCROLL_BAR_SLOT, this.guiLeft + 155, this.guiTop + 36, 8, 134);
+		int scrollBarY = 36;
+		int maxScrollbarOffset = 141;
+		scrollBarY += (int) ((maxScrollbarOffset - scrollBarY) * (this.scrollPos / (float) this.currentMaxScroll));
+		ResourceLocation scrollBarTexture = this.dragScrolling || this.canDragScroll(mouseX, mouseY, scrollBarY) ? WINDOW_SCROLL_BAR_PRESSED : WINDOW_SCROLL_BAR;
+		guiGraphics.blitSprite(scrollBarTexture, this.guiLeft + 156, this.guiTop + scrollBarY, 6, 27);
+	}
+
+	protected boolean cannotScroll() {
+		return this.currentPath == null || this.currentMaxScroll <= 0;
+	}
+
+	protected boolean canDragScroll(double mouseX, double mouseY, int scrollBarY) {
+		return (mouseX >= this.guiLeft + 156 && mouseX < this.guiLeft + 156 + 6) && (mouseY >= this.guiTop + scrollBarY && mouseY < this.guiTop + scrollBarY + 27);
+	}
+
+	protected boolean isWithinWindowBoundaries(int mouseX, int mouseY) {
+		return (mouseX >= this.guiLeft && mouseX < this.guiLeft + WINDOW_WIDTH) && (mouseY >= this.guiTop && mouseY < this.guiTop + WINDOW_HEIGHT);
+	}
+
+	protected void renderPathWindow(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+		guiGraphics.blitSprite(WINDOW_BACKGROUND, this.guiLeft, this.guiTop, -4, WINDOW_WIDTH, WINDOW_HEIGHT);
 		if (this.currentPath != null) {
 			guiGraphics.enableScissor(this.guiLeft, this.guiTop, this.guiLeft + WINDOW_WIDTH, this.guiTop + WINDOW_HEIGHT);
-			this.renderClassContent(guiGraphics);
+			this.renderPathContent(guiGraphics);
 			guiGraphics.disableScissor();
 		}
 
-		guiGraphics.blit(WINDOW_BORDER, this.guiLeft, this.guiTop, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-		guiGraphics.blit(WINDOW_NAME_PLATE, this.guiLeft + 10, this.guiTop + 10, 0, 0, 150, 26);
+		guiGraphics.blitSprite(WINDOW_BORDER, this.guiLeft, this.guiTop, 2, WINDOW_WIDTH, WINDOW_HEIGHT);
+		guiGraphics.blitSprite(WINDOW_NAME_PLATE, this.guiLeft + 10, this.guiTop + 10, 2, 150, 26);
 		if (this.currentPath != null) {
+			guiGraphics.pose().pushPose();
+			guiGraphics.pose().translate(0, 0, 5);
 			this.renderPathName(guiGraphics);
+
+			guiGraphics.pose().pushPose();
 			guiGraphics.drawCenteredString(this.font, this.getTitle(), this.width / 2, this.guiTop - 15, 0xFFFFFF);
+
+			this.renderScrollbar(guiGraphics, mouseX, mouseY);
 		}
 	}
 
@@ -123,7 +191,7 @@ public class PathedScreens extends Screen {
 		}
 	}
 
-	protected void renderClassContent(GuiGraphics guiGraphics) {
+	protected void renderPathContent(GuiGraphics guiGraphics) {
 		int textWidthLimit = WINDOW_WIDTH - 48;
 		int x = this.guiLeft + 18;
 		int y = this.guiTop + 45 - this.scrollPos;
