@@ -21,6 +21,8 @@ public class DataGenerators {
 		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
 		// CLIENT
+		generator.addProvider(event.includeClient(), new PathedLanguageProvider(packOutput, "en_us"));
+		generator.addProvider(event.includeClient(), new PathedItemModelProvider(packOutput, existingFileHelper));
 
 		// SERVER
 	}
