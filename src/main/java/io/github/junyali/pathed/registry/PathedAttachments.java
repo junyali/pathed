@@ -1,6 +1,7 @@
-package io.github.junyali.pathed.attachment;
+package io.github.junyali.pathed.registry;
 
 import io.github.junyali.pathed.Pathed;
+import io.github.junyali.pathed.attachment.PathAttachment;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -15,7 +16,8 @@ public class PathedAttachments {
 	public static final Supplier<AttachmentType<PathAttachment>> PATH_ATTACHMENT =
 			ATTACHMENT_TYPES.register("path_data", () ->
 					AttachmentType.builder(PathAttachment::new)
-							.serialize(new PathAttachment.Serializer())
+							.serialize(PathAttachment.CODEC)
+							.copyOnDeath()
 							.build()
 			);
 

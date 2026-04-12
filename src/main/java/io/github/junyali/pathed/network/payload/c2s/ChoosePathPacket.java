@@ -2,7 +2,7 @@ package io.github.junyali.pathed.network.payload.c2s;
 
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.PathAttachment;
-import io.github.junyali.pathed.attachment.PathedAttachments;
+import io.github.junyali.pathed.registry.PathedAttachments;
 import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.data.path.PathRegistry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
