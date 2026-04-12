@@ -3,6 +3,7 @@ package io.github.junyali.pathed.screen;
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.data.path.PathRegistry;
+import io.github.junyali.pathed.network.payload.c2s.ChoosePathPacket;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -10,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -71,8 +73,10 @@ public class PathSelectionScreen extends PathedScreens {
 					Component.translatable("pathed.gui.choose_path.select"),
 					btn -> {
 						Path selected = this.getCurrentPath();
-						// packet choose class
-						this.onClose();
+						PacketDistributor.sendToServer(new ChoosePathPacket(selected.getId()));
+						if (this.minecraft != null) {
+							this.minecraft.setScreen(null);
+						}
 					}
 			).bounds(this.guiLeft + 88 - 50, this.guiTop + CHOICES_HEIGHT + 5, 100, 20).build());
 		}

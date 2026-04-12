@@ -1,6 +1,7 @@
 package io.github.junyali.pathed.network;
 
 import io.github.junyali.pathed.Pathed;
+import io.github.junyali.pathed.network.payload.c2s.ChoosePathPacket;
 import io.github.junyali.pathed.network.payload.s2c.OpenPathSelectPacket;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -17,6 +18,12 @@ public class PathedNetworkManager {
 				OpenPathSelectPacket.TYPE,
 				OpenPathSelectPacket.STREAM_CODEC,
 				OpenPathSelectPacket::handle
+		);
+
+		registrar.playToServer(
+				ChoosePathPacket.TYPE,
+				ChoosePathPacket.STREAM_CODEC,
+				ChoosePathPacket::handle
 		);
 	}
 }
