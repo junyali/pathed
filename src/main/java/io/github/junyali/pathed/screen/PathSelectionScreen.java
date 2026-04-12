@@ -6,7 +6,6 @@ import io.github.junyali.pathed.data.path.PathRegistry;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
@@ -87,14 +86,17 @@ public class PathSelectionScreen extends PathedScreens {
 
 	@Override
 	public boolean isPauseScreen() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public void onClose() {
-		if (this.minecraft != null) {
-			this.minecraft.setScreen(new PauseScreen(true));
-		}
+
+	}
+
+	@Override
+	public boolean shouldCloseOnEsc() {
+		return false;
 	}
 
 	private void renderPathChoicesBox(GuiGraphics guiGraphics, int mouseX, int mouseY) {
