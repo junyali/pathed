@@ -3,7 +3,7 @@ package io.github.junyali.pathed.event;
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.attachment.PathedAttachments;
-import io.github.junyali.pathed.network.OpenPathSelectPacket;
+import io.github.junyali.pathed.network.payload.s2c.OpenPathSelectPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

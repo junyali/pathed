@@ -1,4 +1,4 @@
-package io.github.junyali.pathed.network;
+package io.github.junyali.pathed.network.payload.s2c;
 
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.PathedClient;

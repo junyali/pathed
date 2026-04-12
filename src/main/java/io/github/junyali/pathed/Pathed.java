@@ -3,7 +3,7 @@ package io.github.junyali.pathed;
 import io.github.junyali.pathed.attachment.PathedAttachments;
 import io.github.junyali.pathed.data.path.PathRegistry;
 import io.github.junyali.pathed.item.PathedItems;
-import io.github.junyali.pathed.network.OpenPathSelectPacket;
+import io.github.junyali.pathed.network.payload.s2c.OpenPathSelectPacket;
 import io.github.junyali.pathed.screen.PathedMenuTypes;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
