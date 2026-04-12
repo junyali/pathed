@@ -2,6 +2,7 @@ package io.github.junyali.pathed.event;
 
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.PathAttachment;
+import io.github.junyali.pathed.attachment.PathDataHolder;
 import io.github.junyali.pathed.registry.PathedAttachments;
 import io.github.junyali.pathed.network.payload.s2c.OpenPathSelectPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,9 +17,7 @@ public class PathedEvents {
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-		PathAttachment attachment = player.getData(PathedAttachments.PATH_ATTACHMENT);
-
-		if (!attachment.hasChosen()) {
+		if (!PathDataHolder.get(player).hasChosen()) {
 			PacketDistributor.sendToPlayer(player, new OpenPathSelectPacket());
 		}
 	}

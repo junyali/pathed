@@ -2,6 +2,7 @@ package io.github.junyali.pathed.network.payload.c2s;
 
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.PathAttachment;
+import io.github.junyali.pathed.attachment.PathDataHolder;
 import io.github.junyali.pathed.registry.PathedAttachments;
 import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.data.path.PathRegistry;
@@ -35,8 +36,7 @@ public record ChoosePathPacket(ResourceLocation pathId) implements CustomPacketP
 			if (context.player() instanceof ServerPlayer player) {
 				Path path = PathRegistry.get(packet.pathId());
 				if (path != null && path.isSelectable()) {
-					PathAttachment attachment = player.getData(PathedAttachments.PATH_ATTACHMENT.get());
-					attachment.setPath(path);
+					PathDataHolder.get(player).setPath(path);
 					path.getStartingItems().giveToPlayer(player);
 				}
 			}
