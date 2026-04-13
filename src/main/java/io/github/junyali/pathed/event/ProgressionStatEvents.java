@@ -55,7 +55,7 @@ public class ProgressionStatEvents {
 	}
 
 	@SubscribeEvent
-	public void onLivingDamage(LivingDamageEvent.Post event) {
+	public static void onLivingDamage(LivingDamageEvent.Post event) {
 		float amount = event.getNewDamage();
 		int fixedPoint = Math.round(amount * 10);
 
@@ -77,7 +77,7 @@ public class ProgressionStatEvents {
 	}
 
 	@SubscribeEvent
-	public void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
+	public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
 		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(event.getCrafting().getItem());
@@ -87,7 +87,7 @@ public class ProgressionStatEvents {
 	}
 
 	@SubscribeEvent
-	public void onPlayerTick(PlayerTickEvent.Post event) {
+	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		if (player.tickCount % 20 != 0) return;
 
@@ -111,12 +111,12 @@ public class ProgressionStatEvents {
 	}
 
 	@SubscribeEvent
-	public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+	public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
 		lastPositions.remove(event.getEntity().getUUID());
 	}
 
 	@SubscribeEvent
-	public void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
+	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
 		ResourceLocation dimensionId = event.getTo().location();
@@ -128,7 +128,7 @@ public class ProgressionStatEvents {
 
 
 	@SubscribeEvent
-	public void onPlayerWakeUp(PlayerWakeUpEvent event) {
+	public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		if (event.wakeImmediately()) return;
 
@@ -138,7 +138,7 @@ public class ProgressionStatEvents {
 	}
 
 	@SubscribeEvent
-	public void onPlayerTrade(TradeWithVillagerEvent event) {
+	public static void onPlayerTrade(TradeWithVillagerEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
 		ResourceLocation professionId;
