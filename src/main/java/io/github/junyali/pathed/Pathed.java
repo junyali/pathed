@@ -20,6 +20,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 public class Pathed {
     public static final String MODID = "pathed";
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static final String PROTOCOL_VERSION = "1";
 
     public Pathed(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);

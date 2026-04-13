@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public class PathedNetworkManager {
 	@SubscribeEvent
 	public static void registerPayloads(RegisterPayloadHandlersEvent event) {
-		final PayloadRegistrar registrar = event.registrar("1");
+		final PayloadRegistrar registrar = event.registrar(Pathed.PROTOCOL_VERSION);
 
 		registrar.playToClient(
 				OpenPathSelectPacket.TYPE,
