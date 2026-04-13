@@ -33,13 +33,22 @@ public record ChoosePathPacket(ResourceLocation pathId) implements CustomPacketP
 
 	public static void handle(ChoosePathPacket packet, IPayloadContext context) {
 		context.enqueueWork(() -> {
-			if (context.player() instanceof ServerPlayer player) {
-				Path path = PathRegistry.get(packet.pathId());
-				if (path != null && path.isSelectable()) {
-					PathDataHolder.get(player).setPath(path);
-					path.getStartingItems().giveToPlayer(player);
-				}
+			if (!(context.player() instanceof ServerPlayer player)) return;
+
+			PathDataHolder holder = PathDataHolder.get(player);
+			if (holder.hasChosen()) {
+				Pathed.LOGGER.warn("Player {} attempted to choose path {} again", player.getGameProfile().getName(), packet.pathId());
+				return;
 			}
+
+			Path path = PathRegistry.get(packet.pathId());
+			if (path == null || !path.isSelectable()) {
+				Pathed.LOGGER.warn("Player {} sent invalid path id {}", player.getGameProfile().getName(), packet.pathId());
+				return;
+			}
+
+			holder.setPath(path);
+			path.getStartingItems().giveToPlayer(player);
 		});
 	}
 }
