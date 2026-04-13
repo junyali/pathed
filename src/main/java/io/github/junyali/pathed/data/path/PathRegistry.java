@@ -19,6 +19,10 @@ public class PathRegistry {
 	private PathRegistry() {}
 
 	public static Path register(Path path) {
+		if (PATHS.containsKey(path.getId())) {
+			Pathed.LOGGER.warn("Duplicate path id {} detected, overriding...", path.getId());
+		}
+
 		PATHS.put(path.getId(), path);
 		return path;
 	}
