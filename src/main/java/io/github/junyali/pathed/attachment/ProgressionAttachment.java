@@ -178,7 +178,7 @@ public class ProgressionAttachment {
 	}
 
 	public void addDamageTaken(ResourceLocation sourceType, float amount) {
-		damageDealt.merge(sourceType, Math.round(amount * 10), Integer::sum);
+		damageTaken.merge(sourceType, Math.round(amount * 10), Integer::sum);
 	}
 
 	public void incrementItemsCrafted(ResourceLocation item, int count) {
@@ -218,7 +218,7 @@ public class ProgressionAttachment {
 	}
 
 	public float getDamageTakenFrom(ResourceLocation sourceType) {
-		return damageDealt.getOrDefault(sourceType, 0) / 10f;
+		return damageTaken.getOrDefault(sourceType, 0) / 10f;
 	}
 
 	public int getItemsCraftedCount(ResourceLocation item) {
