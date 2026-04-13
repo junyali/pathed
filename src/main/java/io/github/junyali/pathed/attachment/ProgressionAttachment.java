@@ -19,6 +19,8 @@ public class ProgressionAttachment {
 	public static final Codec<ProgressionAttachment> CODEC = RecordCodecBuilder.create(i -> i.group(
 			Codec.INT.fieldOf("classPoints").forGetter(ProgressionAttachment::getClassPoints),
 			Codec.INT.fieldOf("generalPoints").forGetter(ProgressionAttachment::getGeneralPoints),
+			Codec.INT.fieldOf("level").forGetter(ProgressionAttachment::getLevel),
+			Codec.INT.fieldOf("experience").forGetter(ProgressionAttachment::getExperience),
 			Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
 					.fieldOf("blocksBroken").forGetter(ProgressionAttachment::getBlocksBroken),
 			Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
@@ -43,6 +45,8 @@ public class ProgressionAttachment {
 
 	private int classPoints;
 	private int generalPoints;
+	private int level;
+	private int experience;
 	private final Map<ResourceLocation, Integer> blocksBroken;
 	private final Map<ResourceLocation, Integer> entitiesKilled;
 	private final Map<ResourceLocation, Integer> damageDealt;
@@ -57,6 +61,8 @@ public class ProgressionAttachment {
 	public ProgressionAttachment() {
 		this.classPoints = 0;
 		this.generalPoints = 0;
+		this.level = 1;
+		this.experience = 0;
 		this.blocksBroken = new HashMap<>();
 		this.entitiesKilled = new HashMap<>();
 		this.damageDealt = new HashMap<>();
@@ -72,6 +78,8 @@ public class ProgressionAttachment {
 	private ProgressionAttachment(
 			int classPoints,
 			int generalPoints,
+			int level,
+			int experience,
 			Map<ResourceLocation, Integer> blocksBroken,
 			Map<ResourceLocation, Integer> entitiesKilled,
 			Map<ResourceLocation, Integer> damageDealt,
@@ -85,6 +93,8 @@ public class ProgressionAttachment {
 	) {
 		this.classPoints = classPoints;
 		this.generalPoints = generalPoints;
+		this.level = level;
+		this.experience = experience;
 		this.blocksBroken = new HashMap<>(blocksBroken);
 		this.entitiesKilled = new HashMap<>(entitiesKilled);
 		this.damageDealt = new HashMap<>(damageDealt);
@@ -105,12 +115,28 @@ public class ProgressionAttachment {
 		return generalPoints;
 	}
 
+	public int getLevel() {
+		return level;
+	}
+
+	public int getExperience() {
+		return experience;
+	}
+
 	public void addClassPoints(int amount) {
 		this.classPoints += amount;
 	}
 
 	public void addGeneralPoints(int amount) {
 		this.generalPoints += amount;
+	}
+
+	public void addLevel(int amount) {
+		this.level += amount;
+	}
+
+	public void addExperience(int amount) {
+		this.experience += amount;
 	}
 
 	public boolean spendClassPoints(int amount) {
