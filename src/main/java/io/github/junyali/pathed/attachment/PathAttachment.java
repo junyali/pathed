@@ -19,7 +19,13 @@ public class PathAttachment {
 	public static final Codec<PathAttachment> CODEC = RecordCodecBuilder.create(i -> i.group(
 			ResourceLocation.CODEC.optionalFieldOf("path").forGetter(a -> Optional.ofNullable(a.path).map(Path::getId)),
 			Codec.BOOL.fieldOf("hasChosen").forGetter(PathAttachment::hasChosen)
-	).apply(i, PathAttachment::new));
+	).apply(i, (optPathId, hasChosen) -> {
+		Path resolved = optPathId.map(PathRegistry::get).orElse(null);
+		PathAttachment pathAttachment = new PathAttachment();
+		pathAttachment.path = resolved;
+		pathAttachment.hasChosen = resolved != null && hasChosen;
+		return pathAttachment;
+	}));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, PathAttachment> STREAM_CODEC =
 			ByteBufCodecs.fromCodecWithRegistries(CODEC);
