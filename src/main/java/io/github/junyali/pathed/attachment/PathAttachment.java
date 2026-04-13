@@ -33,9 +33,10 @@ public class PathAttachment {
 		this.hasChosen = false;
 	}
 
-	private PathAttachment(Optional<ResourceLocation> pathId, boolean hasChosen) {
-		this.path = pathId.map(PathRegistry::get).orElse(null);
-		this.hasChosen = hasChosen;
+	private PathAttachment(@Nullable ResourceLocation pathId, boolean hasChosen) {
+		Path resolved = pathId != null ? PathRegistry.get(pathId) : null;
+		this.path = resolved;
+		this.hasChosen = resolved != null && hasChosen;
 	}
 
 	@Nullable

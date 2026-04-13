@@ -17,7 +17,8 @@ public class PathedEvents {
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-		if (!PathDataHolder.get(player).hasChosen()) {
+		PathDataHolder holder = PathDataHolder.get(player);
+		if (!holder.hasChosen() || holder.getPath() == null) {
 			PacketDistributor.sendToPlayer(player, new OpenPathSelectPacket());
 		}
 	}
