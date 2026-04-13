@@ -122,6 +122,7 @@ public class ProgressionStatEvents {
 		ResourceLocation dimensionId = event.getTo().location();
 		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 		progressionAttachment.getDimensionsVisited().add(dimensionId);
+		lastPositions.remove(player.getUUID());
 		progressionAttachment.sync(player);
 	}
 
