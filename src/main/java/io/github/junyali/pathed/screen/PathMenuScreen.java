@@ -94,23 +94,6 @@ public class PathMenuScreen extends Screen {
 		int centreX = panelLeft + PANEL_WIDTH / 2;
 		int y = panelTop + 12;
 
-		if (this.path != null) {
-			int iconX = centreX - 8;
-			renderPathIcon(guiGraphics, this.path.getIcon(), iconX, y);
-			y += 20;
-			guiGraphics.drawCenteredString(this.font, this.path.getName(), centreX, y, COLOUR_TEXT);
-			y += 14;
-		} else {
-			guiGraphics.drawCenteredString(
-					this.font,
-					Component.translatable("pathed.gui.path_menu.no_path"),
-					centreX,
-					y,
-					COLOUR_SUBTEXT
-			);
-			y += 14;
-		}
-
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player != null) {
 			guiGraphics.drawCenteredString(
@@ -129,6 +112,24 @@ public class PathMenuScreen extends Screen {
 
 			renderPlayerModel(guiGraphics, mc.player, modelCentreX, modelFeetY, mouseX, mouseY);
 			y = modelFeetY + 10;
+		}
+
+		if (this.path != null) {
+			int textWidth = this.font.width(this.path.getName());
+			int totalWidth = 16 + 4 + textWidth;
+			int startX = centreX - totalWidth / 2;
+			renderPathIcon(guiGraphics, this.path.getIcon(), startX, y);
+			guiGraphics.drawString(this.font, this.path.getName(), startX + 20, y + 4, COLOUR_TEXT);
+			y += 20;
+		} else {
+			guiGraphics.drawCenteredString(
+					this.font,
+					Component.translatable("pathed.gui.path_menu.no_path"),
+					centreX,
+					y,
+					COLOUR_SUBTEXT
+			);
+			y += 14;
 		}
 
 		Component levelText = Component.translatable("pathed.gui.path_menu.level", this.level);
