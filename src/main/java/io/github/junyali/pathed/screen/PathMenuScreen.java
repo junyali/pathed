@@ -42,7 +42,7 @@ public class PathMenuScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		this.panelLeft = (this.width / 2) - PANEL_WIDTH - 10;
+		this.panelLeft = (this.width / 2) - PANEL_WIDTH - 40;
 		this.panelTop = (this.height - PANEL_HEIGHT) / 2;
 		this.refreshData();
 	}
@@ -121,14 +121,14 @@ public class PathMenuScreen extends Screen {
 					COLOUR_SUBTEXT
 			);
 		}
-		y+= 16;
+		y+= 20;
 
 		if (mc.player != null) {
 			int modelCentreX = centreX;
-			int modelFeetY = y + PLAYER_MODEL_SIZE + 10;
+			int modelFeetY = y + PLAYER_MODEL_SIZE + 50;
 
 			renderPlayerModel(guiGraphics, mc.player, modelCentreX, modelFeetY, mouseX, mouseY);
-			y = modelFeetY + 14;
+			y = modelFeetY + 10;
 		}
 
 		Component levelText = Component.translatable("pathed.gui.path_menu.level", this.level);
