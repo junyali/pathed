@@ -4,6 +4,8 @@
   "item.pathed.excavator_tool": "Earth Sunderer",
   "item.pathed.lumberjack_tool": "Grovebreaker",
   "item.pathed.spelunker_tool": "Deepseeker",
+  "key.categories.pathed": "Pathed",
+  "key.pathed.open_path_menu": "Open Path Menu",
   "path.pathed.blademaster.description": "Born for question. Your blade is your answer to everything; strike first and ask questions later.",
   "path.pathed.blademaster.name": "Blademaster",
   "path.pathed.blademaster.tool_description": "Forged for one hand alone.",
@@ -24,5 +26,8 @@
   "path.pathed.spelunker.tool_description": "It remembers every cave it has touched.",
   "pathed.gui.choose_path.select": "Select",
   "pathed.gui.choose_path.starting_kit": "Starting Kit",
-  "pathed.gui.choose_path.title": "Choose your Path"
+  "pathed.gui.choose_path.title": "Choose your Path",
+  "pathed.gui.path_menu.level": "Level %s",
+  "pathed.gui.path_menu.no_path": "No Path Selected",
+  "pathed.gui.path_menu.title": "Your Path"
 }

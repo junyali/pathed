@@ -41,6 +41,15 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.gui.choose_path.select", "Select");
 		add("pathed.gui.choose_path.starting_kit", "Starting Kit");
 
+		add("pathed.gui.path_menu.title", "Your Path");
+		add("pathed.gui.path_menu.no_path", "No Path Selected");
+		add("pathed.gui.path_menu.level", "Level %s");
+
+		// KEYMAPPINGS
+
+		add("key.categories.pathed", "Pathed");
+		add("key.pathed.open_path_menu", "Open Path Menu");
+
 		// Items
 		add("item.pathed.blademaster_tool", "The First Edge");
 		add("item.pathed.spelunker_tool", "Deepseeker");
