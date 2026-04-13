@@ -19,6 +19,7 @@ public class PathedAttachments {
 					AttachmentType.builder(PathAttachment::new)
 							.serialize(PathAttachment.CODEC)
 							.copyOnDeath()
+							.sync(PathAttachment.STREAM_CODEC)
 							.build()
 			);
 
@@ -27,6 +28,7 @@ public class PathedAttachments {
 					AttachmentType.builder(ProgressionAttachment::new)
 							.serialize(ProgressionAttachment.CODEC)
 							.copyOnDeath()
+							.sync(ProgressionAttachment.STREAM_CODEC)
 							.build()
 			);
 
