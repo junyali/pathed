@@ -1,9 +1,8 @@
 package io.github.junyali.pathed.event;
 
 import io.github.junyali.pathed.Pathed;
-import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.attachment.PathDataHolder;
-import io.github.junyali.pathed.registry.PathedAttachments;
+import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.network.payload.s2c.OpenPathSelectPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -21,5 +20,7 @@ public class PathedEvents {
 		if (!holder.hasChosen() || holder.getPath() == null) {
 			PacketDistributor.sendToPlayer(player, new OpenPathSelectPacket());
 		}
+
+		ProgressionAttachment.get(player).sync(player);
 	}
 }
