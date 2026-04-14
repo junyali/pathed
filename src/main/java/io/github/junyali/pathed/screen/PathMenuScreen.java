@@ -20,11 +20,16 @@ public class PathMenuScreen extends Screen {
 	private static final int PANEL_WIDTH = 160;
 	private static final int PANEL_HEIGHT = 220;
 	private static final int PLAYER_MODEL_SIZE = 60;
+	private static final int XP_BAR_WIDTH = 100;
+	private static final int XP_BAR_HEIGHT = 6;
 
 	private final boolean showDirtBackground;
 
 	private static final int COLOUR_TEXT = 0xFFFFFFFF;
 	private static final int COLOUR_SUBTEXT = 0xFFAAAAAA;
+	private static final int COLOUR_XP_BG = 0xFF333333;
+	private static final int COLOUR_XP_FILL = 0xFF55FF55;
+	private static final int COLOUR_XP_BORDER = 0xFF888888;
 
 	private int panelLeft;
 	private int panelTop;
@@ -32,7 +37,7 @@ public class PathMenuScreen extends Screen {
 	private Path path;
 	private int level;
 	private long currentExp;
-	private long expForNextLevel;
+	private float expForNextLevel;
 
 	public PathMenuScreen(boolean showDirtBackground) {
 		super(Component.translatable("pathed.gui.path_menu.title"));
@@ -57,7 +62,7 @@ public class PathMenuScreen extends Screen {
 		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(mc.player);
 		this.level = progressionAttachment.getLevel();
 		this.currentExp = progressionAttachment.getExperience();
-		// this.expForNextLevel =
+		this.expForNextLevel = progressionAttachment.getLevelProgress();
 	}
 
 	@Override
@@ -136,7 +141,7 @@ public class PathMenuScreen extends Screen {
 		guiGraphics.drawCenteredString(this.font, levelText, centreX, y, COLOUR_TEXT);
 		y += 14;
 
-		// render xp bar here
+		renderXpBar(guiGraphics, centreX, y);
 	}
 
 	private void renderPlayerModel(GuiGraphics guiGraphics, LivingEntity entity, int x, int y, int mouseX, int mouseY) {
@@ -152,6 +157,24 @@ public class PathMenuScreen extends Screen {
 				mouseY,
 				entity
 		);
+	}
+
+	private void renderXpBar(GuiGraphics guiGraphics, int centreX, int y) {
+		int barLeft = centreX - XP_BAR_WIDTH / 2;
+
+		guiGraphics.fill(barLeft - 1, y - 1, barLeft + XP_BAR_WIDTH + 1, y + XP_BAR_HEIGHT + 1, COLOUR_XP_BORDER);
+		guiGraphics.fill(barLeft, y, barLeft + XP_BAR_WIDTH, y + XP_BAR_HEIGHT, COLOUR_XP_BG);
+
+		if (this.expForNextLevel > 0) {
+			float progress = (float) this.currentExp / (float) this.expForNextLevel;
+			int fillWidth = (int) (XP_BAR_WIDTH * Math.min(progress, 1.0f));
+			if (fillWidth > 0) {
+				guiGraphics.fill(barLeft, y, barLeft + fillWidth, y + XP_BAR_HEIGHT, COLOUR_XP_FILL);
+			}
+		}
+
+		Component expLabel = Component.literal(this.currentExp + " / " + this.expForNextLevel);
+		guiGraphics.drawCenteredString(this.font, expLabel, centreX, y + XP_BAR_HEIGHT + 4, COLOUR_SUBTEXT);
 	}
 
 	private void renderPathIcon(GuiGraphics guiGraphics, PathIcon icon, int x, int y) {
