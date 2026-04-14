@@ -17,8 +17,9 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import org.jetbrains.annotations.NotNull;
 
 public class PathMenuScreen extends Screen {
-	private static final int PANEL_WIDTH = 160;
-	private static final int PANEL_HEIGHT = 220;
+	private static final int PLAYER_PANEL_WIDTH = 160;
+	private static final int PLAYER_PANEL_HEIGHT = 220;
+
 	private static final int PLAYER_MODEL_SIZE = 60;
 	private static final int XP_BAR_WIDTH = 100;
 	private static final int XP_BAR_HEIGHT = 6;
@@ -31,8 +32,8 @@ public class PathMenuScreen extends Screen {
 	private static final int COLOUR_XP_FILL = 0xFF55FF55;
 	private static final int COLOUR_XP_BORDER = 0xFF888888;
 
-	private int panelLeft;
-	private int panelTop;
+	private int playerPanelLeft;
+	private int playerPanelTop;
 
 	private Path path;
 	private int level;
@@ -48,8 +49,8 @@ public class PathMenuScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		this.panelLeft = (this.width / 2) - PANEL_WIDTH - 40;
-		this.panelTop = (this.height - PANEL_HEIGHT) / 2;
+		this.playerPanelLeft = (this.width / 2) - PLAYER_PANEL_WIDTH - 40;
+		this.playerPanelTop = (this.height - PLAYER_PANEL_HEIGHT) / 2;
 		this.refreshData();
 	}
 
@@ -91,15 +92,15 @@ public class PathMenuScreen extends Screen {
 
 	private void renderLeftPanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 		guiGraphics.fill(
-				panelLeft,
-				panelTop,
-				panelLeft + PANEL_WIDTH,
-				panelTop + PANEL_HEIGHT,
+				playerPanelLeft,
+				playerPanelTop,
+				playerPanelLeft + PLAYER_PANEL_WIDTH,
+				playerPanelTop + PLAYER_PANEL_HEIGHT,
 				0xAA000000
 		);
 
-		int centreX = panelLeft + PANEL_WIDTH / 2;
-		int y = panelTop + 12;
+		int centreX = playerPanelLeft + PLAYER_PANEL_WIDTH / 2;
+		int y = playerPanelTop + 12;
 
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player != null) {
