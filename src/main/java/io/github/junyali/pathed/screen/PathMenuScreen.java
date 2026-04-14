@@ -6,6 +6,7 @@ import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.data.path.PathIcon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.component.DataComponents;
@@ -17,8 +18,12 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import org.jetbrains.annotations.NotNull;
 
 public class PathMenuScreen extends Screen {
-	private static final int PLAYER_PANEL_WIDTH = 160;
-	private static final int PLAYER_PANEL_HEIGHT = 220;
+	private static final int PANEL_WIDTH = 160;
+	private static final int PANEL_HEIGHT = 220;
+	private static final int ICON_PANEL_WIDTH = 28;
+	private static final int ICON_PANEL_PADDING = 6;
+	private static final int OPTIONS_PANEL_WIDTH = 120;
+	private static final int PANEL_GAP = 6;
 
 	private static final int PLAYER_MODEL_SIZE = 60;
 	private static final int XP_BAR_WIDTH = 100;
@@ -32,8 +37,10 @@ public class PathMenuScreen extends Screen {
 	private static final int COLOUR_XP_FILL = 0xFF55FF55;
 	private static final int COLOUR_XP_BORDER = 0xFF888888;
 
-	private int playerPanelLeft;
-	private int playerPanelTop;
+	private int panelLeft;
+	private int panelTop;
+	private int iconPanelLeft;
+	private int optionsPanelLeft;
 
 	private Path path;
 	private int level;
@@ -49,8 +56,15 @@ public class PathMenuScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		this.playerPanelLeft = (this.width / 2) - PLAYER_PANEL_WIDTH - 40;
-		this.playerPanelTop = (this.height - PLAYER_PANEL_HEIGHT) / 2;
+		int totalWidth = PANEL_WIDTH + PANEL_GAP + ICON_PANEL_WIDTH + PANEL_GAP + OPTIONS_PANEL_WIDTH;
+		int layoutLeft = 20;
+
+		this.panelLeft = layoutLeft;
+		this.iconPanelLeft = layoutLeft + PANEL_WIDTH + PANEL_GAP;
+		this.optionsPanelLeft = layoutLeft + PANEL_WIDTH + PANEL_GAP + ICON_PANEL_WIDTH + PANEL_GAP;
+		this.panelTop = (this.height - PANEL_HEIGHT) / 2;
+
+		this.addOptionsPanelButtons();
 		this.refreshData();
 	}
 
@@ -66,6 +80,29 @@ public class PathMenuScreen extends Screen {
 		this.currentExp = progressionAttachment.getExperience();
 		this.expForNextLevel = progressionAttachment.getExperienceForNextLevel();
 		this.levelProgress = progressionAttachment.getLevelProgress();
+	}
+
+	private void addOptionsPanelButtons() {
+		int x = this.optionsPanelLeft;
+		int y = this.panelTop + 10;
+		int buttonWidth = OPTIONS_PANEL_WIDTH;
+		int buttonHeight = 20;
+		int buttonSpacing = 26;
+
+		this.addRenderableWidget(Button.builder(
+				Component.translatable("pathed.gui.path_menu.button.skill_tree"),
+				btn -> {
+					// do later
+				}
+		).bounds(x, y, buttonWidth, buttonHeight).build());
+		y += buttonSpacing;
+
+		this.addRenderableWidget(Button.builder(
+				Component.translatable("pathed.gui.path_menu.button.stats"),
+				btn -> {
+
+				}
+		).bounds(x, y, buttonWidth, buttonHeight).build());
 	}
 
 	@Override
@@ -87,20 +124,20 @@ public class PathMenuScreen extends Screen {
 		super.render(guiGraphics, mouseX, mouseY, delta);
 		this.refreshData();
 		this.renderLeftPanel(guiGraphics, mouseX, mouseY);
-		// this.renderRightPanel(blah blah);
+		this.renderOptionsPanel(guiGraphics);
 	}
 
 	private void renderLeftPanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 		guiGraphics.fill(
-				playerPanelLeft,
-				playerPanelTop,
-				playerPanelLeft + PLAYER_PANEL_WIDTH,
-				playerPanelTop + PLAYER_PANEL_HEIGHT,
+				panelLeft,
+				panelTop,
+				panelLeft + PANEL_WIDTH,
+				panelTop + PANEL_HEIGHT,
 				0xAA000000
 		);
 
-		int centreX = playerPanelLeft + PLAYER_PANEL_WIDTH / 2;
-		int y = playerPanelTop + 12;
+		int centreX = panelLeft + PANEL_WIDTH / 2;
+		int y = panelTop + 12;
 
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player != null) {
@@ -145,6 +182,19 @@ public class PathMenuScreen extends Screen {
 		y += 14;
 
 		renderXpBar(guiGraphics, centreX, y);
+	}
+
+	private void renderOptionsPanel(GuiGraphics guiGraphics) {
+		guiGraphics.fill(
+				iconPanelLeft,
+				panelTop,
+				iconPanelLeft + ICON_PANEL_WIDTH,
+				panelTop + PANEL_HEIGHT,
+				0xAA000000
+		);
+
+		int iconX = iconPanelLeft + ICON_PANEL_PADDING;
+		int y = panelTop + ICON_PANEL_PADDING;
 	}
 
 	private void renderPlayerModel(GuiGraphics guiGraphics, LivingEntity entity, int x, int y, int mouseX, int mouseY) {
