@@ -24,7 +24,7 @@
   "path.pathed.spelunker.description": "A master of the deep. Thrive underground as the surface holds little for you.",
   "path.pathed.spelunker.name": "Spelunker",
   "path.pathed.spelunker.tool_description": "It remembers every cave it has touched.",
-  "pathed.gui.choose_path.select": "Select",
+  "pathed.gui.choose_path.button.select": "Select",
   "pathed.gui.choose_path.starting_kit": "Starting Kit",
   "pathed.gui.choose_path.title": "Choose your Path",
   "pathed.gui.path_menu.level": "Level %s",

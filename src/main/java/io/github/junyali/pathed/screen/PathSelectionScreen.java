@@ -70,7 +70,7 @@ public class PathSelectionScreen extends PathedScreens {
 
 		if (!this.selectablePaths.isEmpty()) {
 			this.addRenderableWidget(Button.builder(
-					Component.translatable("pathed.gui.choose_path.select"),
+					Component.translatable("pathed.gui.choose_path.button.select"),
 					btn -> {
 						Path selected = this.getCurrentPath();
 						PacketDistributor.sendToServer(new ChoosePathPacket(selected.getId()));

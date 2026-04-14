@@ -38,7 +38,7 @@ public class PathedLanguageProvider extends LanguageProvider {
 
 		// GUI
 		add("pathed.gui.choose_path.title", "Choose your Path");
-		add("pathed.gui.choose_path.select", "Select");
+		add("pathed.gui.choose_path.button.select", "Select");
 		add("pathed.gui.choose_path.starting_kit", "Starting Kit");
 
 		add("pathed.gui.path_menu.title", "Your Path");
