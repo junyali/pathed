@@ -137,6 +137,9 @@ public class ProgressionAttachment {
 
 	public void addExperience(int amount) {
 		this.experience += amount;
+		while (this.experience >= getExperienceRequiredForLevel(this.level + 1)) {
+			this.level++;
+		}
 	}
 
 	public boolean spendClassPoints(int amount) {
@@ -149,6 +152,25 @@ public class ProgressionAttachment {
 		if (generalPoints < amount) return false;
 		generalPoints -= amount;
 		return true;
+	}
+
+	public static long getExperienceRequiredForLevel(int level) {
+		return (long) (100 * Math.pow(level, 1.5));
+	}
+
+	public long getExperienceForCurrentLevel() {
+		return getExperienceRequiredForLevel(this.level);
+	}
+	public long getExperienceForNextLevel() {
+		return getExperienceRequiredForLevel(this.level + 1);
+	}
+
+	public float getLevelProgress() {
+		long current = this.level;
+		long floor = getExperienceForCurrentLevel();
+		long ceiling = getExperienceForNextLevel();
+		if (ceiling <= floor) return 0f;
+		return (float) (this.experience - floor) / (float) (ceiling - floor);
 	}
 
 	public Map<ResourceLocation, Integer> getBlocksBroken() {
