@@ -37,7 +37,8 @@ public class PathMenuScreen extends Screen {
 	private Path path;
 	private int level;
 	private long currentExp;
-	private float expForNextLevel;
+	private long expForNextLevel;
+	private float levelProgress;
 
 	public PathMenuScreen(boolean showDirtBackground) {
 		super(Component.translatable("pathed.gui.path_menu.title"));
@@ -62,7 +63,8 @@ public class PathMenuScreen extends Screen {
 		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(mc.player);
 		this.level = progressionAttachment.getLevel();
 		this.currentExp = progressionAttachment.getExperience();
-		this.expForNextLevel = progressionAttachment.getLevelProgress();
+		this.expForNextLevel = progressionAttachment.getExperienceForNextLevel();
+		this.levelProgress = progressionAttachment.getLevelProgress();
 	}
 
 	@Override
@@ -166,7 +168,7 @@ public class PathMenuScreen extends Screen {
 		guiGraphics.fill(barLeft, y, barLeft + XP_BAR_WIDTH, y + XP_BAR_HEIGHT, COLOUR_XP_BG);
 
 		if (this.expForNextLevel > 0) {
-			float progress = (float) this.currentExp / (float) this.expForNextLevel;
+			float progress = this.levelProgress;
 			int fillWidth = (int) (XP_BAR_WIDTH * Math.min(progress, 1.0f));
 			if (fillWidth > 0) {
 				guiGraphics.fill(barLeft, y, barLeft + fillWidth, y + XP_BAR_HEIGHT, COLOUR_XP_FILL);
