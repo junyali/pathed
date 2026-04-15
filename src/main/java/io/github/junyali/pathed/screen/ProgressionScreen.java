@@ -91,14 +91,24 @@ public class ProgressionScreen extends Screen {
 		String[] categories = {"Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp"};
 		String[] categoryIds = {"meow", "mrow", "mrrp", "meow1", "mrow2", "mrrp3", "meow4", "mrow5", "mrrp6", "meow7", "mrow8", "mrrp9", "meow10", "mrow11", "mrrp12", "meow13", "mrow14", "mrrp15"};
 
-		int y = this.categoryPanelTop + CATEGORY_PANEL_PADDING + this.font.lineHeight + CATEGORY_BUTTON_SPACING;
+		int totalContentHeight = categories.length * CATEGORY_BUTTON_HEIGHT;
+		int innerHeight = this.panelHeight - FRAME_BORDER * 2 - CATEGORY_PANEL_PADDING - this.font.lineHeight;
+		this.categoryMaxScroll = Math.max(0, totalContentHeight - innerHeight);
+
+		int buttonWidth = CATEGORY_PANEL_WIDTH - FRAME_BORDER * 2;
+		if (this.categoryMaxScroll > 0) {
+			buttonWidth -= 8;
+		}
+
+		int buttonLeft = this.categoryPanelLeft + FRAME_BORDER;
+		int y = this.categoryPanelTop + FRAME_BORDER + CATEGORY_PANEL_PADDING + this.font.lineHeight;
 
 		for (int i = 0; i < categories.length; i++) {
 			final String categoryId = categoryIds[i];
 			CategoryButton button = new CategoryButton(
-					this.categoryPanelLeft + CATEGORY_PANEL_PADDING,
+					buttonLeft,
 					y,
-					CATEGORY_PANEL_WIDTH - CATEGORY_PANEL_PADDING * 2,
+					buttonWidth,
 					CATEGORY_BUTTON_HEIGHT,
 					Component.literal(categories[i]),
 					categoryId,
@@ -108,10 +118,6 @@ public class ProgressionScreen extends Screen {
 			this.addRenderableWidget(button);
 			y += CATEGORY_BUTTON_HEIGHT + CATEGORY_BUTTON_SPACING;
 		}
-
-		int totalContentHeight = categories.length * (CATEGORY_BUTTON_HEIGHT + CATEGORY_BUTTON_SPACING) - CATEGORY_BUTTON_SPACING;
-		int innerHeight = panelHeight - FRAME_BORDER * 2 - CATEGORY_PANEL_PADDING * 2 - this.font.lineHeight - CATEGORY_BUTTON_SPACING;
-		this.categoryMaxScroll = Math.max(0, totalContentHeight - innerHeight);
 	}
 
 	@Override
@@ -141,6 +147,7 @@ public class ProgressionScreen extends Screen {
 		guiGraphics.enableScissor(innerLeft, innerTop, innerLeft + innerWidth, innerTop + innerHeight);
 		super.render(guiGraphics, mouseX, mouseY, delta);
 		guiGraphics.disableScissor();
+		this.renderCategoryScrollbar(guiGraphics, mouseX, mouseY);
 	}
 
 	private void renderCategoryPanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -162,14 +169,12 @@ public class ProgressionScreen extends Screen {
 				this.categoryPanelTop + FRAME_BORDER + 4,
 				COLOUR_TEXT
 		);
-
-		this.renderCategoryScrollbar(guiGraphics, mouseX, mouseY);
 	}
 
 	private void renderCategoryScrollbar(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 		if (this.categoryMaxScroll <= 0) return;
 
-		int slotX = this.categoryPanelLeft + CATEGORY_PANEL_WIDTH - FRAME_BORDER - 10;
+		int slotX = this.categoryPanelLeft + CATEGORY_PANEL_WIDTH - FRAME_BORDER - 8;
 		int slotY = this.categoryPanelTop + FRAME_BORDER + this.font.lineHeight + CATEGORY_BUTTON_SPACING;
 		int slotHeight = (this.height - 20) - FRAME_BORDER * 2 - this.font.lineHeight - CATEGORY_BUTTON_SPACING;
 
@@ -343,14 +348,10 @@ public class ProgressionScreen extends Screen {
 			boolean isHovered = this.isHovered();
 
 			int colour = isSelected ? COLOUR_CATEGORY_BUTTON_SELECTED : (isHovered ? COLOUR_CATEGORY_BUTTON_HOVER : COLOUR_CATEGORY_BUTTON);
-
 			guiGraphics.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, colour);
+
 			int borderColour = isSelected ? 0xFF888888 : 0xFF444444;
-			guiGraphics.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + 1, borderColour);
-			guiGraphics.fill(this.getX(), this.getY() + this.height - 1, this.getX() + this.width, this.getY() + this.height, borderColour);
-			guiGraphics.fill(this.getX(), this.getY(), this.getX() + 1, this.getY() + this.height, borderColour);
-			guiGraphics.fill(this.getX() + this.width - 1, this.getY(), this.getX() + this.width, this.getY() + this.height, borderColour);
-			guiGraphics.pose().pushPose();
+			guiGraphics.fill(this.getX(), this.getY() + this.height - 1, this.getX() + this.width, this.getY() + this.height, borderColour);guiGraphics.pose().pushPose();
 			guiGraphics.pose().scale(0.8f, 0.8f, 1.0f);
 			guiGraphics.drawCenteredString(
 					ProgressionScreen.this.font,
