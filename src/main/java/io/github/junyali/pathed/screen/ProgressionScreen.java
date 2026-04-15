@@ -100,8 +100,31 @@ public class ProgressionScreen extends Screen {
 
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+		this.renderCategoryPanel(guiGraphics);
 		super.render(guiGraphics, mouseX, mouseY, delta);
 	}
+
+	private void renderCategoryPanel(GuiGraphics guiGraphics) {
+		int panelHeight = this.height - 20;
+		guiGraphics.fill(
+				this.categoryPanelLeft,
+				this.categoryPanelTop,
+				this.categoryPanelLeft + CATEGORY_PANEL_WIDTH,
+				this.categoryPanelTop + panelHeight,
+				COLOUR_CATEGORY_BG
+		);
+
+		Component title = Component.translatable("pathed.gui.progression.categories");
+		guiGraphics.drawString(
+				this.font,
+				title,
+				this.categoryPanelLeft + CATEGORY_PANEL_WIDTH / 2,
+				this.categoryPanelTop + CATEGORY_PANEL_PADDING,
+				COLOUR_TEXT
+		);
+	}
+
+
 
 	@Override
 	public boolean isPauseScreen() {
