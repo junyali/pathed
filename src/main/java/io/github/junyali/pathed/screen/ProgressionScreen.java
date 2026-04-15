@@ -155,6 +155,7 @@ public class ProgressionScreen extends Screen {
 		super.render(guiGraphics, mouseX, mouseY, delta);
 		guiGraphics.disableScissor();
 		this.renderCategoryScrollbar(guiGraphics, mouseX, mouseY);
+		this.renderCategoryTitlebar(guiGraphics);
 	}
 
 	private void renderCategoryPanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -165,11 +166,13 @@ public class ProgressionScreen extends Screen {
 		int innerHeight = panelHeight - FRAME_BORDER * 2;
 		guiGraphics.fill(innerLeft, innerTop, innerLeft + innerWidth, innerTop + innerHeight, 0xFF555555);
 		this.renderBorder(guiGraphics, this.categoryPanelLeft, this.categoryPanelTop, CATEGORY_PANEL_WIDTH, this.panelHeight);
+	}
 
+	private void renderCategoryTitlebar(GuiGraphics guiGraphics) {
 		int plateX = this.categoryPanelLeft + (CATEGORY_PANEL_WIDTH - NAME_PLATE_WIDTH) / 2;
 		int plateY = this.categoryPanelTop - NAME_PLATE_HEIGHT / 2 + FRAME_BORDER / 2;
 		guiGraphics.blit(NAME_PLATE, plateX, plateY, 0, 0, NAME_PLATE_WIDTH, NAME_PLATE_HEIGHT, NAME_PLATE_WIDTH, NAME_PLATE_HEIGHT);
-		guiGraphics.renderItem(new ItemStack(Items.NETHER_STAR), plateX + 5, plateY + 5);
+		guiGraphics.renderItem(new ItemStack(Items.NETHER_STAR), plateX + 4, plateY + 5);
 		Component title = Component.translatable("pathed.gui.progression.categories");
 		guiGraphics.drawString(
 				this.font,
