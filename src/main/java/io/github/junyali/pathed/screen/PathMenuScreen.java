@@ -92,7 +92,9 @@ public class PathMenuScreen extends Screen {
 		this.addRenderableWidget(Button.builder(
 				Component.translatable("pathed.gui.path_menu.button.skill_tree"),
 				btn -> {
-					// do later
+					if (this.minecraft != null) {
+						this.minecraft.setScreen(new ProgressionScreen(this.showDirtBackground));
+					}
 				}
 		).bounds(x, y, buttonWidth, buttonHeight).build());
 		y += buttonSpacing;
