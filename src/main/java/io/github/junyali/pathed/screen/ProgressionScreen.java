@@ -7,6 +7,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -22,7 +24,12 @@ public class ProgressionScreen extends Screen {
 	private static final int FRAME_TEX_WIDTH = 176;
 	private static final int FRAME_TEX_HEIGHT = 182;
 
+	private static final int NAME_PLATE_WIDTH = 100;
+	private static final int NAME_PLATE_HEIGHT = 26;
+	private static final int NAME_PLATE_ICON_SIZE = 26;
+
 	private static final ResourceLocation FRAME_TEXTURE = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "textures/gui/border.png");
+	private static final ResourceLocation NAME_PLATE = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "textures/gui/title_bar.png");
 	private static final ResourceLocation SCROLL_BAR = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/scroll_bar");
 	private static final ResourceLocation SCROLL_BAR_PRESSED = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/scroll_bar/pressed");
 	private static final ResourceLocation SCROLL_BAR_SLOT = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/scroll_bar/slot");
@@ -92,7 +99,7 @@ public class ProgressionScreen extends Screen {
 		String[] categoryIds = {"meow", "mrow", "mrrp", "meow1", "mrow2", "mrrp3", "meow4", "mrow5", "mrrp6", "meow7", "mrow8", "mrrp9", "meow10", "mrow11", "mrrp12", "meow13", "mrow14", "mrrp15"};
 
 		int totalContentHeight = categories.length * CATEGORY_BUTTON_HEIGHT;
-		int innerHeight = this.panelHeight - FRAME_BORDER * 2 - CATEGORY_PANEL_PADDING - this.font.lineHeight;
+		int innerHeight = this.panelHeight - FRAME_BORDER * 2;
 		this.categoryMaxScroll = Math.max(0, totalContentHeight - innerHeight);
 
 		int buttonWidth = CATEGORY_PANEL_WIDTH - FRAME_BORDER * 2;
@@ -101,7 +108,7 @@ public class ProgressionScreen extends Screen {
 		}
 
 		int buttonLeft = this.categoryPanelLeft + FRAME_BORDER;
-		int y = this.categoryPanelTop + FRAME_BORDER + CATEGORY_PANEL_PADDING + this.font.lineHeight;
+		int y = this.categoryPanelTop + FRAME_BORDER;
 
 		for (int i = 0; i < categories.length; i++) {
 			final String categoryId = categoryIds[i];
@@ -157,16 +164,18 @@ public class ProgressionScreen extends Screen {
 		int innerWidth = CATEGORY_PANEL_WIDTH - FRAME_BORDER * 2;
 		int innerHeight = panelHeight - FRAME_BORDER * 2;
 		guiGraphics.fill(innerLeft, innerTop, innerLeft + innerWidth, innerTop + innerHeight, 0xFF555555);
-		guiGraphics.enableScissor(innerLeft, innerTop, innerLeft + innerWidth, innerTop + innerHeight);
-		guiGraphics.disableScissor();
 		this.renderBorder(guiGraphics, this.categoryPanelLeft, this.categoryPanelTop, CATEGORY_PANEL_WIDTH, this.panelHeight);
 
+		int plateX = this.categoryPanelLeft + (CATEGORY_PANEL_WIDTH - NAME_PLATE_WIDTH) / 2;
+		int plateY = this.categoryPanelTop - NAME_PLATE_HEIGHT / 2 + FRAME_BORDER / 2;
+		guiGraphics.blit(NAME_PLATE, plateX, plateY, 0, 0, NAME_PLATE_WIDTH, NAME_PLATE_HEIGHT, NAME_PLATE_WIDTH, NAME_PLATE_HEIGHT);
+		guiGraphics.renderItem(new ItemStack(Items.NETHER_STAR), plateX + 5, plateY + 5);
 		Component title = Component.translatable("pathed.gui.progression.categories");
-		guiGraphics.drawCenteredString(
+		guiGraphics.drawString(
 				this.font,
 				title,
-				this.categoryPanelLeft + CATEGORY_PANEL_WIDTH / 2,
-				this.categoryPanelTop + FRAME_BORDER + 4,
+				plateX + NAME_PLATE_ICON_SIZE + 4,
+				plateY + 5 + (16 - this.font.lineHeight) / 2,
 				COLOUR_TEXT
 		);
 	}
@@ -365,7 +374,7 @@ public class ProgressionScreen extends Screen {
 	}
 
 	private void repositionCategoryButtons() {
-		int baseY = this.categoryPanelTop + FRAME_BORDER + CATEGORY_PANEL_PADDING + this.font.lineHeight + CATEGORY_BUTTON_SPACING;
+		int baseY = this.categoryPanelTop + FRAME_BORDER;
 		for (int i = 0; i < this.categoryButtons.size(); i++) {
 			int y = baseY + i * (CATEGORY_BUTTON_HEIGHT + CATEGORY_BUTTON_SPACING) - this.categoryScrollPos;
 			this.categoryButtons.get(i).setY(y);
