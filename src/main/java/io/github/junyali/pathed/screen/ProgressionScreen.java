@@ -66,7 +66,7 @@ public class ProgressionScreen extends Screen {
 		String[] categories = {"Meow", "Mrow", "Mrrp"};
 		String[] categoryIds = {"meow", "mrow", "mrrp"};
 
-		int y = this.categoryPanelTop + CATEGORY_PANEL_PADDING;
+		int y = this.categoryPanelTop + CATEGORY_PANEL_PADDING + this.font.lineHeight + CATEGORY_BUTTON_SPACING;
 
 		for (int i = 0; i < categories.length; i++) {
 			final String categoryId = categoryIds[i];
@@ -117,7 +117,7 @@ public class ProgressionScreen extends Screen {
 		);
 
 		Component title = Component.translatable("pathed.gui.progression.categories");
-		guiGraphics.drawString(
+		guiGraphics.drawCenteredString(
 				this.font,
 				title,
 				this.categoryPanelLeft + CATEGORY_PANEL_WIDTH / 2,
