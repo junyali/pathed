@@ -6,6 +6,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,7 +21,13 @@ public class ProgressionScreen extends Screen {
 	private static final int FRAME_BORDER = 9;
 	private static final int FRAME_TEX_WIDTH = 176;
 	private static final int FRAME_TEX_HEIGHT = 182;
+
 	private static final ResourceLocation FRAME_TEXTURE = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "textures/gui/border.png");
+	private static final ResourceLocation PANEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/background");
+	private static final ResourceLocation PANEL_BORDER = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/border");
+	private static final ResourceLocation SCROLL_BAR = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/scroll_bar");
+	private static final ResourceLocation SCROLL_BAR_PRESSED = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/scroll_bar/pressed");
+	private static final ResourceLocation SCROLL_BAR_SLOT = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/scroll_bar/slot");
 
 	private static final int COLOUR_CATEGORY_BG = 0xCC000000;
 	private static final int COLOUR_CATEGORY_BUTTON = 0xFF2A2A2A;
@@ -31,6 +38,7 @@ public class ProgressionScreen extends Screen {
 	private final boolean showDirtBackground;
 	private final List<CategoryButton> categoryButtons = new ArrayList<>();
 
+	private int panelHeight;
 	private int categoryPanelLeft;
 	private int categoryPanelTop;
 	private int skillTreeLeft;
@@ -45,6 +53,11 @@ public class ProgressionScreen extends Screen {
 	private boolean isDragging = false;
 	private double scrollX = 0;
 	private double scrollY = 0;
+	private int categoryScrollPos = 0;
+	private int categoryMaxScroll = 0;
+	private boolean categoryDragScrolling = false;
+	private double categoryMouseDragStart = 0;
+	private int categoryScrollDragStart = 0;
 
 	private String selectedCategory = "";
 
@@ -56,6 +69,8 @@ public class ProgressionScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
+
+		this.panelHeight = this.height - 20;
 
 		this.categoryPanelLeft = 10;
 		this.categoryPanelTop = 10;
@@ -96,6 +111,9 @@ public class ProgressionScreen extends Screen {
 			this.addRenderableWidget(button);
 			y += CATEGORY_BUTTON_HEIGHT + CATEGORY_BUTTON_SPACING;
 		}
+
+		int totalContentHeight = categories.length * (CATEGORY_BUTTON_HEIGHT + CATEGORY_BUTTON_SPACING) - CATEGORY_BUTTON_SPACING;
+		int innerHeight = panelHeight - FRAME_BORDER * 2 - CATEGORY_PANEL_PADDING * 2 - this.font.lineHeight - CATEGORY_BUTTON_SPACING;
 	}
 
 	@Override
@@ -114,29 +132,51 @@ public class ProgressionScreen extends Screen {
 
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+		this.repositionCategoryButtons();
 		this.renderSkillTreeArea(guiGraphics, mouseX, mouseY, delta);
-		this.renderCategoryPanel(guiGraphics);
+		this.renderCategoryPanel(guiGraphics, mouseX, mouseY);
 		super.render(guiGraphics, mouseX, mouseY, delta);
 	}
 
-	private void renderCategoryPanel(GuiGraphics guiGraphics) {
+	private void renderCategoryPanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 		int panelHeight = this.height - 20;
-		guiGraphics.fill(
-				this.categoryPanelLeft,
-				this.categoryPanelTop,
-				this.categoryPanelLeft + CATEGORY_PANEL_WIDTH,
-				this.categoryPanelTop + panelHeight,
-				COLOUR_CATEGORY_BG
-		);
+		int innerLeft = this.categoryPanelLeft + FRAME_BORDER;
+		int innerTop = this.categoryPanelTop + FRAME_BORDER;
+		int innerWidth = CATEGORY_PANEL_WIDTH - FRAME_BORDER * 2;
+		int innerHeight = panelHeight - FRAME_BORDER * 2;
+		guiGraphics.blitSprite(PANEL_BACKGROUND, innerLeft, innerTop, -4, innerWidth, innerHeight);
+		guiGraphics.enableScissor(innerLeft, innerTop, innerLeft + innerWidth, innerTop + innerHeight);
+		guiGraphics.disableScissor();
+		guiGraphics.blitSprite(PANEL_BORDER, this.categoryPanelLeft, this.categoryPanelTop, 2, CATEGORY_PANEL_WIDTH, panelHeight);
 
 		Component title = Component.translatable("pathed.gui.progression.categories");
 		guiGraphics.drawCenteredString(
 				this.font,
 				title,
 				this.categoryPanelLeft + CATEGORY_PANEL_WIDTH / 2,
-				this.categoryPanelTop + CATEGORY_PANEL_PADDING,
+				this.categoryPanelTop + FRAME_BORDER + 4,
 				COLOUR_TEXT
 		);
+
+		this.renderCategoryScrollbar(guiGraphics, mouseX, mouseY);
+	}
+
+	private void renderCategoryScrollbar(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		if (this.categoryMaxScroll <= 0) return;
+
+		int slotX = this.categoryPanelLeft + CATEGORY_PANEL_WIDTH - FRAME_BORDER - 10;
+		int slotY = this.categoryPanelTop + FRAME_BORDER + this.font.lineHeight + CATEGORY_BUTTON_SPACING;
+		int slotHeight = (this.height - 20) - FRAME_BORDER * 2 - this.font.lineHeight - CATEGORY_BUTTON_SPACING;
+
+		guiGraphics.blitSprite(SCROLL_BAR_SLOT, slotX, slotY, 8, slotHeight);
+
+		int thumbHeight = 27;
+		int scrollRange = slotHeight - thumbHeight;
+		int thumbY = slotY + (int) (scrollRange * (this.categoryScrollPos / (float) this.categoryMaxScroll));
+
+		boolean hovered = mouseX >= slotX && mouseX < slotX + 8 && mouseY >= thumbY && mouseY < thumbY + thumbHeight;
+		ResourceLocation texture = (this.categoryDragScrolling || hovered) ? SCROLL_BAR_PRESSED : SCROLL_BAR;
+		guiGraphics.blitSprite(texture, slotX + 1, thumbY, 6, thumbHeight);
 	}
 
 	private void renderSkillTreeArea(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
@@ -205,6 +245,21 @@ public class ProgressionScreen extends Screen {
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (button == 0 && this.categoryMaxScroll > 0) {
+			int slotX = this.categoryPanelLeft + CATEGORY_PANEL_WIDTH - FRAME_BORDER - 10;
+			int slotY = this.categoryPanelTop + FRAME_BORDER + this.font.lineHeight + CATEGORY_BUTTON_SPACING;
+			int slotHeight = this.panelHeight - FRAME_BORDER * 2 - this.font.lineHeight - CATEGORY_BUTTON_SPACING;
+			int thumbHeight = 27;
+			int scrollRange = slotHeight - thumbHeight;
+			int thumbY = slotY + (int) (scrollRange * (this.categoryScrollPos / (float) this.categoryMaxScroll));
+
+			if (mouseX >= slotX && mouseX < slotX + 8 && mouseY >= thumbY && mouseY < thumbY + thumbHeight) {
+				this.categoryDragScrolling = true;
+				this.categoryScrollDragStart = thumbY;
+				this.categoryMouseDragStart = mouseY;
+				return true;
+			}
+		}
 		if (button == 0 && isInSkillTreeArea(mouseX, mouseY)) {
 			this.isDragging = true;
 			return true;
@@ -216,6 +271,7 @@ public class ProgressionScreen extends Screen {
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
 		if (button == 0) {
 			this.isDragging = false;
+			this.categoryDragScrolling = false;
 			return true;
 		}
 		return super.mouseReleased(mouseX, mouseY, button);
@@ -223,6 +279,17 @@ public class ProgressionScreen extends Screen {
 
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+		if (this.categoryDragScrolling) {
+			int slotY = this.categoryPanelTop + FRAME_BORDER + this.font.lineHeight + CATEGORY_BUTTON_SPACING;
+			int slotHeight = this.panelHeight - FRAME_BORDER * 2 - this.font.lineHeight - CATEGORY_BUTTON_SPACING;
+			int thumbHeight = 27;
+			int scrollRange = slotHeight - thumbHeight;
+			int delta = (int) (mouseY - this.categoryMouseDragStart);
+			int newThumbY = Mth.clamp(this.categoryScrollDragStart + delta, slotY, slotY + scrollRange);
+			float part = (newThumbY - slotY) / (float) scrollRange;
+			this.categoryScrollPos = (int) (part * this.categoryMaxScroll);
+			return true;
+		}
 		if (this.isDragging) {
 			this.scrollX += deltaX;
 			this.scrollY += deltaY;
@@ -233,6 +300,23 @@ public class ProgressionScreen extends Screen {
 
 	private boolean isInSkillTreeArea(double mouseX, double mouseY) {
 		return mouseX >= this.contentLeft && mouseX <= this.contentLeft + this.contentWidth && mouseY >= this.contentTop && mouseY <= this.contentTop + this.contentHeight;
+	}
+
+	private boolean isInCategoryPanel(double mouseX, double mouseY) {
+		int innerLeft = this.categoryPanelLeft + FRAME_BORDER;
+		int innerTop = this.categoryPanelTop + FRAME_BORDER;
+		int innerWidth = CATEGORY_PANEL_WIDTH - FRAME_BORDER * 2;
+		int innerHeight = this.panelHeight - FRAME_BORDER * 2;
+		return mouseX >= innerLeft && mouseX < innerLeft + innerWidth && mouseY >= innerTop && mouseY < innerTop + innerHeight;
+	}
+
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+		if (isInCategoryPanel(mouseX, mouseY) && this.categoryMaxScroll > 0) {
+			this.categoryScrollPos = Mth.clamp(this.categoryScrollPos - (int) vertical * 4, 0, this.categoryMaxScroll);
+			return true;
+		}
+		return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
 	}
 
 	@Override
@@ -271,6 +355,14 @@ public class ProgressionScreen extends Screen {
 					COLOUR_TEXT
 			);
 			guiGraphics.pose().popPose();
+		}
+	}
+
+	private void repositionCategoryButtons() {
+		int baseY = this.categoryPanelTop + FRAME_BORDER + CATEGORY_PANEL_PADDING + this.font.lineHeight + CATEGORY_BUTTON_SPACING;
+		for (int i = 0; i < this.categoryButtons.size(); i++) {
+			int y = baseY + i * (CATEGORY_BUTTON_HEIGHT + CATEGORY_BUTTON_SPACING) - this.categoryScrollPos;
+			this.categoryButtons.get(i).setY(y);
 		}
 	}
 }
