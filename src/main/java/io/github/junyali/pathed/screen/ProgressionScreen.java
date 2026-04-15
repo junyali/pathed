@@ -174,13 +174,8 @@ public class ProgressionScreen extends Screen {
 	private void renderDirtBackground(GuiGraphics guiGraphics) {
 		ResourceLocation dirtTexture = ResourceLocation.withDefaultNamespace("textures/block/dirt.png");
 		int tileSize = 32;
-		int startX = (int) Math.floor(-scrollX / tileSize) * tileSize;
-		int startY = (int) Math.floor(-scrollY / tileSize) * tileSize;
-		int endX = (int) Math.ceil((this.skillTreeWidth - scrollX) / tileSize) * tileSize;
-		int endY = (int) Math.ceil((this.skillTreeHeight - scrollY) / tileSize) * tileSize;
-
-		for (int x = startX; x < endX; x += tileSize) {
-			for (int y = startY; y < endY; y += tileSize) {
+		for (int x = 0; x < this.skillTreeWidth; x += tileSize) {
+			for (int y = 0; y < this.skillTreeHeight; y += tileSize) {
 				guiGraphics.blit(dirtTexture, x, y, 0, 0, tileSize, tileSize, tileSize, tileSize);
 			}
 		}
