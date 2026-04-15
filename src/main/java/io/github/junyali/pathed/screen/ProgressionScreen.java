@@ -149,7 +149,7 @@ public class ProgressionScreen extends Screen {
 		int innerTop = this.categoryPanelTop + FRAME_BORDER;
 		int innerWidth = CATEGORY_PANEL_WIDTH - FRAME_BORDER * 2;
 		int innerHeight = panelHeight - FRAME_BORDER * 2;
-		guiGraphics.fill(innerLeft, innerTop, innerLeft + innerWidth, innerTop + innerHeight, 0x555555FF);
+		guiGraphics.fill(innerLeft, innerTop, innerLeft + innerWidth, innerTop + innerHeight, 0xFF555555);
 		guiGraphics.enableScissor(innerLeft, innerTop, innerLeft + innerWidth, innerTop + innerHeight);
 		guiGraphics.disableScissor();
 		this.renderBorder(guiGraphics, this.categoryPanelLeft, this.categoryPanelTop, CATEGORY_PANEL_WIDTH, this.panelHeight);
