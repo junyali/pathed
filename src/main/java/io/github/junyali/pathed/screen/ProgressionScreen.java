@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProgressionScreen extends Screen {
-	private static final int CATEGORY_PANEL_WIDTH = 120;
-	private static final int CATEGORY_BUTTON_HEIGHT = 30;
-	private static final int CATEGORY_BUTTON_SPACING = 4;
+	private static final int CATEGORY_PANEL_WIDTH = 100;
+	private static final int CATEGORY_BUTTON_HEIGHT = 20;
+	private static final int CATEGORY_BUTTON_SPACING = 0;
 	private static final int CATEGORY_PANEL_PADDING = 8;
 
 	private static final int COLOUR_CATEGORY_BG = 0xCC000000;
@@ -246,13 +246,16 @@ public class ProgressionScreen extends Screen {
 			guiGraphics.fill(this.getX(), this.getY() + this.height - 1, this.getX() + this.width, this.getY() + this.height, borderColour);
 			guiGraphics.fill(this.getX(), this.getY(), this.getX() + 1, this.getY() + this.height, borderColour);
 			guiGraphics.fill(this.getX() + this.width - 1, this.getY(), this.getX() + this.width, this.getY() + this.height, borderColour);
+			guiGraphics.pose().pushPose();
+			guiGraphics.pose().scale(0.8f, 0.8f, 1.0f);
 			guiGraphics.drawCenteredString(
 					ProgressionScreen.this.font,
 					this.getMessage(),
-					this.getX() + this.width / 2,
-					this.getY() + (this.height - 8) / 2,
+					(int) ((this.getX() + this.width / 2) / 0.8f),
+					(int) ((this.getY() + (this.height - 8) / 2) / 0.8f),
 					COLOUR_TEXT
 			);
+			guiGraphics.pose().popPose();
 		}
 	}
 }
