@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -100,6 +101,7 @@ public class ProgressionScreen extends Screen {
 
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+		this.renderSkillTreeArea(guiGraphics, mouseX, mouseY, delta);
 		this.renderCategoryPanel(guiGraphics);
 		super.render(guiGraphics, mouseX, mouseY, delta);
 	}
@@ -124,7 +126,64 @@ public class ProgressionScreen extends Screen {
 		);
 	}
 
+	private void renderSkillTreeArea(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(this.skillTreeLeft, this.skillTreeTop, 0);
 
+		guiGraphics.enableScissor(
+				this.skillTreeLeft,
+				this.skillTreeTop,
+				this.skillTreeLeft + this.skillTreeWidth,
+				this.skillTreeTop + this.skillTreeHeight
+		);
+
+		this.renderDirtBackground(guiGraphics);
+
+		guiGraphics.pose().translate(scrollX, scrollY, 0);
+		guiGraphics.disableScissor();
+		guiGraphics.pose().popPose();
+		guiGraphics.fill(
+				this.skillTreeLeft - 1,
+				this.skillTreeTop - 1,
+				this.skillTreeLeft + this.skillTreeWidth + 1,
+				this.skillTreeTop,
+				0xFF888888
+		);
+		guiGraphics.fill(
+				this.skillTreeLeft - 1,
+				this.skillTreeTop + this.skillTreeHeight,
+				this.skillTreeLeft + this.skillTreeWidth + 1,
+				this.skillTreeTop + this.skillTreeHeight + 1,
+				0xFF888888
+		);guiGraphics.fill(
+				this.skillTreeLeft - 1,
+				this.skillTreeTop,
+				this.skillTreeLeft,
+				this.skillTreeTop + this.skillTreeHeight,
+				0xFF888888
+		);guiGraphics.fill(
+				this.skillTreeLeft + this.skillTreeWidth,
+				this.skillTreeTop,
+				this.skillTreeLeft + this.skillTreeWidth + 1,
+				this.skillTreeTop + this.skillTreeHeight,
+				0xFF888888
+		);
+	}
+
+	private void renderDirtBackground(GuiGraphics guiGraphics) {
+		ResourceLocation dirtTexture = ResourceLocation.withDefaultNamespace("textures/block/dirt.png");
+		int tileSize = 32;
+		int startX = (int) Math.floor(-scrollX / tileSize) * tileSize;
+		int startY = (int) Math.floor(-scrollY / tileSize) * tileSize;
+		int endX = (int) Math.ceil((this.skillTreeWidth - scrollX) / tileSize) * tileSize;
+		int endY = (int) Math.ceil((this.skillTreeHeight - scrollY) / tileSize) * tileSize;
+
+		for (int x = startX; x < endX; x += tileSize) {
+			for (int y = startY; y < endY; y += tileSize) {
+				guiGraphics.blit(dirtTexture, x, y, 0, 0, tileSize, tileSize, tileSize, tileSize);
+			}
+		}
+	}
 
 	@Override
 	public boolean isPauseScreen() {
