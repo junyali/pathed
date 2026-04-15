@@ -140,6 +140,7 @@ public class ProgressionScreen extends Screen {
 		this.renderDirtBackground(guiGraphics);
 
 		guiGraphics.pose().translate(scrollX, scrollY, 0);
+		this.renderElement(guiGraphics);
 		guiGraphics.disableScissor();
 		guiGraphics.pose().popPose();
 		guiGraphics.fill(
@@ -183,6 +184,55 @@ public class ProgressionScreen extends Screen {
 				guiGraphics.blit(dirtTexture, x, y, 0, 0, tileSize, tileSize, tileSize, tileSize);
 			}
 		}
+	}
+
+	private void renderElement(GuiGraphics guiGraphics) {
+		// drag testing
+		int size = 50;
+		int x = -size / 2;
+		int y = -size / 2;
+		guiGraphics.fill(x, y, x + size, y + size, 0xFFFF5555);
+		guiGraphics.fill(x + 2, y + 2, x + size - 2, y + size - 2, 0xFF55FF55);
+	}
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (button == 0 && isInSkillTreeArea(mouseX, mouseY)) {
+			this.isDragging = true;
+			this.dragStartX = mouseX;
+			this.dragStartY = mouseY;
+			return true;
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		if (button == 0) {
+			this.isDragging = false;
+			return true;
+		}
+		return super.mouseReleased(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+		if (this.isDragging) {
+			double dx = mouseX - this.dragStartX;
+			double dy = mouseY - this.dragStartY;
+
+			this.scrollX += dx;
+			this.scrollY += dy;
+
+			this.dragStartX = mouseX;
+			this.dragStartY = mouseY;
+			return true;
+		}
+		return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+	}
+
+	private boolean isInSkillTreeArea(double mouseX, double mouseY) {
+		return mouseX >= this.skillTreeLeft && mouseX <= this.skillTreeLeft + this.skillTreeWidth && mouseY >= this.skillTreeTop && mouseY <= this.skillTreeTop + this.skillTreeHeight;
 	}
 
 	@Override
