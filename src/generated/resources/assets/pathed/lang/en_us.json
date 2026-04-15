@@ -31,5 +31,7 @@
   "pathed.gui.path_menu.button.stats": "Stats",
   "pathed.gui.path_menu.level": "Level %s",
   "pathed.gui.path_menu.no_path": "No Path Selected",
-  "pathed.gui.path_menu.title": "Your Path"
+  "pathed.gui.path_menu.title": "Your Path",
+  "pathed.gui.progression.categories": "Categories",
+  "pathed.gui.progression.title": "Progression"
 }
