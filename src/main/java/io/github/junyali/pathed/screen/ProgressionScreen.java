@@ -23,13 +23,10 @@ public class ProgressionScreen extends Screen {
 	private static final int FRAME_TEX_HEIGHT = 182;
 
 	private static final ResourceLocation FRAME_TEXTURE = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "textures/gui/border.png");
-	private static final ResourceLocation PANEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/background");
-	private static final ResourceLocation PANEL_BORDER = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/border");
 	private static final ResourceLocation SCROLL_BAR = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/scroll_bar");
 	private static final ResourceLocation SCROLL_BAR_PRESSED = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/scroll_bar/pressed");
 	private static final ResourceLocation SCROLL_BAR_SLOT = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/scroll_bar/slot");
 
-	private static final int COLOUR_CATEGORY_BG = 0xCC000000;
 	private static final int COLOUR_CATEGORY_BUTTON = 0xFF2A2A2A;
 	private static final int COLOUR_CATEGORY_BUTTON_HOVER = 0xFFA3A3A3;
 	private static final int COLOUR_CATEGORY_BUTTON_SELECTED = 0xFF4A4A4A;
@@ -91,8 +88,8 @@ public class ProgressionScreen extends Screen {
 	private void setupCategoryButtons() {
 		this.categoryButtons.clear();
 
-		String[] categories = {"Meow", "Mrow", "Mrrp"};
-		String[] categoryIds = {"meow", "mrow", "mrrp"};
+		String[] categories = {"Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp"};
+		String[] categoryIds = {"meow", "mrow", "mrrp", "meow1", "mrow2", "mrrp3", "meow4", "mrow5", "mrrp6", "meow7", "mrow8", "mrrp9", "meow10", "mrow11", "mrrp12", "meow13", "mrow14", "mrrp15"};
 
 		int y = this.categoryPanelTop + CATEGORY_PANEL_PADDING + this.font.lineHeight + CATEGORY_BUTTON_SPACING;
 
@@ -114,6 +111,7 @@ public class ProgressionScreen extends Screen {
 
 		int totalContentHeight = categories.length * (CATEGORY_BUTTON_HEIGHT + CATEGORY_BUTTON_SPACING) - CATEGORY_BUTTON_SPACING;
 		int innerHeight = panelHeight - FRAME_BORDER * 2 - CATEGORY_PANEL_PADDING * 2 - this.font.lineHeight - CATEGORY_BUTTON_SPACING;
+		this.categoryMaxScroll = Math.max(0, totalContentHeight - innerHeight);
 	}
 
 	@Override
@@ -135,7 +133,14 @@ public class ProgressionScreen extends Screen {
 		this.repositionCategoryButtons();
 		this.renderSkillTreeArea(guiGraphics, mouseX, mouseY, delta);
 		this.renderCategoryPanel(guiGraphics, mouseX, mouseY);
+		int panelHeight = this.height - 20;
+		int innerLeft = this.categoryPanelLeft + FRAME_BORDER;
+		int innerTop = this.categoryPanelTop + FRAME_BORDER;
+		int innerWidth = CATEGORY_PANEL_WIDTH - FRAME_BORDER * 2;
+		int innerHeight = panelHeight - FRAME_BORDER * 2;
+		guiGraphics.enableScissor(innerLeft, innerTop, innerLeft + innerWidth, innerTop + innerHeight);
 		super.render(guiGraphics, mouseX, mouseY, delta);
+		guiGraphics.disableScissor();
 	}
 
 	private void renderCategoryPanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -144,10 +149,10 @@ public class ProgressionScreen extends Screen {
 		int innerTop = this.categoryPanelTop + FRAME_BORDER;
 		int innerWidth = CATEGORY_PANEL_WIDTH - FRAME_BORDER * 2;
 		int innerHeight = panelHeight - FRAME_BORDER * 2;
-		guiGraphics.blitSprite(PANEL_BACKGROUND, innerLeft, innerTop, -4, innerWidth, innerHeight);
+		guiGraphics.fill(innerLeft, innerTop, innerLeft + innerWidth, innerTop + innerHeight, 0x555555FF);
 		guiGraphics.enableScissor(innerLeft, innerTop, innerLeft + innerWidth, innerTop + innerHeight);
 		guiGraphics.disableScissor();
-		guiGraphics.blitSprite(PANEL_BORDER, this.categoryPanelLeft, this.categoryPanelTop, 2, CATEGORY_PANEL_WIDTH, panelHeight);
+		this.renderBorder(guiGraphics, this.categoryPanelLeft, this.categoryPanelTop, CATEGORY_PANEL_WIDTH, this.panelHeight);
 
 		Component title = Component.translatable("pathed.gui.progression.categories");
 		guiGraphics.drawCenteredString(
@@ -212,11 +217,11 @@ public class ProgressionScreen extends Screen {
 	}
 
 	private void renderFrame(GuiGraphics guiGraphics) {
+		this.renderBorder(guiGraphics, this.skillTreeLeft, this.skillTreeTop, this.skillTreeWidth, this.skillTreeHeight);
+	}
+
+	private void renderBorder(GuiGraphics guiGraphics, int x, int y, int w, int h) {
 		// warning: some very complex maths here D:
-		int x = this.skillTreeLeft;
-		int y = this.skillTreeTop;
-		int w = this.skillTreeWidth;
-		int h = this.skillTreeHeight;
 		int b = FRAME_BORDER;
 		int tw = FRAME_TEX_WIDTH;
 		int th = FRAME_TEX_HEIGHT;
