@@ -33,8 +33,6 @@ public class ProgressionScreen extends Screen {
 	private int skillTreeHeight;
 
 	private boolean isDragging = false;
-	private double dragStartX;
-	private double dragStartY;
 	private double scrollX = 0;
 	private double scrollY = 0;
 
@@ -194,8 +192,6 @@ public class ProgressionScreen extends Screen {
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (button == 0 && isInSkillTreeArea(mouseX, mouseY)) {
 			this.isDragging = true;
-			this.dragStartX = mouseX;
-			this.dragStartY = mouseY;
 			return true;
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
@@ -213,14 +209,8 @@ public class ProgressionScreen extends Screen {
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
 		if (this.isDragging) {
-			double dx = mouseX - this.dragStartX;
-			double dy = mouseY - this.dragStartY;
-
-			this.scrollX += dx;
-			this.scrollY += dy;
-
-			this.dragStartX = mouseX;
-			this.dragStartY = mouseY;
+			this.scrollX += deltaX;
+			this.scrollY += deltaY;
 			return true;
 		}
 		return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
