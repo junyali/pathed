@@ -1,5 +1,6 @@
 package io.github.junyali.pathed.screen;
 
+import io.github.junyali.pathed.Pathed;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -16,6 +17,11 @@ public class ProgressionScreen extends Screen {
 	private static final int CATEGORY_BUTTON_SPACING = 0;
 	private static final int CATEGORY_PANEL_PADDING = 8;
 
+	private static final int FRAME_BORDER = 9;
+	private static final int FRAME_TEX_WIDTH = 176;
+	private static final int FRAME_TEX_HEIGHT = 182;
+	private static final ResourceLocation FRAME_TEXTURE = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "textures/gui/border.png");
+
 	private static final int COLOUR_CATEGORY_BG = 0xCC000000;
 	private static final int COLOUR_CATEGORY_BUTTON = 0xFF2A2A2A;
 	private static final int COLOUR_CATEGORY_BUTTON_HOVER = 0xFFA3A3A3;
@@ -31,6 +37,10 @@ public class ProgressionScreen extends Screen {
 	private int skillTreeTop;
 	private int skillTreeWidth;
 	private int skillTreeHeight;
+	private int contentLeft;
+	private int contentTop;
+	private int contentWidth;
+	private int contentHeight;
 
 	private boolean isDragging = false;
 	private double scrollX = 0;
@@ -54,6 +64,11 @@ public class ProgressionScreen extends Screen {
 		this.skillTreeTop = 10;
 		this.skillTreeWidth = this.width - this.skillTreeLeft - 10;
 		this.skillTreeHeight = this.height - 20;
+
+		this.contentLeft = this.skillTreeLeft + FRAME_BORDER;
+		this.contentTop = this.skillTreeTop + FRAME_BORDER;
+		this.contentWidth = this.skillTreeWidth - FRAME_BORDER * 2;
+		this.contentHeight = this.skillTreeHeight - FRAME_BORDER * 2;
 
 		this.setupCategoryButtons();
 	}
@@ -126,57 +141,57 @@ public class ProgressionScreen extends Screen {
 
 	private void renderSkillTreeArea(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(this.skillTreeLeft, this.skillTreeTop, 0);
+		guiGraphics.pose().translate(this.contentLeft, this.contentTop, 0);
 
 		guiGraphics.enableScissor(
-				this.skillTreeLeft,
-				this.skillTreeTop,
-				this.skillTreeLeft + this.skillTreeWidth,
-				this.skillTreeTop + this.skillTreeHeight
+				this.contentLeft,
+				this.contentTop,
+				this.contentLeft + this.contentWidth,
+				this.contentTop + this.contentHeight
 		);
 
 		this.renderDirtBackground(guiGraphics);
 
 		guiGraphics.pose().translate(scrollX, scrollY, 0);
 		this.renderElement(guiGraphics);
+
 		guiGraphics.disableScissor();
 		guiGraphics.pose().popPose();
-		guiGraphics.fill(
-				this.skillTreeLeft - 1,
-				this.skillTreeTop - 1,
-				this.skillTreeLeft + this.skillTreeWidth + 1,
-				this.skillTreeTop,
-				0xFF888888
-		);
-		guiGraphics.fill(
-				this.skillTreeLeft - 1,
-				this.skillTreeTop + this.skillTreeHeight,
-				this.skillTreeLeft + this.skillTreeWidth + 1,
-				this.skillTreeTop + this.skillTreeHeight + 1,
-				0xFF888888
-		);guiGraphics.fill(
-				this.skillTreeLeft - 1,
-				this.skillTreeTop,
-				this.skillTreeLeft,
-				this.skillTreeTop + this.skillTreeHeight,
-				0xFF888888
-		);guiGraphics.fill(
-				this.skillTreeLeft + this.skillTreeWidth,
-				this.skillTreeTop,
-				this.skillTreeLeft + this.skillTreeWidth + 1,
-				this.skillTreeTop + this.skillTreeHeight,
-				0xFF888888
-		);
+
+		this.renderFrame(guiGraphics);
 	}
 
 	private void renderDirtBackground(GuiGraphics guiGraphics) {
 		ResourceLocation dirtTexture = ResourceLocation.withDefaultNamespace("textures/block/dirt.png");
 		int tileSize = 32;
-		for (int x = 0; x < this.skillTreeWidth; x += tileSize) {
-			for (int y = 0; y < this.skillTreeHeight; y += tileSize) {
+		for (int x = 0; x < this.contentWidth; x += tileSize) {
+			for (int y = 0; y < this.contentHeight; y += tileSize) {
 				guiGraphics.blit(dirtTexture, x, y, 0, 0, tileSize, tileSize, tileSize, tileSize);
 			}
 		}
+	}
+
+	private void renderFrame(GuiGraphics guiGraphics) {
+		// warning: some very complex maths here D:
+		int x = this.skillTreeLeft;
+		int y = this.skillTreeTop;
+		int w = this.skillTreeWidth;
+		int h = this.skillTreeHeight;
+		int b = FRAME_BORDER;
+		int tw = FRAME_TEX_WIDTH;
+		int th = FRAME_TEX_HEIGHT;
+		int iw = tw - b * 2;
+		int ih = th - b * 2;
+
+		guiGraphics.blit(FRAME_TEXTURE, x, y, b, b, 0, 0, b, b, tw, th);
+		guiGraphics.blit(FRAME_TEXTURE, x + w - b, y, b, b, tw - b, 0, b, b, tw, th);
+		guiGraphics.blit(FRAME_TEXTURE, x, y + h - b, b, b, 0, th - b, b, b, tw, th);
+		guiGraphics.blit(FRAME_TEXTURE, x + w - b, y + h - b, b, b, tw - b, th - b, b, b, tw, th);
+
+		guiGraphics.blit(FRAME_TEXTURE, x + b, y, w - b * 2, b, b, 0, iw, b, tw, th);
+		guiGraphics.blit(FRAME_TEXTURE, x + b, y + h - b, w - b * 2, b, b, th - b, iw, b, tw, th);
+		guiGraphics.blit(FRAME_TEXTURE, x, y + b, b, h - b * 2, 0, b, b, ih, tw, th);
+		guiGraphics.blit(FRAME_TEXTURE, x + w - b, y + b, b, h - b * 2, tw - b, b, b, ih, tw, th);
 	}
 
 	private void renderElement(GuiGraphics guiGraphics) {
@@ -217,7 +232,7 @@ public class ProgressionScreen extends Screen {
 	}
 
 	private boolean isInSkillTreeArea(double mouseX, double mouseY) {
-		return mouseX >= this.skillTreeLeft && mouseX <= this.skillTreeLeft + this.skillTreeWidth && mouseY >= this.skillTreeTop && mouseY <= this.skillTreeTop + this.skillTreeHeight;
+		return mouseX >= this.contentLeft && mouseX <= this.contentLeft + this.contentWidth && mouseY >= this.contentTop && mouseY <= this.contentTop + this.contentHeight;
 	}
 
 	@Override
