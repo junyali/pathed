@@ -175,8 +175,8 @@ public class ProgressionScreen extends Screen {
 		if (this.categoryMaxScroll <= 0) return;
 
 		int slotX = this.categoryPanelLeft + CATEGORY_PANEL_WIDTH - FRAME_BORDER - 8;
-		int slotY = this.categoryPanelTop + FRAME_BORDER + this.font.lineHeight + CATEGORY_BUTTON_SPACING;
-		int slotHeight = (this.height - 20) - FRAME_BORDER * 2 - this.font.lineHeight - CATEGORY_BUTTON_SPACING;
+		int slotY = this.categoryPanelTop + FRAME_BORDER;
+		int slotHeight = this.panelHeight - FRAME_BORDER * 2;
 
 		guiGraphics.blitSprite(SCROLL_BAR_SLOT, slotX, slotY, 8, slotHeight);
 
@@ -257,8 +257,8 @@ public class ProgressionScreen extends Screen {
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (button == 0 && this.categoryMaxScroll > 0) {
 			int slotX = this.categoryPanelLeft + CATEGORY_PANEL_WIDTH - FRAME_BORDER - 10;
-			int slotY = this.categoryPanelTop + FRAME_BORDER + this.font.lineHeight + CATEGORY_BUTTON_SPACING;
-			int slotHeight = this.panelHeight - FRAME_BORDER * 2 - this.font.lineHeight - CATEGORY_BUTTON_SPACING;
+			int slotY = this.categoryPanelTop + FRAME_BORDER;
+			int slotHeight = this.panelHeight - FRAME_BORDER * 2;
 			int thumbHeight = 27;
 			int scrollRange = slotHeight - thumbHeight;
 			int thumbY = slotY + (int) (scrollRange * (this.categoryScrollPos / (float) this.categoryMaxScroll));
@@ -290,8 +290,8 @@ public class ProgressionScreen extends Screen {
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
 		if (this.categoryDragScrolling) {
-			int slotY = this.categoryPanelTop + FRAME_BORDER + this.font.lineHeight + CATEGORY_BUTTON_SPACING;
-			int slotHeight = this.panelHeight - FRAME_BORDER * 2 - this.font.lineHeight - CATEGORY_BUTTON_SPACING;
+			int slotY = this.categoryPanelTop + FRAME_BORDER;
+			int slotHeight = this.panelHeight - FRAME_BORDER * 2;
 			int thumbHeight = 27;
 			int scrollRange = slotHeight - thumbHeight;
 			int delta = (int) (mouseY - this.categoryMouseDragStart);
