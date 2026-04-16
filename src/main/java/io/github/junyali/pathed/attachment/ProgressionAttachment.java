@@ -134,7 +134,11 @@ public class ProgressionAttachment {
 			Codec.INT.fieldOf("generalPoints").forGetter(ProgressionAttachment::getGeneralPoints),
 			Codec.INT.fieldOf("level").forGetter(ProgressionAttachment::getLevel),
 			Codec.INT.fieldOf("experience").forGetter(ProgressionAttachment::getExperience),
-			ProgressionStats.CODEC.fieldOf("progressionStats").forGetter(a -> a.progressionStats)
+			ProgressionStats.CODEC.fieldOf("progressionStats").forGetter(a -> a.progressionStats),
+			ResourceLocation.CODEC.listOf().xmap(HashSet::new, list -> list.stream().toList())
+					.fieldOf("completedNodes").forGetter(a -> new HashSet<>(a.completedNodes)),
+			ResourceLocation.CODEC.listOf().xmap(HashSet::new, list -> list.stream().toList())
+					.fieldOf("availableNodes").forGetter(a -> new HashSet<>(a.availableNodes))
 	).apply(i, ProgressionAttachment::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, ProgressionAttachment> STREAM_CODEC =
@@ -145,6 +149,8 @@ public class ProgressionAttachment {
 	private int level;
 	private int experience;
 	private final ProgressionStats progressionStats;
+	private final Set<ResourceLocation> completedNodes;
+	private final Set<ResourceLocation> availableNodes;
 
 	public ProgressionAttachment() {
 		this.classPoints = 0;
@@ -152,6 +158,8 @@ public class ProgressionAttachment {
 		this.level = 1;
 		this.experience = 0;
 		this.progressionStats = new ProgressionStats();
+		this.completedNodes = new HashSet<>();
+		this.availableNodes = new HashSet<>();
 	}
 
 	private ProgressionAttachment(
@@ -159,13 +167,17 @@ public class ProgressionAttachment {
 			int generalPoints,
 			int level,
 			int experience,
-			ProgressionStats progressionStats
+			ProgressionStats progressionStats,
+			Set<ResourceLocation> completedNodes,
+			Set<ResourceLocation> availableNodes
 	) {
 		this.classPoints = classPoints;
 		this.generalPoints = generalPoints;
 		this.level = level;
 		this.experience = experience;
 		this.progressionStats = progressionStats;
+		this.completedNodes = completedNodes;
+		this.availableNodes = availableNodes;
 	}
 
 	public int getClassPoints() {
@@ -274,6 +286,14 @@ public class ProgressionAttachment {
 		return progressionStats.getTradingCount();
 	}
 
+	public Set<ResourceLocation> getCompletedNodes() {
+		return completedNodes;
+	}
+
+	public Set<ResourceLocation> getAvailableNodes() {
+		return availableNodes;
+	}
+
 	public void incrementBlocksBroken(ResourceLocation block) {
 		progressionStats.getBlocksBroken().merge(block, 1, Integer::sum);
 	}
@@ -312,6 +332,14 @@ public class ProgressionAttachment {
 
 	public void incrementTradingCount(ResourceLocation profession) {
 		progressionStats.getTradingCount().merge(profession, 1, Integer::sum);
+	}
+
+	public void addCompletedNode(ResourceLocation node) {
+		completedNodes.add(node);
+	}
+
+	public void addAvailableNode(ResourceLocation node) {
+		availableNodes.add(node);
 	}
 
 	public int getBlocksBrokenCount(ResourceLocation block) {
