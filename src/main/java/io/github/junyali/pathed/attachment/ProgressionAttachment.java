@@ -16,28 +16,125 @@ import java.util.Map;
 import java.util.Set;
 
 public class ProgressionAttachment {
+	public static class ProgressionStats {
+		private final Map<ResourceLocation, Integer> blocksBroken;
+		private final Map<ResourceLocation, Integer> entitiesKilled;
+		private final Map<ResourceLocation, Integer> damageDealt;
+		private final Map<ResourceLocation, Integer> damageTaken;
+		private final Map<ResourceLocation, Integer> itemsCrafted;
+		private int distanceTravelled;
+		private final Set<ResourceLocation> dimensionsVisited;
+		private int deathCount;
+		private int sleepCount;
+		private final Map<ResourceLocation, Integer> tradingCount;
+
+		public ProgressionStats() {
+			this(new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), 0, new HashSet<>(), 0, 0, new HashMap<>());
+		}
+
+		private ProgressionStats(
+				Map<ResourceLocation, Integer> blocksBroken,
+				Map<ResourceLocation, Integer> entitiesKilled,
+				Map<ResourceLocation, Integer> damageDealt,
+				Map<ResourceLocation, Integer> damageTaken,
+				Map<ResourceLocation, Integer> itemsCrafted,
+				int distanceTravelled,
+				Set<ResourceLocation> dimensionsVisited,
+				int deathCount,
+				int sleepCount,
+				Map<ResourceLocation, Integer> tradingCount
+		) {
+			this.blocksBroken = blocksBroken;
+			this.entitiesKilled = entitiesKilled;
+			this.damageDealt = damageDealt;
+			this.damageTaken = damageTaken;
+			this.itemsCrafted = itemsCrafted;
+			this.distanceTravelled = distanceTravelled;
+			this.dimensionsVisited = dimensionsVisited;
+			this.deathCount = deathCount;
+			this.sleepCount = sleepCount;
+			this.tradingCount = tradingCount;
+		}
+
+		public Map<ResourceLocation, Integer> getBlocksBroken() {
+			return blocksBroken;
+		}
+
+		public Map<ResourceLocation, Integer> getEntitiesKilled() {
+			return entitiesKilled;
+		}
+
+		public Map<ResourceLocation, Integer> getDamageDealt() {
+			return damageDealt;
+		}
+
+		public Map<ResourceLocation, Integer> getDamageTaken() {
+			return damageTaken;
+		}
+
+		public Map<ResourceLocation, Integer> getItemsCrafted() {
+			return itemsCrafted;
+		}
+
+		public int getDistanceTravelled() {
+			return distanceTravelled;
+		}
+
+		public Set<ResourceLocation> getDimensionsVisited() {
+			return dimensionsVisited;
+		}
+
+		public int getDeathCount() {
+			return deathCount;
+		}
+
+		public int getSleepCount() {
+			return sleepCount;
+		}
+
+		public Map<ResourceLocation, Integer> getTradingCount() {
+			return tradingCount;
+		}
+
+		public void addDistanceTravelled(int amount) {
+			this.distanceTravelled += amount;
+		}
+
+		public void incrementDeathCount() {
+			this.deathCount++;
+		}
+
+		public void incrementSleepCount() {
+			this.sleepCount++;
+		}
+
+		static final Codec<ProgressionStats> CODEC = RecordCodecBuilder.create(i -> i.group(
+				Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
+						.fieldOf("blocksBroken").forGetter(ProgressionStats::getBlocksBroken),
+				Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
+						.fieldOf("entitiesKilled").forGetter(ProgressionStats::getEntitiesKilled),
+				Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
+						.fieldOf("damageDealt").forGetter(ProgressionStats::getDamageDealt),
+				Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
+						.fieldOf("damageTaken").forGetter(ProgressionStats::getDamageTaken),
+				Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
+						.fieldOf("itemsCrafted").forGetter(ProgressionStats::getItemsCrafted),
+				Codec.INT.fieldOf("distanceTravelled").forGetter(ProgressionStats::getDistanceTravelled),
+				ResourceLocation.CODEC.listOf().xmap(HashSet::new, list -> list.stream().toList())
+						.fieldOf("dimensionsVisited").forGetter(s -> new HashSet<>(s.getDimensionsVisited())),
+				Codec.INT.fieldOf("deathCount").forGetter(ProgressionStats::getDeathCount),
+				Codec.INT.fieldOf("sleepCount").forGetter(ProgressionStats::getSleepCount),
+				Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
+						.fieldOf("tradingCount").forGetter(ProgressionStats::getTradingCount)
+		).apply(i, ProgressionStats::new));
+	}
+
 	public static final Codec<ProgressionAttachment> CODEC = RecordCodecBuilder.create(i -> i.group(
 			Codec.INT.fieldOf("classPoints").forGetter(ProgressionAttachment::getClassPoints),
 			Codec.INT.fieldOf("generalPoints").forGetter(ProgressionAttachment::getGeneralPoints),
 			Codec.INT.fieldOf("level").forGetter(ProgressionAttachment::getLevel),
 			Codec.INT.fieldOf("experience").forGetter(ProgressionAttachment::getExperience),
-			Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
-					.fieldOf("blocksBroken").forGetter(ProgressionAttachment::getBlocksBroken),
-			Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
-					.fieldOf("entitiesKilled").forGetter(ProgressionAttachment::getEntitiesKilled),
-			Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
-					.fieldOf("damageDealt").forGetter(ProgressionAttachment::getDamageDealt),
-			Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
-					.fieldOf("damageTaken").forGetter(ProgressionAttachment::getDamageTaken),
-			Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
-					.fieldOf("itemsCrafted").forGetter(ProgressionAttachment::getItemsCrafted),
-			Codec.INT.fieldOf("distanceTravelled").forGetter(ProgressionAttachment::getDistanceTravelled),
-			ResourceLocation.CODEC.listOf().xmap(HashSet::new, list -> list.stream().toList())
-					.fieldOf("dimensionsVisited").forGetter(a -> new HashSet<>(a.getDimensionsVisited())),
-			Codec.INT.fieldOf("deathCount").forGetter(ProgressionAttachment::getDeathCount),
-			Codec.INT.fieldOf("sleepCount").forGetter(ProgressionAttachment::getSleepCount),
-			Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
-					.fieldOf("tradingCount").forGetter(ProgressionAttachment::getTradingCount)
+			ProgressionStats.CODEC.fieldOf("progressionStats").forGetter(a -> a.progressionStats)
 	).apply(i, ProgressionAttachment::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, ProgressionAttachment> STREAM_CODEC =
@@ -47,32 +144,14 @@ public class ProgressionAttachment {
 	private int generalPoints;
 	private int level;
 	private int experience;
-	private final Map<ResourceLocation, Integer> blocksBroken;
-	private final Map<ResourceLocation, Integer> entitiesKilled;
-	private final Map<ResourceLocation, Integer> damageDealt;
-	private final Map<ResourceLocation, Integer> damageTaken;
-	private final Map<ResourceLocation, Integer> itemsCrafted;
-	private int distanceTravelled;
-	private final Set<ResourceLocation> dimensionsVisited;
-	private int deathCount;
-	private int sleepCount;
-	private final Map<ResourceLocation, Integer> tradingCount;
+	private final ProgressionStats progressionStats;
 
 	public ProgressionAttachment() {
 		this.classPoints = 0;
 		this.generalPoints = 0;
 		this.level = 1;
 		this.experience = 0;
-		this.blocksBroken = new HashMap<>();
-		this.entitiesKilled = new HashMap<>();
-		this.damageDealt = new HashMap<>();
-		this.damageTaken = new HashMap<>();
-		this.itemsCrafted = new HashMap<>();
-		this.distanceTravelled = 0;
-		this.dimensionsVisited = new HashSet<>();
-		this.deathCount = 0;
-		this.sleepCount = 0;
-		this.tradingCount = new HashMap<>();
+		this.progressionStats = new ProgressionStats();
 	}
 
 	private ProgressionAttachment(
@@ -80,31 +159,13 @@ public class ProgressionAttachment {
 			int generalPoints,
 			int level,
 			int experience,
-			Map<ResourceLocation, Integer> blocksBroken,
-			Map<ResourceLocation, Integer> entitiesKilled,
-			Map<ResourceLocation, Integer> damageDealt,
-			Map<ResourceLocation, Integer> damageTaken,
-			Map<ResourceLocation, Integer> itemsCrafted,
-			int distanceTravelled,
-			Set<ResourceLocation> dimensionsVisited,
-			int deathCount,
-			int sleepCount,
-			Map<ResourceLocation, Integer> tradingCount
+			ProgressionStats progressionStats
 	) {
 		this.classPoints = classPoints;
 		this.generalPoints = generalPoints;
 		this.level = level;
 		this.experience = experience;
-		this.blocksBroken = new HashMap<>(blocksBroken);
-		this.entitiesKilled = new HashMap<>(entitiesKilled);
-		this.damageDealt = new HashMap<>(damageDealt);
-		this.damageTaken = new HashMap<>(damageTaken);
-		this.itemsCrafted = new HashMap<>(itemsCrafted);
-		this.distanceTravelled = distanceTravelled;
-		this.dimensionsVisited = new HashSet<>(dimensionsVisited);
-		this.deathCount = deathCount;
-		this.sleepCount = sleepCount;
-		this.tradingCount = new HashMap<>(tradingCount);
+		this.progressionStats = progressionStats;
 	}
 
 	public int getClassPoints() {
@@ -174,115 +235,115 @@ public class ProgressionAttachment {
 	}
 
 	public Map<ResourceLocation, Integer> getBlocksBroken() {
-		return blocksBroken;
+		return progressionStats.getBlocksBroken();
 	}
 
 	public Map<ResourceLocation, Integer> getEntitiesKilled() {
-		return entitiesKilled;
+		return progressionStats.getEntitiesKilled();
 	}
 
 	public Map<ResourceLocation, Integer> getDamageDealt() {
-		return damageDealt;
+		return progressionStats.getDamageDealt();
 	}
 
 	public Map<ResourceLocation, Integer> getDamageTaken() {
-		return damageTaken;
+		return progressionStats.getDamageTaken();
 	}
 
 	public Map<ResourceLocation, Integer> getItemsCrafted() {
-		return itemsCrafted;
+		return progressionStats.getItemsCrafted();
 	}
 
 	public int getDistanceTravelled() {
-		return distanceTravelled;
+		return progressionStats.getDistanceTravelled();
 	}
 
 	public Set<ResourceLocation> getDimensionsVisited() {
-		return dimensionsVisited;
+		return progressionStats.getDimensionsVisited();
 	}
 
 	public int getDeathCount() {
-		return deathCount;
+		return progressionStats.getDeathCount();
 	}
 
 	public int getSleepCount() {
-		return sleepCount;
+		return progressionStats.getSleepCount();
 	}
 
 	public Map<ResourceLocation, Integer> getTradingCount() {
-		return tradingCount;
+		return progressionStats.getTradingCount();
 	}
 
 	public void incrementBlocksBroken(ResourceLocation block) {
-		blocksBroken.merge(block, 1, Integer::sum);
+		progressionStats.getBlocksBroken().merge(block, 1, Integer::sum);
 	}
 
 	public void incrementEntitiesKilled(ResourceLocation entity) {
-		entitiesKilled.merge(entity, 1, Integer::sum);
+		progressionStats.getEntitiesKilled().merge(entity, 1, Integer::sum);
 	}
 
 	public void addDamageDealt(ResourceLocation entityType, float amount) {
-		damageDealt.merge(entityType, Math.round(amount * 10), Integer::sum);
+		progressionStats.getDamageDealt().merge(entityType, Math.round(amount * 10), Integer::sum);
 	}
 
 	public void addDamageTaken(ResourceLocation sourceType, float amount) {
-		damageTaken.merge(sourceType, Math.round(amount * 10), Integer::sum);
+		progressionStats.getDamageTaken().merge(sourceType, Math.round(amount * 10), Integer::sum);
 	}
 
 	public void incrementItemsCrafted(ResourceLocation item, int count) {
-		itemsCrafted.merge(item, count, Integer::sum);
+		progressionStats.getItemsCrafted().merge(item, count, Integer::sum);
 	}
 
 	public void addDistanceTravelled(int fixedPoint) {
-		distanceTravelled += fixedPoint;
+		progressionStats.addDistanceTravelled(fixedPoint);
 	}
 
 	public void visitDimension(ResourceLocation dimension) {
-		dimensionsVisited.add(dimension);
+		progressionStats.getDimensionsVisited().add(dimension);
 	}
 
 	public void incrementDeathCount() {
-		deathCount++;
+		progressionStats.incrementDeathCount();
 	}
 
 	public void incrementSleepCount() {
-		sleepCount++;
+		progressionStats.incrementSleepCount();
 	}
 
 	public void incrementTradingCount(ResourceLocation profession) {
-		tradingCount.merge(profession, 1, Integer::sum);
+		progressionStats.getTradingCount().merge(profession, 1, Integer::sum);
 	}
 
 	public int getBlocksBrokenCount(ResourceLocation block) {
-		return blocksBroken.getOrDefault(block, 0);
+		return progressionStats.getBlocksBroken().getOrDefault(block, 0);
 	}
 
 	public int getEntitiesKilledCount(ResourceLocation entity) {
-		return entitiesKilled.getOrDefault(entity, 0);
+		return progressionStats.getEntitiesKilled().getOrDefault(entity, 0);
 	}
 
 	public float getDamageDealtTo(ResourceLocation entityType) {
-		return damageDealt.getOrDefault(entityType, 0) / 10f;
+		return progressionStats.getDamageDealt().getOrDefault(entityType, 0) / 10f;
 	}
 
 	public float getDamageTakenFrom(ResourceLocation sourceType) {
-		return damageTaken.getOrDefault(sourceType, 0) / 10f;
+		return progressionStats.getDamageTaken().getOrDefault(sourceType, 0) / 10f;
 	}
 
 	public int getItemsCraftedCount(ResourceLocation item) {
-		return itemsCrafted.getOrDefault(item, 0);
+		return progressionStats.getItemsCrafted().getOrDefault(item, 0);
 	}
 
 	public float getDistanceTravelledBlocks() {
-		return distanceTravelled / 100f;
+		return progressionStats.getDistanceTravelled() / 100f;
 	}
 
 	public boolean hasVisitedDimension(ResourceLocation dimension) {
-		return dimensionsVisited.contains(dimension);
+		return progressionStats.getDimensionsVisited().contains(dimension);
 	}
 
 	public int getTradingCountFor(ResourceLocation profession) {
-		return tradingCount.getOrDefault(profession, 0);
+		return progressionStats.getTradingCount().getOrDefault(profession, 0);
 	}
 
 	public static ProgressionAttachment get(Entity entity) {
