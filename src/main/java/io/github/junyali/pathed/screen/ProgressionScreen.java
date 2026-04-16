@@ -259,8 +259,8 @@ public class ProgressionScreen extends Screen {
 	private void renderElement(GuiGraphics guiGraphics) {
 		// drag testing
 		int size = 50;
-		int x = -size / 2;
-		int y = -size / 2;
+		int x = (this.contentWidth - size) / 2;
+		int y = (this.contentHeight - size) / 2;
 		guiGraphics.fill(x, y, x + size, y + size, 0xFFFF5555);
 		guiGraphics.fill(x + 2, y + 2, x + size - 2, y + size - 2, 0xFF55FF55);
 	}
