@@ -16,8 +16,14 @@ import java.util.*;
 public class SkillNodeLoader extends SimpleJsonResourceReloadListener {
 	private static final Gson GSON = new GsonBuilder().create();
 
-	private static final Map<ResourceLocation, SkillNode> NODES = new LinkedHashMap<>();
-	private static final Map<ResourceLocation, SkillCategory> CATEGORIES = new LinkedHashMap<>();
+	private record Snapshot(
+		Map<ResourceLocation, SkillNode> nodes,
+		Map<ResourceLocation, SkillCategory> categories
+	) {
+		static final Snapshot EMPTY = new Snapshot(Map.of(), Map.of());
+	}
+
+	private static volatile Snapshot snapshot = Snapshot.EMPTY;
 
 	public SkillNodeLoader() {
 		super(GSON, "skill_nodes");
@@ -25,8 +31,8 @@ public class SkillNodeLoader extends SimpleJsonResourceReloadListener {
 
 	@Override
 	protected void apply(Map<ResourceLocation, JsonElement> objects, @NotNull ResourceManager manager, @NotNull ProfilerFiller profiler) {
-		NODES.clear();
-		CATEGORIES.clear();
+		Map<ResourceLocation, SkillNode> nodes = new LinkedHashMap<>();
+		Map<ResourceLocation, SkillCategory> categories = new LinkedHashMap<>();
 
 		for (Map.Entry<ResourceLocation, JsonElement> entry : objects.entrySet()) {
 			ResourceLocation fileId = entry.getKey();
@@ -34,8 +40,8 @@ public class SkillNodeLoader extends SimpleJsonResourceReloadListener {
 			try {
 				SkillNode parsed = SkillNode.CODEC.parse(JsonOps.INSTANCE, entry.getValue()).getOrThrow();
 				SkillNode node = new SkillNode(fileId, parsed.nameKey(), parsed.descriptionKey(), parsed.category(), parsed.position(), parsed.icon(), parsed.prerequisites(), parsed.requirements(), parsed.rewards(), parsed.pathLocked());
-				NODES.put(node.id(), node);
-				CATEGORIES.computeIfAbsent(node.category(), catId ->
+				nodes.put(node.id(), node);
+				categories.computeIfAbsent(node.category(), catId ->
 						new SkillCategory(catId,
 								catId.toLanguageKey("skill_category", "name"),
 								"minecraft:nether_star",
@@ -47,23 +53,28 @@ public class SkillNodeLoader extends SimpleJsonResourceReloadListener {
 			}
 		}
 
-		Pathed.LOGGER.info("Loaded {} nodes across {} categories", NODES.size(), CATEGORIES.size());
+		snapshot = new Snapshot(
+				Collections.unmodifiableMap(nodes),
+				Collections.unmodifiableMap(categories)
+		);
+
+		Pathed.LOGGER.info("Loaded {} nodes across {} categories", nodes.size(), categories.size());
 	}
 
 	public static Map<ResourceLocation, SkillNode> getNodes() {
-		return Collections.unmodifiableMap(NODES);
+		return snapshot.nodes;
 	}
 
 	public static Map<ResourceLocation, SkillCategory> getCategories() {
-		return Collections.unmodifiableMap(CATEGORIES);
+		return snapshot.categories;
 	}
 
 	public static Collection<SkillNode> getNodesForCategory(ResourceLocation categoryId) {
-		SkillCategory cat = CATEGORIES.get(categoryId);
+		SkillCategory cat = snapshot.categories.get(categoryId);
 		return cat == null ? List.of() : cat.getNodes();
 	}
 
 	public static SkillNode getNode(ResourceLocation id) {
-		return NODES.get(id);
+		return snapshot.nodes.get(id);
 	}
 }
