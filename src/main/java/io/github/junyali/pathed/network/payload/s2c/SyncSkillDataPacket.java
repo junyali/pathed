@@ -70,5 +70,39 @@ public record SyncSkillDataPacket (
 
 					return new SyncSkillDataPacket(cats, nodes);
 				}
-			}
+
+				@Override
+				public void encode(RegistryFriendlyByteBuf buf, SyncSkillDataPacket pkt) {
+					// AHHHH so much to write D:
+					buf.writeVarInt(pkt.categories.size());
+					for (var entry : pkt.categories.entrySet()) {
+						ResourceLocation.STREAM_CODEC.encode(buf, entry.getKey());
+						buf.writeUtf(entry.getValue().getNameKey());
+						buf.writeUtf(entry.getValue().getIconItem());
+						boolean hasPath = entry.getValue().getPathLocked().isPresent();
+						buf.writeBoolean(hasPath);
+						if (hasPath) ResourceLocation.STREAM_CODEC.encode(buf, entry.getValue().getPathLocked().get());
+					}
+
+					buf.writeVarInt(pkt.nodes.size());
+					for (var entry : pkt.nodes.entrySet()) {
+						SkillNode n = entry.getValue();
+						ResourceLocation.STREAM_CODEC.encode(buf, n.id());
+						buf.writeUtf(n.nameKey());
+						buf.writeUtf(n.descriptionKey());
+						ResourceLocation.STREAM_CODEC.encode(buf, n.category());
+						buf.writeVarInt(n.position().x());
+						buf.writeVarInt(n.position().y());
+						buf.writeUtf(n.icon().type());
+						buf.writeUtf(n.icon().value());
+						buf.writeVarInt(n.prerequisites().size());
+						for (ResourceLocation pre : n.prerequisites()) {
+							ResourceLocation.STREAM_CODEC.encode(buf, pre);
+						}
+						boolean hasPath = n.pathLocked().isPresent();
+						buf.writeBoolean(hasPath);
+						if (hasPath) ResourceLocation.STREAM_CODEC.encode(buf, n.pathLocked().get());
+					}
+				}
+			};
 }
