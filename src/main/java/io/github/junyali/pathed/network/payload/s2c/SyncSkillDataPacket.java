@@ -1,6 +1,7 @@
 package io.github.junyali.pathed.network.payload.s2c;
 
 import io.github.junyali.pathed.Pathed;
+import io.github.junyali.pathed.data.skill.ClientSkillData;
 import io.github.junyali.pathed.data.skill.SkillCategory;
 import io.github.junyali.pathed.data.skill.SkillNode;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -114,7 +115,8 @@ public record SyncSkillDataPacket (
 
 	public static void handle(SyncSkillDataPacket packet, IPayloadContext context) {
 		context.enqueueWork(() -> {
-			// send to client!
+			ClientSkillData.setCategories(packet.categories);
+			ClientSkillData.setNodes(packet.nodes);
 		});
 	}
 }
