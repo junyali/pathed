@@ -1,9 +1,11 @@
 package io.github.junyali.pathed.screen;
 
 import io.github.junyali.pathed.Pathed;
+import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.data.skill.ClientSkillData;
 import io.github.junyali.pathed.data.skill.SkillCategory;
 import io.github.junyali.pathed.data.skill.SkillNodeLoader;
+import io.github.junyali.pathed.registry.PathedAttachments;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -101,8 +103,24 @@ public class ProgressionScreen extends Screen {
 		this.categoryButtons.clear();
 
 		Map<ResourceLocation, SkillCategory> categories = ClientSkillData.getCategories();
+		ResourceLocation playerPath = null;
+		if (this.minecraft != null && this.minecraft.player != null) {
+			PathAttachment pathAttachment = this.minecraft.player.getData(PathedAttachments.PATH_ATTACHMENT);
+			if (pathAttachment != null && pathAttachment.getPath() != null) {
+				playerPath = pathAttachment.getPath().getId();
+			}
+		}
 
-		int totalContentHeight = categories.size() * CATEGORY_BUTTON_HEIGHT;
+		List<Map.Entry<ResourceLocation, SkillCategory>> filteredCategories = new ArrayList<>();
+		for (Map.Entry<ResourceLocation, SkillCategory> entry : categories.entrySet()) {
+			SkillCategory cat = entry.getValue();
+
+			if (cat.getPathLocked().isEmpty() || (playerPath != null && cat.getPathLocked().get().equals(playerPath))) {
+				filteredCategories.add(entry);
+			}
+		}
+
+		int totalContentHeight = filteredCategories.size() * CATEGORY_BUTTON_HEIGHT;
 		int innerHeight = this.panelHeight - FRAME_BORDER * 2;
 		this.categoryMaxScroll = Math.max(0, totalContentHeight - innerHeight);
 
@@ -114,7 +132,7 @@ public class ProgressionScreen extends Screen {
 		int buttonLeft = this.categoryPanelLeft + FRAME_BORDER;
 		int y = this.categoryPanelTop + FRAME_BORDER;
 
-		for (Map.Entry<ResourceLocation, SkillCategory> entry : categories.entrySet()) {
+		for (Map.Entry<ResourceLocation, SkillCategory> entry : filteredCategories) {
 			ResourceLocation catId = entry.getKey();
 			SkillCategory cat = entry.getValue();
 
