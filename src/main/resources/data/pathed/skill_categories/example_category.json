@@ -1,0 +1,5 @@
+{
+  "name": "pathed.skill_category.example_category.name",
+  "icon_item": "minecraft:nether_star",
+  "path_locked": "pathed:spelunker"
+}
