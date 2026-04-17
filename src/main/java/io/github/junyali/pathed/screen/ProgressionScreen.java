@@ -145,7 +145,11 @@ public class ProgressionScreen extends Screen {
 					Component.translatable(cat.getNameKey()),
 					idStr,
 					cat.getIconItem(),
-					btn -> this.selectedCategory = idStr
+					btn -> {
+						this.selectedCategory = idStr;
+						this.scrollX = 0;
+						this.scrollY = 0;
+					}
 			);
 			this.categoryButtons.add(button);
 			this.addRenderableWidget(button);
