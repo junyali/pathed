@@ -27,21 +27,24 @@ public sealed interface SkillNodeRequirement permits
 			}
 	);
 
-	record StatRequirement(String stat, Optional<ResourceLocation> target, int count) implements SkillNodeRequirement{
+	record StatRequirement(String stat, Optional<ResourceLocation> target, int count, boolean consumed) implements SkillNodeRequirement{
 		static final MapCodec<StatRequirement> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
 				Codec.STRING.fieldOf("stat").forGetter(StatRequirement::stat),
 				ResourceLocation.CODEC.optionalFieldOf("target").forGetter(StatRequirement::target),
-				Codec.INT.fieldOf("count").forGetter(StatRequirement::count)
+				Codec.INT.fieldOf("count").forGetter(StatRequirement::count),
+				Codec.BOOL.optionalFieldOf("consumed", false).forGetter(StatRequirement::consumed)
 		).apply(i, StatRequirement::new));
 	}
 
-	record PointRequirement(int amount, boolean classPoints) implements SkillNodeRequirement {
+	record PointRequirement(int amount, boolean classPoints, boolean consumed) implements SkillNodeRequirement {
 		static final MapCodec<PointRequirement> CLASS_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-				Codec.INT.fieldOf("amount").forGetter(PointRequirement::amount)
-		).apply(i, amount -> new PointRequirement(amount, true)));
+				Codec.INT.fieldOf("amount").forGetter(PointRequirement::amount),
+				Codec.BOOL.optionalFieldOf("consumed", false).forGetter(PointRequirement::consumed)
+		).apply(i, (amount, consumed) -> new PointRequirement(amount, true, consumed)));
 		static final MapCodec<PointRequirement> GENERAL_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-				Codec.INT.fieldOf("amount").forGetter(PointRequirement::amount)
-		).apply(i, amount -> new PointRequirement(amount, false)));
+				Codec.INT.fieldOf("amount").forGetter(PointRequirement::amount),
+				Codec.BOOL.optionalFieldOf("consumed", false).forGetter(PointRequirement::consumed)
+		).apply(i, (amount, consumed) -> new PointRequirement(amount, false, consumed)));
 	}
 
 	record NodeRequirement(ResourceLocation nodeId) implements SkillNodeRequirement {
