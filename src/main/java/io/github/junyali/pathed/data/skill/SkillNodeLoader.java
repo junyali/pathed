@@ -32,7 +32,8 @@ public class SkillNodeLoader extends SimpleJsonResourceReloadListener {
 			ResourceLocation fileId = entry.getKey();
 
 			try {
-				SkillNode node = SkillNode.CODEC.parse(JsonOps.INSTANCE, entry.getValue()).getOrThrow();
+				SkillNode parsed = SkillNode.CODEC.parse(JsonOps.INSTANCE, entry.getValue()).getOrThrow();
+				SkillNode node = new SkillNode(fileId, parsed.nameKey(), parsed.descriptionKey(), parsed.category(), parsed.position(), parsed.icon(), parsed.prerequisites(), parsed.pathLocked());
 				NODES.put(node.id(), node);
 				CATEGORIES.computeIfAbsent(node.category(), catId ->
 						new SkillCategory(catId,

@@ -34,7 +34,6 @@ public record SkillNode(
 	}
 
 	public static final Codec<SkillNode> CODEC = RecordCodecBuilder.create(i -> i.group(
-			ResourceLocation.CODEC.fieldOf("id").forGetter(SkillNode::id),
 			Codec.STRING.fieldOf("name").forGetter(SkillNode::nameKey),
 			Codec.STRING.fieldOf("description").forGetter(SkillNode::descriptionKey),
 			ResourceLocation.CODEC.fieldOf("category").forGetter(SkillNode::category),
@@ -44,5 +43,6 @@ public record SkillNode(
 			// requirement field
 			// reward field
 			ResourceLocation.CODEC.optionalFieldOf("path_locked").forGetter(SkillNode::pathLocked)
-	).apply(i, SkillNode::new));
+	).apply(i, (name, desc, cat, pos, icon, prereqs, path) ->
+			new SkillNode(null, name, desc, cat, pos, icon, prereqs, path)));
 }
