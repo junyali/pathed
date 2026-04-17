@@ -27,7 +27,7 @@ public class SkillCategory {
 			ResourceLocation.CODEC.optionalFieldOf("path_locked").forGetter(c -> Optional.ofNullable(c.pathLocked))
 	).apply(i, (name, icon, optPath) -> new SkillCategory(name, icon, optPath.orElse(null))));
 
-	void addNode(SkillNode node) {
+	public void addNode(SkillNode node) {
 		nodes.add(node);
 	}
 
