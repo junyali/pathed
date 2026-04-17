@@ -1,4 +1,4 @@
-package io.github.junyali.pathed.screen;
+package io.github.junyali.pathed.screen.progression.components;
 
 import net.minecraft.resources.ResourceLocation;
 

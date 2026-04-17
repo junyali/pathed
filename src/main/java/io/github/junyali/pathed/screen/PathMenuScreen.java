@@ -4,6 +4,7 @@ import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.data.path.PathIcon;
+import io.github.junyali.pathed.screen.progression.ProgressionScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
