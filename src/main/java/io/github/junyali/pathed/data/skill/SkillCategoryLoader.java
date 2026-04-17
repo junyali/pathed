@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class SkillCategoryLoader extends SimpleJsonResourceReloadListener {
 	private static final Gson GSON = new GsonBuilder().create();
-	private static final Map<ResourceLocation, SkillCategory> CATEGORIES = new LinkedHashMap<>();
+	private static volatile Map<ResourceLocation, SkillCategory> categories = Map.of();
 
 	public SkillCategoryLoader() {
 		super(GSON, "skill_categories");
@@ -25,18 +25,19 @@ public class SkillCategoryLoader extends SimpleJsonResourceReloadListener {
 
 	@Override
 	protected void apply(Map<ResourceLocation, JsonElement> objects, @NotNull ResourceManager manager, @NotNull ProfilerFiller profiler) {
-		CATEGORIES.clear();
+		Map<ResourceLocation, SkillCategory> built = new LinkedHashMap<>();
 		for (Map.Entry<ResourceLocation, JsonElement> entry : objects.entrySet()) {
 			try {
 				SkillCategory cat = SkillCategory.CODEC.parse(JsonOps.INSTANCE, entry.getValue()).getOrThrow();
-				CATEGORIES.put(entry.getKey(), cat);
+				built.put(entry.getKey(), cat);
 			} catch (Exception e) {
 				Pathed.LOGGER.error("Error loading category {}", entry.getKey(), e);
 			}
 		}
+		categories = Collections.unmodifiableMap(built);
 	}
 
 	public static Map<ResourceLocation, SkillCategory> getCategories() {
-		return Collections.unmodifiableMap(CATEGORIES);
+		return categories;
 	}
 }
