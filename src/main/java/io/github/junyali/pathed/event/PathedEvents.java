@@ -3,6 +3,7 @@ package io.github.junyali.pathed.event;
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.PathDataHolder;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
+import io.github.junyali.pathed.data.skill.SkillCategoryLoader;
 import io.github.junyali.pathed.data.skill.SkillNodeLoader;
 import io.github.junyali.pathed.network.payload.s2c.OpenPathSelectPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,6 +29,7 @@ public class PathedEvents {
 
 	@SubscribeEvent
 	public static void onAddReloadListeners(AddReloadListenerEvent event) {
+		event.addListener(new SkillCategoryLoader());
 		event.addListener(new SkillNodeLoader());
 	}
 }
