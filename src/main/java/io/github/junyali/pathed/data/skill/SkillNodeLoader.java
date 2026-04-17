@@ -11,8 +11,7 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class SkillNodeLoader extends SimpleJsonResourceReloadListener {
 	private static final Gson GSON = new GsonBuilder().create();
@@ -48,5 +47,22 @@ public class SkillNodeLoader extends SimpleJsonResourceReloadListener {
 		}
 
 		Pathed.LOGGER.info("Loaded {} nodes across {} categories", NODES.size(), CATEGORIES.size());
+	}
+
+	public static Map<ResourceLocation, SkillNode> getNodes() {
+		return Collections.unmodifiableMap(NODES);
+	}
+
+	public static Map<ResourceLocation, SkillCategory> getCategories() {
+		return Collections.unmodifiableMap(CATEGORIES);
+	}
+
+	public static Collection<SkillNode> getNodesForCategory(ResourceLocation categoryId) {
+		SkillCategory cat = CATEGORIES.get(categoryId);
+		return cat == null ? List.of() : cat.getNodes();
+	}
+
+	public static SkillNode getNode(ResourceLocation id) {
+		return NODES.get(id);
 	}
 }
