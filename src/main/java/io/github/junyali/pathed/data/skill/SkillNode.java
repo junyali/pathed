@@ -29,7 +29,7 @@ public record SkillNode(
 	public record NodeIcon(String type, String value) {
 		public static final Codec<NodeIcon> CODEC = RecordCodecBuilder.create(i -> i.group(
 				Codec.STRING.fieldOf("type").forGetter(NodeIcon::type),
-				Codec.STRING.fieldOf("valur").forGetter(NodeIcon::value)
+				Codec.STRING.fieldOf("value").forGetter(NodeIcon::value)
 		).apply(i, NodeIcon::new));
 	}
 
