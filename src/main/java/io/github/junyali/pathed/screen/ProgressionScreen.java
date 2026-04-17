@@ -1,6 +1,7 @@
 package io.github.junyali.pathed.screen;
 
 import io.github.junyali.pathed.Pathed;
+import io.github.junyali.pathed.data.skill.ClientSkillData;
 import io.github.junyali.pathed.data.skill.SkillCategory;
 import io.github.junyali.pathed.data.skill.SkillNodeLoader;
 import net.minecraft.client.gui.GuiGraphics;
@@ -99,7 +100,7 @@ public class ProgressionScreen extends Screen {
 	private void setupCategoryButtons() {
 		this.categoryButtons.clear();
 
-		Map<ResourceLocation, SkillCategory> categories = SkillNodeLoader.getCategories();
+		Map<ResourceLocation, SkillCategory> categories = ClientSkillData.getCategories();
 
 		int totalContentHeight = categories.size() * CATEGORY_BUTTON_HEIGHT;
 		int innerHeight = this.panelHeight - FRAME_BORDER * 2;
