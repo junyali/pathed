@@ -32,7 +32,6 @@ public class SkillNodeLoader extends SimpleJsonResourceReloadListener {
 	@Override
 	protected void apply(Map<ResourceLocation, JsonElement> objects, @NotNull ResourceManager manager, @NotNull ProfilerFiller profiler) {
 		Map<ResourceLocation, SkillNode> nodes = new LinkedHashMap<>();
-		Map<ResourceLocation, SkillCategory> categories = new LinkedHashMap<>();
 
 		for (Map.Entry<ResourceLocation, JsonElement> entry : objects.entrySet()) {
 			ResourceLocation fileId = entry.getKey();
@@ -41,13 +40,13 @@ public class SkillNodeLoader extends SimpleJsonResourceReloadListener {
 				SkillNode parsed = SkillNode.CODEC.parse(JsonOps.INSTANCE, entry.getValue()).getOrThrow();
 				SkillNode node = new SkillNode(fileId, parsed.nameKey(), parsed.descriptionKey(), parsed.category(), parsed.position(), parsed.icon(), parsed.prerequisites(), parsed.requirements(), parsed.rewards(), parsed.pathLocked());
 				nodes.put(node.id(), node);
-				categories.computeIfAbsent(node.category(), catId ->
-						new SkillCategory(catId,
-								catId.toLanguageKey("skill_category", "name"),
-								"minecraft:nether_star",
-								node.pathLocked().orElse(null)
-						)
-				).addNode(node);
+
+				SkillCategory cat = SkillCategoryLoader.getCategories().get(node.category());
+				if (cat != null) {
+					cat.addNode(node);
+				} else {
+					Pathed.LOGGER.warn("Node {} references unknown category {}", fileId, node.category());
+				}
 			} catch (Exception e) {
 				Pathed.LOGGER.error("Exception loading node {}", fileId, e);
 			}
@@ -55,10 +54,10 @@ public class SkillNodeLoader extends SimpleJsonResourceReloadListener {
 
 		snapshot = new Snapshot(
 				Collections.unmodifiableMap(nodes),
-				Collections.unmodifiableMap(categories)
+				SkillCategoryLoader.getCategories()
 		);
 
-		Pathed.LOGGER.info("Loaded {} nodes across {} categories", nodes.size(), categories.size());
+		Pathed.LOGGER.info("Loaded {} nodes across {} categories", nodes.size(), SkillCategoryLoader.getCategories().size());
 	}
 
 	public static Map<ResourceLocation, SkillNode> getNodes() {
