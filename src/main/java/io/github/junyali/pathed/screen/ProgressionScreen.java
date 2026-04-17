@@ -132,11 +132,18 @@ public class ProgressionScreen extends Screen {
 		int buttonLeft = this.categoryPanelLeft + FRAME_BORDER;
 		int y = this.categoryPanelTop + FRAME_BORDER;
 
+		boolean isFirst = true;
 		for (Map.Entry<ResourceLocation, SkillCategory> entry : filteredCategories) {
 			ResourceLocation catId = entry.getKey();
 			SkillCategory cat = entry.getValue();
 
 			String idStr = catId.toString();
+
+			if (isFirst) {
+				this.selectedCategory = idStr;
+				isFirst = false;
+			}
+
 			CategoryButton button = new CategoryButton(
 					buttonLeft,
 					y,
