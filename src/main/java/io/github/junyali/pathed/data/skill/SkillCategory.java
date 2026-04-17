@@ -14,18 +14,21 @@ public class SkillCategory {
 	private final String iconItem;
 	private final ResourceLocation pathLocked;
 	private final List<SkillNode> nodes = new ArrayList<>();
+	private final ResourceLocation background;
 
-	public SkillCategory(String nameKey, String iconItem, ResourceLocation pathLocked) {
+	public SkillCategory(String nameKey, String iconItem, ResourceLocation pathLocked, ResourceLocation background) {
 		this.nameKey = nameKey;
 		this.iconItem = iconItem;
 		this.pathLocked = pathLocked;
+		this.background = background;
 	}
 
 	public static final Codec<SkillCategory> CODEC = RecordCodecBuilder.create(i -> i.group(
 			Codec.STRING.fieldOf("name").forGetter(SkillCategory::getNameKey),
 			Codec.STRING.fieldOf("icon_item").forGetter(SkillCategory::getIconItem),
-			ResourceLocation.CODEC.optionalFieldOf("path_locked").forGetter(c -> Optional.ofNullable(c.pathLocked))
-	).apply(i, (name, icon, optPath) -> new SkillCategory(name, icon, optPath.orElse(null))));
+			ResourceLocation.CODEC.optionalFieldOf("path_locked").forGetter(c -> Optional.ofNullable(c.pathLocked)),
+			ResourceLocation.CODEC.optionalFieldOf("background", ResourceLocation.withDefaultNamespace("textures/block/dirt.png")).forGetter(SkillCategory::getBackground)
+	).apply(i, (name, icon, optPath, bg) -> new SkillCategory(name, icon, optPath.orElse(null), bg)));
 
 	public void addNode(SkillNode node) {
 		nodes.add(node);
@@ -45,5 +48,9 @@ public class SkillCategory {
 
 	public List<SkillNode> getNodes() {
 		return Collections.unmodifiableList(nodes);
+	}
+
+	public ResourceLocation getBackground() {
+		return background;
 	}
 }

@@ -14,6 +14,7 @@ public record SkillNode(
 		ResourceLocation category,
 		NodePosition position,
 		NodeIcon icon,
+		String nodeType,
 		List<ResourceLocation> prerequisites,
 		List<ResourceLocation> previousNodes,
 		List<SkillNodeRequirement> requirements,
@@ -40,11 +41,12 @@ public record SkillNode(
 			ResourceLocation.CODEC.fieldOf("category").forGetter(SkillNode::category),
 			NodePosition.CODEC.fieldOf("position").forGetter(SkillNode::position),
 			NodeIcon.CODEC.fieldOf("icon").forGetter(SkillNode::icon),
+			Codec.STRING.optionalFieldOf("node_type", "task").forGetter(SkillNode::nodeType),
 			ResourceLocation.CODEC.listOf().optionalFieldOf("prerequisites", List.of()).forGetter(SkillNode::prerequisites),
 			ResourceLocation.CODEC.listOf().optionalFieldOf("previous_nodes", List.of()).forGetter(SkillNode::previousNodes),
 			SkillNodeRequirement.CODEC.listOf().optionalFieldOf("requirements", List.of()).forGetter(SkillNode::requirements),
 			SkillNodeReward.CODEC.listOf().optionalFieldOf("rewards", List.of()).forGetter(SkillNode::rewards),
 			ResourceLocation.CODEC.optionalFieldOf("path_locked").forGetter(SkillNode::pathLocked)
-	).apply(i, (name, desc, cat, pos, icon, prereqs, prevnodes, req, rew, path) ->
-			new SkillNode(null, name, desc, cat, pos, icon, prereqs, prevnodes, req, rew, path)));
+	).apply(i, (name, desc, cat, pos, icon, type, prereqs, prevnodes, req, rew, path) ->
+			new SkillNode(null, name, desc, cat, pos, icon, type, prereqs, prevnodes, req, rew, path)));
 }

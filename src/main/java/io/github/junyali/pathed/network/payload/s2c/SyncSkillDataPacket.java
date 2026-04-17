@@ -33,7 +33,8 @@ public record SyncSkillDataPacket (
 						String name = buf.readUtf();
 						String icon = buf.readUtf();
 						ResourceLocation pathLocked = buf.readBoolean() ? ResourceLocation.STREAM_CODEC.decode(buf) : null;
-						cats.put(id, new SkillCategory(name, icon, pathLocked));
+						ResourceLocation background = ResourceLocation.STREAM_CODEC.decode(buf);
+						cats.put(id, new SkillCategory(name, icon, pathLocked, background));
 					}
 
 					int nodeCount = buf.readVarInt();
@@ -47,6 +48,7 @@ public record SyncSkillDataPacket (
 						int y = buf.readVarInt();
 						String iconType = buf.readUtf();
 						String iconValue = buf.readUtf();
+						String nodeType = buf.readUtf();
 						int preCount = buf.readVarInt();
 						List<ResourceLocation> prereqs = new ArrayList<>();
 						for (int j = 0; j < preCount; j++) {
@@ -62,6 +64,7 @@ public record SyncSkillDataPacket (
 						SkillNode node = new SkillNode(id, name, desc, category,
 								new SkillNode.NodePosition(x, y),
 								new SkillNode.NodeIcon(iconType, iconValue),
+								nodeType,
 								prereqs,
 								prevnodes,
 								List.of(),
@@ -90,6 +93,7 @@ public record SyncSkillDataPacket (
 						boolean hasPath = entry.getValue().getPathLocked().isPresent();
 						buf.writeBoolean(hasPath);
 						if (hasPath) ResourceLocation.STREAM_CODEC.encode(buf, entry.getValue().getPathLocked().get());
+						ResourceLocation.STREAM_CODEC.encode(buf, entry.getValue().getBackground());
 					}
 
 					buf.writeVarInt(pkt.nodes.size());
@@ -103,6 +107,7 @@ public record SyncSkillDataPacket (
 						buf.writeVarInt(n.position().y());
 						buf.writeUtf(n.icon().type());
 						buf.writeUtf(n.icon().value());
+						buf.writeUtf(n.nodeType());
 						buf.writeVarInt(n.prerequisites().size());
 						for (ResourceLocation pre : n.prerequisites()) {
 							ResourceLocation.STREAM_CODEC.encode(buf, pre);
