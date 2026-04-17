@@ -107,6 +107,10 @@ public record SyncSkillDataPacket (
 						for (ResourceLocation pre : n.prerequisites()) {
 							ResourceLocation.STREAM_CODEC.encode(buf, pre);
 						}
+						buf.writeVarInt(n.previousNodes().size());
+						for (ResourceLocation prev : n.previousNodes()) {
+							ResourceLocation.STREAM_CODEC.encode(buf, prev);
+						}
 						boolean hasPath = n.pathLocked().isPresent();
 						buf.writeBoolean(hasPath);
 						if (hasPath) ResourceLocation.STREAM_CODEC.encode(buf, n.pathLocked().get());
