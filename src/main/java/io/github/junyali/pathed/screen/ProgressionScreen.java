@@ -1,9 +1,12 @@
 package io.github.junyali.pathed.screen;
 
 import io.github.junyali.pathed.Pathed;
+import io.github.junyali.pathed.data.skill.SkillCategory;
+import io.github.junyali.pathed.data.skill.SkillNodeLoader;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -13,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ProgressionScreen extends Screen {
 	private static final int CATEGORY_PANEL_WIDTH = 100;
@@ -95,10 +99,9 @@ public class ProgressionScreen extends Screen {
 	private void setupCategoryButtons() {
 		this.categoryButtons.clear();
 
-		String[] categories = {"Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp", "Meow", "Mrow", "Mrrp"};
-		String[] categoryIds = {"meow", "mrow", "mrrp", "meow1", "mrow2", "mrrp3", "meow4", "mrow5", "mrrp6", "meow7", "mrow8", "mrrp9", "meow10", "mrow11", "mrrp12", "meow13", "mrow14", "mrrp15"};
+		Map<ResourceLocation, SkillCategory> categories = SkillNodeLoader.getCategories();
 
-		int totalContentHeight = categories.length * CATEGORY_BUTTON_HEIGHT;
+		int totalContentHeight = categories.size() * CATEGORY_BUTTON_HEIGHT;
 		int innerHeight = this.panelHeight - FRAME_BORDER * 2;
 		this.categoryMaxScroll = Math.max(0, totalContentHeight - innerHeight);
 
@@ -110,16 +113,20 @@ public class ProgressionScreen extends Screen {
 		int buttonLeft = this.categoryPanelLeft + FRAME_BORDER;
 		int y = this.categoryPanelTop + FRAME_BORDER;
 
-		for (int i = 0; i < categories.length; i++) {
-			final String categoryId = categoryIds[i];
+		for (Map.Entry<ResourceLocation, SkillCategory> entry : categories.entrySet()) {
+			ResourceLocation catId = entry.getKey();
+			SkillCategory cat = entry.getValue();
+
+			String idStr = catId.toString();
 			CategoryButton button = new CategoryButton(
 					buttonLeft,
 					y,
 					buttonWidth,
 					CATEGORY_BUTTON_HEIGHT,
-					Component.literal(categories[i]),
-					categoryId,
-					btn -> this.selectedCategory = categoryId
+					Component.translatable(cat.getNameKey()),
+					idStr,
+					cat.getIconItem(),
+					btn -> this.selectedCategory = idStr
 			);
 			this.categoryButtons.add(button);
 			this.addRenderableWidget(button);
@@ -348,10 +355,12 @@ public class ProgressionScreen extends Screen {
 
 	private class CategoryButton extends Button {
 		private final String categoryId;
+		private final ItemStack iconStack;
 
-		public CategoryButton(int x, int y, int width, int height, Component message, String categoryId, OnPress onPress) {
+		public CategoryButton(int x, int y, int width, int height, Component message, String categoryId, String iconItem, OnPress onPress) {
 			super(x, y, width, height, message, onPress, DEFAULT_NARRATION);
 			this.categoryId = categoryId;
+			this.iconStack = BuiltInRegistries.ITEM.get(ResourceLocation.parse(iconItem)).getDefaultInstance();
 		}
 
 		@Override
@@ -364,11 +373,15 @@ public class ProgressionScreen extends Screen {
 
 			int borderColour = isSelected ? 0xFF888888 : 0xFF444444;
 			guiGraphics.fill(this.getX(), this.getY() + this.height - 1, this.getX() + this.width, this.getY() + this.height, borderColour);guiGraphics.pose().pushPose();
+
+			guiGraphics.renderItem(this.iconStack, this.getX() + 2, this.getY() + 2);
+
+			guiGraphics.pose().pushPose();
 			guiGraphics.pose().scale(0.8f, 0.8f, 1.0f);
-			guiGraphics.drawCenteredString(
+			guiGraphics.drawString(
 					ProgressionScreen.this.font,
 					this.getMessage(),
-					(int) ((this.getX() + this.width / 2) / 0.8f),
+					(int) ((this.getX() + 20) / 0.8f),
 					(int) ((this.getY() + (this.height - 8) / 2) / 0.8f),
 					COLOUR_TEXT
 			);
