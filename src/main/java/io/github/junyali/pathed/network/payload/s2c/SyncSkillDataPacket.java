@@ -52,12 +52,18 @@ public record SyncSkillDataPacket (
 						for (int j = 0; j < preCount; j++) {
 							prereqs.add(ResourceLocation.STREAM_CODEC.decode(buf));
 						}
+						int prevCount = buf.readVarInt();
+						List<ResourceLocation> prevnodes = new ArrayList<>();
+						for (int j = 0; j < prevCount; j++) {
+							prevnodes.add(ResourceLocation.STREAM_CODEC.decode(buf));
+						}
 						ResourceLocation nodePath = buf.readBoolean() ? ResourceLocation.STREAM_CODEC.decode(buf) : null;
 						// OH MY GOODNESS HOW LONG IS THIS GOING ON FOR
 						SkillNode node = new SkillNode(id, name, desc, category,
 								new SkillNode.NodePosition(x, y),
 								new SkillNode.NodeIcon(iconType, iconValue),
 								prereqs,
+								prevnodes,
 								List.of(),
 								List.of(),
 								Optional.ofNullable(nodePath));

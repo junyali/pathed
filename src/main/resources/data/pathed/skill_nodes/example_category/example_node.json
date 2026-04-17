@@ -13,6 +13,9 @@
   "prerequisites": [
     "pathed:example_category/another_example_node"
   ],
+  "previous_nodes": [
+    "pathed:example_category/some_earlier_node"
+  ],
   "requirements": [
     {
       "type": "pathed:stat_count",
