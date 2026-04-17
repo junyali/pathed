@@ -1,0 +1,37 @@
+{
+  "name": "pathed.skill.example_category.some_earlier_node.name",
+  "description": "pathed.skill.example_category.some_earlier_node.desc",
+  "category": "pathed:example_category",
+  "position": {
+    "x": 0,
+    "y": 0
+  },
+  "icon": {
+    "type": "item",
+    "value": "minecraft:stone"
+  },
+  "prerequisites": [],
+  "previous_nodes": [],
+  "requirements": [
+    {
+      "type": "pathed:stat_count",
+      "stat": "entities_killed",
+      "target": "minecraft:wither",
+      "count": 1,
+      "consumed": false
+    },
+    {
+      "type": "pathed:class_points",
+      "amount": 3,
+      "consumed": true
+    }
+  ],
+  "rewards": [
+    {
+      "type": "pathed:item",
+      "item": "minecraft:nether_star",
+      "count": 1
+    }
+  ],
+  "path_locked": "pathed:spelunker"
+}
