@@ -2,8 +2,14 @@ package io.github.junyali.pathed.screen.progression;
 
 import io.github.junyali.pathed.data.skill.ClientSkillData;
 import io.github.junyali.pathed.data.skill.SkillCategory;
+import io.github.junyali.pathed.data.skill.SkillNode;
+import io.github.junyali.pathed.screen.progression.components.ConnectionRenderer;
+import io.github.junyali.pathed.screen.progression.components.NodeRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class SkillTreePanel {
 	private final ProgressionScreen screen;
@@ -46,7 +52,7 @@ public class SkillTreePanel {
 		this.renderBackground(guiGraphics);
 
 		guiGraphics.pose().translate(scrollX, scrollY, 0);
-		this.renderElement(guiGraphics);
+		this.renderNodes(guiGraphics);
 
 		guiGraphics.disableScissor();
 		guiGraphics.pose().popPose();
@@ -77,13 +83,27 @@ public class SkillTreePanel {
 		return ResourceLocation.withDefaultNamespace("textures/block/dirt.png");
 	}
 
-	private void renderElement(GuiGraphics guiGraphics) {
-		// drag testing
-		int size = 50;
-		int x = (this.contentWidth - size) / 2;
-		int y = (this.contentHeight - size) / 2;
-		guiGraphics.fill(x, y, x + size, y + size, 0xFFFF5555);
-		guiGraphics.fill(x + 2, y + 2, x + size - 2, y + size - 2, 0xFF55FF55);
+	private void renderNodes(GuiGraphics guiGraphics) {
+		if (this.screen.selectedCategory.isEmpty()) return;
+
+		SkillCategory category = ClientSkillData.getCategories().get(ResourceLocation.parse(this.screen.selectedCategory));
+		if (category == null) return;
+
+		int centreX = this.contentWidth / 2;
+		int centreY = this.contentHeight / 2;
+
+		Map<ResourceLocation, SkillNode> nodeMap = new LinkedHashMap<>();
+		for (SkillNode node : category.getNodes()) {
+			nodeMap.put(node.id(), node);
+		}
+
+		for (SkillNode node : category.getNodes()) {
+			ConnectionRenderer.render(guiGraphics, node, nodeMap, centreX, centreY);
+		}
+
+		for (SkillNode node : category.getNodes()) {
+			NodeRenderer.render(guiGraphics, node, centreX, centreY, false);
+		}
 	}
 
 	public boolean isInArea(double mouseX, double mouseY) {
