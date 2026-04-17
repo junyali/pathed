@@ -4,7 +4,6 @@ import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.data.skill.ClientSkillData;
 import io.github.junyali.pathed.data.skill.SkillCategory;
-import io.github.junyali.pathed.data.skill.SkillNodeLoader;
 import io.github.junyali.pathed.registry.PathedAttachments;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -250,7 +249,7 @@ public class ProgressionScreen extends Screen {
 				this.contentTop + this.contentHeight
 		);
 
-		this.renderDirtBackground(guiGraphics);
+		this.renderBackground(guiGraphics);
 
 		guiGraphics.pose().translate(scrollX, scrollY, 0);
 		this.renderElement(guiGraphics);
@@ -261,14 +260,27 @@ public class ProgressionScreen extends Screen {
 		this.renderFrame(guiGraphics);
 	}
 
-	private void renderDirtBackground(GuiGraphics guiGraphics) {
-		ResourceLocation dirtTexture = ResourceLocation.withDefaultNamespace("textures/block/dirt.png");
+	private void renderBackground(GuiGraphics guiGraphics) {
+		ResourceLocation texture = this.getCurrentCategoryBackground();
 		int tileSize = 32;
 		for (int x = 0; x < this.contentWidth; x += tileSize) {
 			for (int y = 0; y < this.contentHeight; y += tileSize) {
-				guiGraphics.blit(dirtTexture, x, y, 0, 0, tileSize, tileSize, tileSize, tileSize);
+				guiGraphics.blit(texture, x, y, 0, 0, tileSize, tileSize, tileSize, tileSize);
 			}
 		}
+	}
+
+	private ResourceLocation getCurrentCategoryBackground() {
+		if (this.selectedCategory.isEmpty()) {
+			return ResourceLocation.withDefaultNamespace("textures/block/dirt.png");
+		}
+
+		SkillCategory category = ClientSkillData.getCategories().get(ResourceLocation.parse(this.selectedCategory));
+		if (category != null && category.getBackground() != null) {
+			return category.getBackground();
+		}
+
+		return ResourceLocation.withDefaultNamespace("textures/block/dirt.png");
 	}
 
 	private void renderFrame(GuiGraphics guiGraphics) {
