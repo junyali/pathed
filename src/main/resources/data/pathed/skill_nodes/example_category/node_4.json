@@ -1,20 +1,19 @@
 {
-  "name": "pathed.skill.example_category.example_node.name",
-  "description": "pathed.skill.example_category.example_node.desc",
+  "name": "pathed.skill.example_category.node_4.name",
+  "description": "pathed.skill.example_category.node_4.desc",
   "category": "pathed:example_category",
+  "node_type": "goal",
   "position": {
-    "x": 40,
-    "y": 40
+    "x": 100,
+    "y": 30
   },
   "icon": {
     "type": "item",
-    "value": "minecraft:nether_star"
+    "value": "minecraft:netherite_pickaxe"
   },
-  "prerequisites": [
-    "pathed:example_category/another_example_node"
-  ],
+  "prerequisites": [],
   "previous_nodes": [
-    "pathed:example_category/some_earlier_node"
+    "pathed:example_category/example_node"
   ],
   "requirements": [
     {
