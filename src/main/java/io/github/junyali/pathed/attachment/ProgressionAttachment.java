@@ -45,16 +45,16 @@ public class ProgressionAttachment {
 				int sleepCount,
 				Map<ResourceLocation, Integer> tradingCount
 		) {
-			this.blocksBroken = blocksBroken;
-			this.entitiesKilled = entitiesKilled;
-			this.damageDealt = damageDealt;
-			this.damageTaken = damageTaken;
-			this.itemsCrafted = itemsCrafted;
+			this.blocksBroken = new HashMap<>(blocksBroken);
+			this.entitiesKilled = new HashMap<>(entitiesKilled);
+			this.damageDealt = new HashMap<>(damageDealt);
+			this.damageTaken = new HashMap<>(damageTaken);
+			this.itemsCrafted = new HashMap<>(itemsCrafted);
 			this.distanceTravelled = distanceTravelled;
-			this.dimensionsVisited = dimensionsVisited;
+			this.dimensionsVisited = new HashSet<>(dimensionsVisited);
 			this.deathCount = deathCount;
 			this.sleepCount = sleepCount;
-			this.tradingCount = tradingCount;
+			this.tradingCount = new HashMap<>(tradingCount);
 		}
 
 		public Map<ResourceLocation, Integer> getBlocksBroken() {
@@ -140,7 +140,7 @@ public class ProgressionAttachment {
 
 		private UpgradeData(ToolTier currentToolTier, Set<ResourceLocation> unlockedAttributes) {
 			this.currentToolTier = currentToolTier;
-			this.unlockedAttributes = unlockedAttributes;
+			this.unlockedAttributes = new HashSet<>(unlockedAttributes);
 		}
 
 		public ToolTier getCurrentToolTier() {
@@ -224,8 +224,8 @@ public class ProgressionAttachment {
 		this.experience = experience;
 		this.progressionStats = progressionStats;
 		this.upgradeData = upgradeData;
-		this.completedNodes = completedNodes;
-		this.availableNodes = availableNodes;
+		this.completedNodes = new HashSet<>(completedNodes);
+		this.availableNodes = new HashSet<>(availableNodes);
 	}
 
 	public int getClassPoints() {
