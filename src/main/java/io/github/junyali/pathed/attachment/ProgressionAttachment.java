@@ -2,6 +2,7 @@ package io.github.junyali.pathed.attachment;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.junyali.pathed.item.tool.ToolTier;
 import io.github.junyali.pathed.registry.PathedAttachments;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -129,12 +130,55 @@ public class ProgressionAttachment {
 		).apply(i, ProgressionStats::new));
 	}
 
+	public static class UpgradeData {
+		private ToolTier currentToolTier;
+		private final Set<ResourceLocation> unlockedAttributes;
+
+		public UpgradeData() {
+			this(ToolTier.WOOD, new HashSet<>());
+		}
+
+		private UpgradeData(ToolTier currentToolTier, Set<ResourceLocation> unlockedAttributes) {
+			this.currentToolTier = currentToolTier;
+			this.unlockedAttributes = unlockedAttributes;
+		}
+
+		public ToolTier getCurrentToolTier() {
+			return currentToolTier;
+		}
+
+		public void setToolTier(ToolTier tier) {
+			this.currentToolTier = tier;
+		}
+
+		public Set<ResourceLocation> getUnlockedAttributes() {
+			return unlockedAttributes;
+		}
+
+		public void unlockAttribute(ResourceLocation attribute) {
+			unlockedAttributes.add(attribute);
+		}
+
+		public boolean hasAttribute(ResourceLocation attribute) {
+			return unlockedAttributes.contains(attribute);
+		}
+
+		static final Codec<UpgradeData> CODEC = RecordCodecBuilder.create(i -> i.group(
+				ToolTier.CODEC.optionalFieldOf("currentToolTier", ToolTier.WOOD)
+						.forGetter(UpgradeData::getCurrentToolTier),
+				ResourceLocation.CODEC.listOf().xmap(HashSet::new, list -> list.stream().toList())
+						.optionalFieldOf("unlockedAttributes", new HashSet<>())
+						.forGetter(d -> new HashSet<>(d.getUnlockedAttributes()))
+		).apply(i, UpgradeData::new));
+	}
+
 	public static final Codec<ProgressionAttachment> CODEC = RecordCodecBuilder.create(i -> i.group(
 			Codec.INT.fieldOf("classPoints").forGetter(ProgressionAttachment::getClassPoints),
 			Codec.INT.fieldOf("generalPoints").forGetter(ProgressionAttachment::getGeneralPoints),
 			Codec.INT.fieldOf("level").forGetter(ProgressionAttachment::getLevel),
 			Codec.INT.fieldOf("experience").forGetter(ProgressionAttachment::getExperience),
 			ProgressionStats.CODEC.fieldOf("progressionStats").forGetter(a -> a.progressionStats),
+			UpgradeData.CODEC.optionalFieldOf("upgradeData", new UpgradeData()).forGetter(a -> a.upgradeData),
 			ResourceLocation.CODEC.listOf().xmap(HashSet::new, list -> list.stream().toList())
 					.fieldOf("completedNodes").forGetter(a -> new HashSet<>(a.completedNodes)),
 			ResourceLocation.CODEC.listOf().xmap(HashSet::new, list -> list.stream().toList())
@@ -149,6 +193,7 @@ public class ProgressionAttachment {
 	private int level;
 	private int experience;
 	private final ProgressionStats progressionStats;
+	private final UpgradeData upgradeData;
 	private final Set<ResourceLocation> completedNodes;
 	private final Set<ResourceLocation> availableNodes;
 
@@ -158,6 +203,7 @@ public class ProgressionAttachment {
 		this.level = 1;
 		this.experience = 0;
 		this.progressionStats = new ProgressionStats();
+		this.upgradeData = new UpgradeData();
 		this.completedNodes = new HashSet<>();
 		this.availableNodes = new HashSet<>();
 	}
@@ -168,6 +214,7 @@ public class ProgressionAttachment {
 			int level,
 			int experience,
 			ProgressionStats progressionStats,
+			UpgradeData upgradeData,
 			Set<ResourceLocation> completedNodes,
 			Set<ResourceLocation> availableNodes
 	) {
@@ -176,6 +223,7 @@ public class ProgressionAttachment {
 		this.level = level;
 		this.experience = experience;
 		this.progressionStats = progressionStats;
+		this.upgradeData = upgradeData;
 		this.completedNodes = completedNodes;
 		this.availableNodes = availableNodes;
 	}
@@ -194,6 +242,10 @@ public class ProgressionAttachment {
 
 	public int getExperience() {
 		return experience;
+	}
+
+	public UpgradeData getUpgradeData() {
+		return upgradeData;
 	}
 
 	public void addClassPoints(int amount) {
