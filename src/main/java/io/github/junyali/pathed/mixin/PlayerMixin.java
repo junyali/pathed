@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Player.class)
 public class PlayerMixin {
 	@Inject(
-			method = "hasCorrectToolForDrops(Lnet/minecraft/world/level/block/state/BlockState;)Z",
+			method = "hasCorrectToolForDrops*",
 			at = @At("HEAD"),
 			cancellable = true
 	)
