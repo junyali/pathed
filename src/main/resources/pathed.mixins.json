@@ -3,7 +3,7 @@
   "package": "io.github.junyali.pathed.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ItemStackMixin"
+    "PlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
