@@ -26,15 +26,22 @@ public class SkillCategoryLoader extends SimpleJsonResourceReloadListener {
 	@Override
 	protected void apply(Map<ResourceLocation, JsonElement> objects, @NotNull ResourceManager manager, @NotNull ProfilerFiller profiler) {
 		Map<ResourceLocation, SkillCategory> built = new LinkedHashMap<>();
+		int successCount = 0;
+		int failureCount = 0;
+
 		for (Map.Entry<ResourceLocation, JsonElement> entry : objects.entrySet()) {
 			try {
 				SkillCategory cat = SkillCategory.CODEC.parse(JsonOps.INSTANCE, entry.getValue()).getOrThrow();
 				built.put(entry.getKey(), cat);
+				successCount++;
 			} catch (Exception e) {
+				failureCount++;
 				Pathed.LOGGER.error("Error loading category {}", entry.getKey(), e);
 			}
 		}
 		categories = Collections.unmodifiableMap(built);
+		Pathed.LOGGER.info("Loaded {} skill categories ({} succeeded, {} failed)",
+				successCount + failureCount, successCount, failureCount);
 	}
 
 	public static Map<ResourceLocation, SkillCategory> getCategories() {
