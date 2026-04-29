@@ -1,0 +1,38 @@
+{
+  "name": "pathed.skill.tiers.diamond.name",
+  "description": "pathed.skill.tiers.diamond.desc",
+  "category": "pathed:tiers",
+  "node_type": "challenge",
+  "position": {
+    "x": 180,
+    "y": 0
+  },
+  "icon": {
+    "type": "item",
+    "value": "minecraft:diamond_pickaxe"
+  },
+  "previous_nodes": [
+    "pathed:tiers/iron"
+  ],
+  "requirements": [
+    {
+      "type": "pathed:stat_count",
+      "stat": "entities_killed",
+      "target": "minecraft:wither",
+      "count": 1,
+      "consumed": false
+    },
+    {
+      "type": "pathed:class_points",
+      "amount": 3,
+      "consumed": true
+    }
+  ],
+  "rewards": [
+    {
+      "type": "pathed:item",
+      "item": "minecraft:nether_star",
+      "count": 1
+    }
+  ]
+}

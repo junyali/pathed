@@ -1,0 +1,34 @@
+{
+  "name": "pathed.skill.tiers.wood.name",
+  "description": "pathed.skill.tiers.wood.desc",
+  "category": "pathed:tiers",
+  "position": {
+    "x": 0,
+    "y": 0
+  },
+  "icon": {
+    "type": "item",
+    "value": "minecraft:wooden_pickaxe"
+  },
+  "requirements": [
+    {
+      "type": "pathed:stat_count",
+      "stat": "entities_killed",
+      "target": "minecraft:wither",
+      "count": 1,
+      "consumed": false
+    },
+    {
+      "type": "pathed:class_points",
+      "amount": 3,
+      "consumed": true
+    }
+  ],
+  "rewards": [
+    {
+      "type": "pathed:item",
+      "item": "minecraft:nether_star",
+      "count": 1
+    }
+  ]
+}
