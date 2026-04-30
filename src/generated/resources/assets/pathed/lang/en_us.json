@@ -33,5 +33,18 @@
   "pathed.gui.path_menu.no_path": "No Path Selected",
   "pathed.gui.path_menu.title": "Your Path",
   "pathed.gui.progression.categories": "Categories",
-  "pathed.gui.progression.title": "Progression"
+  "pathed.gui.progression.title": "Progression",
+  "pathed.skill.tooltip.prerequisites": "Prerequisites:",
+  "pathed.skill.tooltip.req.class_points": "%1$s Class Points",
+  "pathed.skill.tooltip.req.general_points": "%1$s General Points",
+  "pathed.skill.tooltip.req.node": "Unlock %1$s",
+  "pathed.skill.tooltip.req.stat.blocks_mined": "Mine %1$s %2$s",
+  "pathed.skill.tooltip.req.stat.distance_walked": "Walk %1$s blocks",
+  "pathed.skill.tooltip.req.stat.entities_killed": "Kill %1$s %2$s",
+  "pathed.skill.tooltip.req.stat.items_crafted": "Craft %1$s %2$s",
+  "pathed.skill.tooltip.requirements": "Requirements:",
+  "pathed.skill.tooltip.reward.class_points": "+%1$s Class Points",
+  "pathed.skill.tooltip.reward.general_points": "+%1$s General Points",
+  "pathed.skill.tooltip.reward.item": "%1$s x %2$s",
+  "pathed.skill.tooltip.rewards": "Rewards:"
 }

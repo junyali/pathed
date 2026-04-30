@@ -50,6 +50,24 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.gui.progression.title", "Progression");
 		add("pathed.gui.progression.categories", "Categories");
 
+		// NODE TOOLTIPS
+		add("pathed.skill.tooltip.prerequisites", "Prerequisites:");
+		add("pathed.skill.tooltip.requirements", "Requirements:");
+		add("pathed.skill.tooltip.rewards", "Rewards:");
+
+		add("pathed.skill.tooltip.req.stat.entities_killed", "Kill %1$s %2$s");
+		add("pathed.skill.tooltip.req.stat.blocks_mined", "Mine %1$s %2$s");
+		add("pathed.skill.tooltip.req.stat.items_crafted", "Craft %1$s %2$s");
+		add("pathed.skill.tooltip.req.stat.distance_walked", "Walk %1$s blocks");
+
+		add("pathed.skill.tooltip.req.class_points", "%1$s Class Points");
+		add("pathed.skill.tooltip.req.general_points", "%1$s General Points");
+		add("pathed.skill.tooltip.req.node", "Unlock %1$s");
+
+		add("pathed.skill.tooltip.reward.item", "%1$s x %2$s");
+		add("pathed.skill.tooltip.reward.class_points", "+%1$s Class Points");
+		add("pathed.skill.tooltip.reward.general_points", "+%1$s General Points");
+
 		// KEYMAPPINGS
 
 		add("key.categories.pathed", "Pathed");
