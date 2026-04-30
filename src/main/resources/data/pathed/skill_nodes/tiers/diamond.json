@@ -14,6 +14,10 @@
   "previous_nodes": [
     "pathed:tiers/iron"
   ],
+  "prerequisites": [
+    "pathed:tiers/iron",
+    "pathed:tiers/gold"
+  ],
   "requirements": [
     {
       "type": "pathed:stat_count",

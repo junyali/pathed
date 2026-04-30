@@ -13,6 +13,9 @@
   "previous_nodes": [
     "pathed:tiers/wood"
   ],
+  "prerequisites": [
+    "pathed:tiers/wood"
+  ],
   "requirements": [
     {
       "type": "pathed:stat_count",

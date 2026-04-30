@@ -14,6 +14,9 @@
   "previous_nodes": [
     "pathed:tiers/stone"
   ],
+  "prerequisites": [
+    "pathed:tiers/stone"
+  ],
   "requirements": [
     {
       "type": "pathed:stat_count",

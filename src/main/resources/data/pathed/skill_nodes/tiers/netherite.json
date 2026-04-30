@@ -13,6 +13,9 @@
   "previous_nodes": [
     "pathed:tiers/diamond"
   ],
+  "prerequisites": [
+    "pathed:tiers/diamond"
+  ],
   "requirements": [
     {
       "type": "pathed:stat_count",
