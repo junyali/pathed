@@ -101,7 +101,7 @@ public class NodeTooltipRenderer {
 	private static void renderTooltipText(GuiGraphics guiGraphics, List<Component> lines, Font font, int x, int y) {
 		int currentY = y + TOOLTIP_PADDING;
 		for (Component line : lines) {
-			guiGraphics.drawString(font, line, x + TOOLTIP_PADDING, currentY, 0xFFFFFFF);
+			guiGraphics.drawString(font, line, x + TOOLTIP_PADDING, currentY, 0xFFFFFF);
 			currentY += LINE_HEIGHT;
 		}
 	}
