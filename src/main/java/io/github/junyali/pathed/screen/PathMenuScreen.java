@@ -106,6 +106,14 @@ public class PathMenuScreen extends Screen {
 
 				}
 		).bounds(x, y, buttonWidth, buttonHeight).build());
+		y += buttonSpacing;
+
+		this.addRenderableWidget(Button.builder(
+				Component.translatable("pathed.gui.path_menu.button.reward_stash"),
+				btn -> {
+					// for collecting rewards
+				}
+		).bounds(x, y, buttonWidth, buttonHeight).build());
 	}
 
 	@Override

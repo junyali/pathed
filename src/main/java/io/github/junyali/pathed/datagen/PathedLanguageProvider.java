@@ -46,6 +46,7 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.gui.path_menu.level", "Level %s");
 		add("pathed.gui.path_menu.button.skill_tree", "Skill Tree");
 		add("pathed.gui.path_menu.button.stats", "Stats");
+		add("pathed.gui.path_menu.button.reward_stash", "Stash");
 
 		add("pathed.gui.progression.title", "Progression");
 		add("pathed.gui.progression.categories", "Categories");

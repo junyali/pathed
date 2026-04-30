@@ -27,6 +27,7 @@
   "pathed.gui.choose_path.button.select": "Select",
   "pathed.gui.choose_path.starting_kit": "Starting Kit",
   "pathed.gui.choose_path.title": "Choose your Path",
+  "pathed.gui.path_menu.button.reward_stash": "Stash",
   "pathed.gui.path_menu.button.skill_tree": "Skill Tree",
   "pathed.gui.path_menu.button.stats": "Stats",
   "pathed.gui.path_menu.level": "Level %s",
