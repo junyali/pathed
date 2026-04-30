@@ -128,6 +128,10 @@ public class SkillTreePanel {
 		hoveredNode = null;
 		hoveredNodeData = null;
 
+		if (!isInArea(mouseX, mouseY)) {
+			return;
+		}
+
 		double adjustedMouseX = mouseX - this.contentLeft - scrollX;
 		double adjustedMouseY = mouseY - this.contentTop - scrollY;
 
@@ -135,7 +139,23 @@ public class SkillTreePanel {
 			int nodeX = centreX + node.position().x() - NodeRenderer.FRAME_SIZE / 2;
 			int nodeY = centreY + node.position().y() - NodeRenderer.FRAME_SIZE / 2;
 
-			if (adjustedMouseX >= nodeX && adjustedMouseX < nodeX + NodeRenderer.FRAME_SIZE && adjustedMouseY >= nodeY && adjustedMouseY < nodeY + NodeRenderer.FRAME_SIZE) {
+			int hitX1 = nodeX;
+			int hitY1 = nodeY;
+			int hitX2 = nodeX + NodeRenderer.FRAME_SIZE;
+			int hitY2 = nodeY + NodeRenderer.FRAME_SIZE;
+
+			int visX1 = (int) -scrollX;
+			int visY1 = (int) - scrollY;
+			int visX2 = visX1 + this.contentWidth;
+			int visY2 = visY1 + this.contentHeight;
+
+			int clipX1 = Math.max(hitX1, visX1);
+			int clipY1 = Math.max(hitY1, visY1);
+			int clipX2 = Math.min(hitX2, visX2);
+			int clipY2 = Math.min(hitY2, visY2);
+			if (clipX1 >= clipX2 || clipY1 >= clipY2) continue;
+
+			if (adjustedMouseX >= clipX1 && adjustedMouseX < clipX2 && adjustedMouseY >= clipY1 && adjustedMouseY < clipY2) {
 				hoveredNode = node.id();
 				hoveredNodeData = node;
 				break;
