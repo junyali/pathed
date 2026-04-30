@@ -80,9 +80,7 @@ public class SkillTreePanel {
 					hoveredNodeData,
 					this.screen.getMinecraft().font,
 					mouseX,
-					mouseY,
-					this.screen.width,
-					this.screen.height
+					mouseY
 			);
 		}
 	}
