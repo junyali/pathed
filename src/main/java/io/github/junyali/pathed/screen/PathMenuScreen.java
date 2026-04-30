@@ -112,6 +112,9 @@ public class PathMenuScreen extends Screen {
 				Component.translatable("pathed.gui.path_menu.button.reward_stash"),
 				btn -> {
 					// for collecting rewards
+					if (this.minecraft != null) {
+						this.minecraft.setScreen(new RewardStashScreen(this.showDirtBackground));
+					}
 				}
 		).bounds(x, y, buttonWidth, buttonHeight).build());
 	}
