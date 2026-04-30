@@ -5,6 +5,7 @@ import io.github.junyali.pathed.data.skill.SkillCategory;
 import io.github.junyali.pathed.data.skill.SkillNode;
 import io.github.junyali.pathed.screen.progression.components.ConnectionRenderer;
 import io.github.junyali.pathed.screen.progression.components.NodeRenderer;
+import io.github.junyali.pathed.screen.progression.components.NodeTooltipRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
@@ -26,6 +27,7 @@ public class SkillTreePanel {
 	private double scrollX = 0;
 	private double scrollY = 0;
 	private ResourceLocation hoveredNode = null;
+	private SkillNode hoveredNodeData = null;
 
 	public SkillTreePanel(ProgressionScreen screen, int left, int top, int width, int height) {
 		this.screen = screen;
@@ -59,6 +61,18 @@ public class SkillTreePanel {
 		guiGraphics.pose().popPose();
 
 		ProgressionRenderer.renderBorder(guiGraphics, this.left, this.top, this.width, this.height);
+
+		if (hoveredNodeData != null) {
+			NodeTooltipRenderer.render(
+					guiGraphics,
+					hoveredNodeData,
+					this.screen.getMinecraft().font,
+					mouseX,
+					mouseY,
+					this.screen.width,
+					this.screen.height
+			);
+		}
 	}
 
 	private void renderBackground(GuiGraphics guiGraphics) {
@@ -112,6 +126,7 @@ public class SkillTreePanel {
 
 	private void updateHoveredNode(Map<ResourceLocation, SkillNode> nodeMap, int centreX, int centreY, int mouseX, int mouseY) {
 		hoveredNode = null;
+		hoveredNodeData = null;
 
 		double adjustedMouseX = mouseX - this.contentLeft - scrollX;
 		double adjustedMouseY = mouseY - this.contentTop - scrollY;
@@ -122,6 +137,7 @@ public class SkillTreePanel {
 
 			if (adjustedMouseX >= nodeX && adjustedMouseX < nodeX + NodeRenderer.FRAME_SIZE && adjustedMouseY >= nodeY && adjustedMouseY < nodeY + NodeRenderer.FRAME_SIZE) {
 				hoveredNode = node.id();
+				hoveredNodeData = node;
 				break;
 			}
 		}
