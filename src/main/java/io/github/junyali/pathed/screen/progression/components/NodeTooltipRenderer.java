@@ -4,6 +4,7 @@ import io.github.junyali.pathed.data.skill.SkillNode;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,32 @@ public class NodeTooltipRenderer {
 
 	private static List<Component> buildTooltipLines(SkillNode node) {
 		List<Component> lines = new ArrayList<>();
+
+		String categoryId = node.category().getPath();
+		String nodeId = node.id().getPath().replace(categoryId + "/", "");
+
+		lines.add(Component.translatable("pathed.skill." + categoryId + "." + nodeId + ".name")
+				.withStyle(style -> style.withColor(0xFFFFFF).withBold(true)));
+
+		Component description = Component.translatable("pathed.skill." + categoryId + "." + nodeId + ".desc")
+				.withStyle(style -> style.withColor(0xAAAAAA));
+		lines.add(Component.empty());
+		lines.add(description);
+
+		if (node.prerequisites() != null && !node.prerequisites().isEmpty()) {
+			lines.add(Component.empty());
+			lines.add(Component.translatable("pathed.skill.tooltip.prerequisites")
+					.withStyle(style -> style.withColor(0xFFAA00).withBold(true)));
+
+			for (ResourceLocation prereq : node.prerequisites()) {
+				String prereqCategory = prereq.getPath().substring(0, prereq.getPath().lastIndexOf("/"));
+				String prereqNode = prereq.getPath().substring(prereq.getPath().lastIndexOf("/") + 1);
+
+				lines.add(Component.literal(" ->")
+						.append(Component.translatable("pathed.skill." + prereqCategory + "." + prereqNode + ".name"))
+						.withStyle(style -> style.withColor(0xFFAA00)));
+			}
+		}
 
 		return lines;
 	}
