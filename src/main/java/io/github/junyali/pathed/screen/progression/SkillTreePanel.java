@@ -25,6 +25,7 @@ public class SkillTreePanel {
 	private boolean isDragging = false;
 	private double scrollX = 0;
 	private double scrollY = 0;
+	private ResourceLocation hoveredNode = null;
 
 	public SkillTreePanel(ProgressionScreen screen, int left, int top, int width, int height) {
 		this.screen = screen;
@@ -52,7 +53,7 @@ public class SkillTreePanel {
 		this.renderBackground(guiGraphics);
 
 		guiGraphics.pose().translate(scrollX, scrollY, 0);
-		this.renderNodes(guiGraphics);
+		this.renderNodes(guiGraphics, mouseX, mouseY);
 
 		guiGraphics.disableScissor();
 		guiGraphics.pose().popPose();
@@ -83,7 +84,7 @@ public class SkillTreePanel {
 		return ResourceLocation.withDefaultNamespace("textures/block/dirt.png");
 	}
 
-	private void renderNodes(GuiGraphics guiGraphics) {
+	private void renderNodes(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 		if (this.screen.selectedCategory.isEmpty()) return;
 
 		SkillCategory category = ClientSkillData.getCategories().get(ResourceLocation.parse(this.screen.selectedCategory));
@@ -97,12 +98,32 @@ public class SkillTreePanel {
 			nodeMap.put(node.id(), node);
 		}
 
+		updateHoveredNode(nodeMap, centreX, centreY, mouseX, mouseY);
+
 		for (SkillNode node : category.getNodes()) {
 			ConnectionRenderer.render(guiGraphics, node, nodeMap, centreX, centreY);
 		}
 
 		for (SkillNode node : category.getNodes()) {
-			NodeRenderer.render(guiGraphics, node, centreX, centreY, false);
+			boolean hovered = node.id().equals(hoveredNode);
+			NodeRenderer.render(guiGraphics, node, centreX, centreY, false, hovered);
+		}
+	}
+
+	private void updateHoveredNode(Map<ResourceLocation, SkillNode> nodeMap, int centreX, int centreY, int mouseX, int mouseY) {
+		hoveredNode = null;
+
+		double adjustedMouseX = mouseX - this.contentLeft - scrollX;
+		double adjustedMouseY = mouseY - this.contentTop - scrollY;
+
+		for (SkillNode node : nodeMap.values()) {
+			int nodeX = centreX + node.position().x() - NodeRenderer.FRAME_SIZE / 2;
+			int nodeY = centreY + node.position().y() - NodeRenderer.FRAME_SIZE / 2;
+
+			if (adjustedMouseX >= nodeX && adjustedMouseX < nodeX + NodeRenderer.FRAME_SIZE && adjustedMouseY >= nodeY && adjustedMouseY < nodeY + NodeRenderer.FRAME_SIZE) {
+				hoveredNode = node.id();
+				break;
+			}
 		}
 	}
 

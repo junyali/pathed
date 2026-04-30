@@ -9,8 +9,9 @@ import net.minecraft.world.item.ItemStack;
 public class NodeRenderer {
 	public static final int FRAME_SIZE = 26;
 	private static final int ICON_OFFSET = 5;
+	private static final int HOVER_DARKEN_COLOUR = 0x80000000;
 
-	public static void render(GuiGraphics guiGraphics, SkillNode node, int centreX, int centreY, boolean completed) {
+	public static void render(GuiGraphics guiGraphics, SkillNode node, int centreX, int centreY, boolean completed, boolean hovered) {
 		int x = centreX + node.position().x() - FRAME_SIZE / 2;
 		int y = centreY + node.position().y() - FRAME_SIZE / 2;
 
@@ -20,6 +21,10 @@ public class NodeRenderer {
 		if ("item".equals(node.icon().type())) {
 			ItemStack stack = BuiltInRegistries.ITEM.get(ResourceLocation.parse(node.icon().value())).getDefaultInstance();
 			guiGraphics.renderItem(stack, x + ICON_OFFSET, y + ICON_OFFSET);
+		}
+
+		if (hovered) {
+			guiGraphics.fill(x, y, x + FRAME_SIZE, y + FRAME_SIZE, HOVER_DARKEN_COLOUR);
 		}
 	}
 }
