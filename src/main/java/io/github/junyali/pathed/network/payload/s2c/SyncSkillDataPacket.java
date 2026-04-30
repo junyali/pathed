@@ -1,10 +1,9 @@
 package io.github.junyali.pathed.network.payload.s2c;
 
 import io.github.junyali.pathed.Pathed;
-import io.github.junyali.pathed.data.skill.ClientSkillData;
-import io.github.junyali.pathed.data.skill.SkillCategory;
-import io.github.junyali.pathed.data.skill.SkillNode;
+import io.github.junyali.pathed.data.skill.*;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +18,12 @@ public record SyncSkillDataPacket (
 ) implements CustomPacketPayload {
 	public static final Type<SyncSkillDataPacket> TYPE =
 			new Type<>(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "sync_skill_data"));
+
+	private static final StreamCodec<RegistryFriendlyByteBuf, SkillNodeRequirement> REQ_STREAM =
+			ByteBufCodecs.fromCodecWithRegistries(SkillNodeRequirement.CODEC);
+
+	private static final StreamCodec<RegistryFriendlyByteBuf, SkillNodeReward> REWARD_STREAM =
+			ByteBufCodecs.fromCodecWithRegistries(SkillNodeReward.CODEC);
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, SyncSkillDataPacket> STREAM_CODEC =
 			new StreamCodec<>() {
@@ -59,6 +64,16 @@ public record SyncSkillDataPacket (
 						for (int j = 0; j < prevCount; j++) {
 							prevnodes.add(ResourceLocation.STREAM_CODEC.decode(buf));
 						}
+						int reqCount = buf.readVarInt();
+						List<SkillNodeRequirement> requirements = new ArrayList<>(reqCount);
+						for (int j = 0; j < reqCount; j++) {
+							requirements.add(REQ_STREAM.decode(buf));
+						}
+						int rewCount = buf.readVarInt();
+						List<SkillNodeReward> rewards = new ArrayList<>(rewCount);
+						for (int j = 0; j < rewCount; j++) {
+							rewards.add(REWARD_STREAM.decode(buf));
+						}
 						ResourceLocation nodePath = buf.readBoolean() ? ResourceLocation.STREAM_CODEC.decode(buf) : null;
 						// OH MY GOODNESS HOW LONG IS THIS GOING ON FOR
 						SkillNode node = new SkillNode(id, name, desc, category,
@@ -67,8 +82,8 @@ public record SyncSkillDataPacket (
 								nodeType,
 								prereqs,
 								prevnodes,
-								List.of(),
-								List.of(),
+								requirements,
+								rewards,
 								Optional.ofNullable(nodePath));
 						nodes.put(id, node);
 
@@ -115,6 +130,14 @@ public record SyncSkillDataPacket (
 						buf.writeVarInt(n.previousNodes().size());
 						for (ResourceLocation prev : n.previousNodes()) {
 							ResourceLocation.STREAM_CODEC.encode(buf, prev);
+						}
+						buf.writeVarInt(n.requirements().size());
+						for (SkillNodeRequirement r : n.requirements()) {
+							REQ_STREAM.encode(buf, r);
+						}
+						buf.writeVarInt(n.rewards().size());
+						for (SkillNodeReward r : n.rewards()) {
+							REWARD_STREAM.encode(buf, r);
 						}
 						boolean hasPath = n.pathLocked().isPresent();
 						buf.writeBoolean(hasPath);
