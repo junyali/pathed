@@ -71,6 +71,7 @@ public class ProgressionScreen extends Screen {
 
 		this.categoryPanel.renderScrollbar(guiGraphics, mouseX, mouseY);
 		this.categoryPanel.renderTitlebar(guiGraphics);
+		this.skillTreePanel.renderTooltip(guiGraphics, mouseX, mouseY);
 	}
 
 	@Override

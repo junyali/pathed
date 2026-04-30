@@ -61,7 +61,19 @@ public class SkillTreePanel {
 		guiGraphics.pose().popPose();
 
 		ProgressionRenderer.renderBorder(guiGraphics, this.left, this.top, this.width, this.height);
+	}
 
+	private void renderBackground(GuiGraphics guiGraphics) {
+		ResourceLocation texture = this.getCurrentCategoryBackground();
+		int tileSize = 32;
+		for (int x = 0; x < this.contentWidth; x += tileSize) {
+			for (int y = 0; y < this.contentHeight; y += tileSize) {
+				guiGraphics.blit(texture, x, y, 0, 0, tileSize, tileSize, tileSize, tileSize);
+			}
+		}
+	}
+
+	public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 		if (hoveredNodeData != null) {
 			NodeTooltipRenderer.render(
 					guiGraphics,
@@ -72,16 +84,6 @@ public class SkillTreePanel {
 					this.screen.width,
 					this.screen.height
 			);
-		}
-	}
-
-	private void renderBackground(GuiGraphics guiGraphics) {
-		ResourceLocation texture = this.getCurrentCategoryBackground();
-		int tileSize = 32;
-		for (int x = 0; x < this.contentWidth; x += tileSize) {
-			for (int y = 0; y < this.contentHeight; y += tileSize) {
-				guiGraphics.blit(texture, x, y, 0, 0, tileSize, tileSize, tileSize, tileSize);
-			}
 		}
 	}
 

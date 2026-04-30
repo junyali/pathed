@@ -38,8 +38,15 @@ public class NodeTooltipRenderer {
 			y = 0;
 		}
 
+		guiGraphics.flush();
+		guiGraphics.pose().pushPose();;
+		guiGraphics.pose().translate(0.0F, 0.0F, 400.0F);
+
 		renderTooltipBackground(guiGraphics, x, y, tooltipWidth, tooltipHeight);
 		renderTooltipText(guiGraphics, lines, font, x, y);
+
+		guiGraphics.flush();
+		guiGraphics.pose().popPose();
 	}
 
 	private static List<Component> buildTooltipLines(SkillNode node) {
