@@ -1,16 +1,28 @@
 package io.github.junyali.pathed.screen.progression.components;
 
 import io.github.junyali.pathed.data.skill.SkillNode;
+import io.github.junyali.pathed.data.skill.SkillNodeRequirement;
+import io.github.junyali.pathed.data.skill.SkillNodeReward;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NodeTooltipRenderer {
+	private static final int COLOUR_NAME = 0xFFFFFF;
+	private static final int COLOUR_DESC = 0xAAAAAA;
+	private static final int COLOUR_PREREQ = 0xFFAA00;
+	private static final int COLOUR_REQUIREMENT = 0xFF5555;
+	private static final int COLOUR_REWARD = 0x55FF55;
+	private static final int COLOUR_MUTED = 0x808080;
+
 	public static void render(GuiGraphics guiGraphics, SkillNode node, Font font, int mouseX, int mouseY) {
 		List<Component> lines = buildTooltipLines(node);
 		if (lines.isEmpty()) {
@@ -32,17 +44,16 @@ public class NodeTooltipRenderer {
 		String nodeId = node.id().getPath().replace(categoryId + "/", "");
 
 		lines.add(Component.translatable("pathed.skill." + categoryId + "." + nodeId + ".name")
-				.withStyle(style -> style.withColor(0xFFFFFF).withBold(true)));
+				.withStyle(style -> style.withColor(COLOUR_NAME).withBold(true)));
 
 		Component description = Component.translatable("pathed.skill." + categoryId + "." + nodeId + ".desc")
-				.withStyle(style -> style.withColor(0xAAAAAA));
-		lines.add(Component.empty());
+				.withStyle(style -> style.withColor(COLOUR_DESC));
 		lines.add(description);
 
 		if (node.prerequisites() != null && !node.prerequisites().isEmpty()) {
 			lines.add(Component.empty());
 			lines.add(Component.translatable("pathed.skill.tooltip.prerequisites")
-					.withStyle(style -> style.withColor(0xFFAA00).withBold(true)));
+					.withStyle(style -> style.withColor(COLOUR_PREREQ).withBold(true)));
 
 			for (ResourceLocation prereq : node.prerequisites()) {
 				String prereqCategory = prereq.getPath().substring(0, prereq.getPath().lastIndexOf("/"));
@@ -50,10 +61,94 @@ public class NodeTooltipRenderer {
 
 				lines.add(Component.literal(" ->")
 						.append(Component.translatable("pathed.skill." + prereqCategory + "." + prereqNode + ".name"))
-						.withStyle(style -> style.withColor(0xFFAA00)));
+						.withStyle(style -> style.withColor(COLOUR_PREREQ)));
+			}
+		}
+
+		if (node.requirements() != null && !node.requirements().isEmpty()) {
+			lines.add(Component.empty());
+			lines.add(Component.translatable("pathed.skill.tooltip.requirements")
+					.withStyle(style -> style.withColor(COLOUR_REQUIREMENT).withBold(true)));
+			for (SkillNodeRequirement req : node.requirements()) {
+				lines.add(formatRequirement(req));
+			}
+		}
+
+		if (node.rewards() != null && !node.rewards().isEmpty()) {
+			lines.add(Component.empty());
+			lines.add(Component.translatable("pathed.skill.tooltip.rewards")
+					.withStyle(style -> style.withColor(COLOUR_REWARD).withBold(true)));
+			for (SkillNodeReward reward : node.rewards()) {
+				lines.add(formatReward(reward));
 			}
 		}
 
 		return lines;
+	}
+
+	private static Component formatRequirement(SkillNodeRequirement req) {
+		MutableComponent line = switch (req) {
+			case SkillNodeRequirement.StatRequirement r -> {
+				Component target = r.target()
+						.map(NodeTooltipRenderer::lookupTargetName)
+						.orElse(Component.empty());
+
+				yield Component.translatable(
+						"pathed.skill.tooltip.req.stat." + r.stat(),
+						r.count(),
+						target
+				);
+			}
+			case SkillNodeRequirement.PointRequirement r -> Component.translatable(
+					r.classPoints()
+							? "pathed.skill.tooltip.req.class_points"
+							: "pathed.skill.tooltip.req.general_points",
+					r.amount()
+			);
+			case  SkillNodeRequirement.NodeRequirement r -> {
+				int slash = r.nodeId().getPath().lastIndexOf("/");
+				// meow?
+				String cat = r.nodeId().getPath().substring(0, slash);
+				String node = r.nodeId().getPath().substring(slash + 1);
+				yield Component.translatable("pathed.skill.tooltip.req.node",
+						Component.translatable("pathed.skill." + cat + "." + node + ".name"));
+			}
+		};
+
+		return Component.literal(" - ").append(line)
+				.withStyle(style -> style.withColor(COLOUR_REQUIREMENT));
+	}
+
+	private static Component formatReward(SkillNodeReward reward) {
+		MutableComponent line = switch(reward) {
+			case SkillNodeReward.ItemReward r -> {
+				ItemStack stack = BuiltInRegistries.ITEM.get(r.item()).getDefaultInstance();
+				yield Component.translatable("pathed.skill.tooltip.reward.item",
+						r.count(), stack.getHoverName());
+			}
+			case SkillNodeReward.PointReward r -> {
+				MutableComponent c = Component.empty();
+				if (r.classPoints() > 0) {
+					c.append(Component.translatable("pathed.skill.tooltip.reward.class_points", r.classPoints()));
+				}
+				if (r.generalPoints() > 0) {
+					c.append(Component.translatable("pathed.skill.tooltip.reward.general_points"));
+				}
+				yield c;
+			}
+		};
+
+		return Component.literal(" - ").append(line)
+				.withStyle(style -> style.withColor(COLOUR_REWARD));
+	}
+
+	private static Component lookupTargetName(ResourceLocation target) {
+		var entityType = BuiltInRegistries.ENTITY_TYPE.getOptional(target).orElse(null);
+		if (entityType != null) return entityType.getDescription();
+
+		var item = BuiltInRegistries.ITEM.getOptional(target).orElse(null);
+		if (item != null) return item.getDescription();
+
+		return Component.literal(target.toString());
 	}
 }
