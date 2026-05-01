@@ -3,8 +3,11 @@ package io.github.junyali.pathed.data.skill;
 import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.path.Path;
+import io.github.junyali.pathed.network.payload.s2c.NodeCompletedPacket;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class SkillNodeEvaluator {
 	private SkillNodeEvaluator() {}
@@ -72,11 +75,13 @@ public final class SkillNodeEvaluator {
 			if (p.getCompletedNodes().contains(node.id())) continue;
 			if (isAvailable(player, node) && !p.getAvailableNodes().contains(node.id())) {
 				p.addAvailableNode(node.id());
+				announceCompletion(player, node);
 				changed = true;
 			}
 
 			if (hasNoConsumedReqs(node) && isAvailable(player, node) && meetsRequirements(player, node)) {
 				p.addCompletedNode(node.id());
+				announceCompletion(player, node);
 				changed = true;
 			}
 		}
@@ -88,5 +93,14 @@ public final class SkillNodeEvaluator {
 			if (req instanceof SkillNodeRequirement.PointRequirement p && p.consumed()) return false;
 		}
 		return true;
+	}
+
+	private static void announceCompletion(ServerPlayer player, SkillNode node) {
+		PacketDistributor.sendToPlayer(player, new NodeCompletedPacket(node.id()));
+
+		Component name = Component.translatable(node.nameKey());
+		player.sendSystemMessage(
+				Component.translatable("pathed.chat.node_get", player.getDisplayName(), name)
+		);
 	}
 }
