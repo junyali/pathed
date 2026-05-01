@@ -2,6 +2,7 @@ package io.github.junyali.pathed.event;
 
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
+import io.github.junyali.pathed.data.skill.SkillNodeEvaluator;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,6 +29,11 @@ public class ProgressionStatEvents {
 	private static final ResourceLocation ENVIRONMENT_SOURCE =
 			ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "environment");
 
+	private static void evaluateAndSync(ServerPlayer player, ProgressionAttachment p) {
+		SkillNodeEvaluator.evaluateAll(player);
+		p.sync(player);
+	}
+
 	@SubscribeEvent
 	public static void onBlockBreak(BlockEvent.BreakEvent event) {
 		if (!(event.getPlayer() instanceof ServerPlayer player)) return;
@@ -35,7 +41,7 @@ public class ProgressionStatEvents {
 		ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(event.getState().getBlock());
 		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 		progressionAttachment.getBlocksBroken().merge(blockId, 1, Integer::sum);
-		progressionAttachment.sync(player);
+		evaluateAndSync(player, progressionAttachment);
 	}
 
 	@SubscribeEvent
@@ -43,14 +49,14 @@ public class ProgressionStatEvents {
 		if (event.getEntity() instanceof ServerPlayer victim) {
 			ProgressionAttachment progressionAttachment = ProgressionAttachment.get(victim);
 			progressionAttachment.incrementDeathCount();
-			progressionAttachment.sync(victim);
+			evaluateAndSync(victim, progressionAttachment);
 		}
 
 		if (event.getSource().getEntity() instanceof ServerPlayer killer) {
 			ResourceLocation entityId = BuiltInRegistries.ENTITY_TYPE.getKey(event.getEntity().getType());
 			ProgressionAttachment progressionAttachment = ProgressionAttachment.get(killer);
 			progressionAttachment.getEntitiesKilled().merge(entityId, 1, Integer::sum);
-			progressionAttachment.sync(killer);
+			evaluateAndSync(killer, progressionAttachment);
 		}
 	}
 
@@ -63,7 +69,7 @@ public class ProgressionStatEvents {
 			ResourceLocation targetId = BuiltInRegistries.ENTITY_TYPE.getKey(event.getEntity().getType());
 			ProgressionAttachment progressionAttachment = ProgressionAttachment.get(attacker);
 			progressionAttachment.getDamageDealt().merge(targetId, fixedPoint, Integer::sum);
-			progressionAttachment.sync(attacker);
+			evaluateAndSync(attacker, progressionAttachment);
 		}
 
 		if (event.getEntity() instanceof ServerPlayer victim) {
@@ -72,7 +78,7 @@ public class ProgressionStatEvents {
 					: ENVIRONMENT_SOURCE;
 			ProgressionAttachment progressionAttachment = ProgressionAttachment.get(victim);
 			progressionAttachment.getDamageTaken().merge(sourceId, fixedPoint, Integer::sum);
-			progressionAttachment.sync(victim);
+			evaluateAndSync(victim, progressionAttachment);
 		}
 	}
 
@@ -83,7 +89,7 @@ public class ProgressionStatEvents {
 		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(event.getCrafting().getItem());
 		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 		progressionAttachment.getItemsCrafted().merge(itemId, event.getCrafting().getCount(), Integer::sum);
-		progressionAttachment.sync(player);
+		evaluateAndSync(player, progressionAttachment);
 	}
 
 	@SubscribeEvent
@@ -103,7 +109,7 @@ public class ProgressionStatEvents {
 				int fixedPoint = (int)(dist * 100);
 				ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 				progressionAttachment.addDistanceTravelled(fixedPoint);
-				progressionAttachment.sync(player);
+				evaluateAndSync(player, progressionAttachment);
 			}
 		}
 
@@ -123,7 +129,7 @@ public class ProgressionStatEvents {
 		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 		progressionAttachment.getDimensionsVisited().add(dimensionId);
 		lastPositions.remove(player.getUUID());
-		progressionAttachment.sync(player);
+		evaluateAndSync(player, progressionAttachment);
 	}
 
 
@@ -135,7 +141,7 @@ public class ProgressionStatEvents {
 
 		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 		progressionAttachment.incrementSleepCount();
-		progressionAttachment.sync(player);
+		evaluateAndSync(player, progressionAttachment);
 	}
 
 	@SubscribeEvent
@@ -152,6 +158,6 @@ public class ProgressionStatEvents {
 
 		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 		progressionAttachment.incrementTradingCount(professionId);
-		progressionAttachment.sync(player);
+		evaluateAndSync(player, progressionAttachment);
 	}
 }

@@ -63,4 +63,30 @@ public final class SkillNodeEvaluator {
 		p.sync(player);
 		return true;
 	}
+
+	public static void evaluateAll(ServerPlayer player) {
+		ProgressionAttachment p = ProgressionAttachment.get(player);
+		boolean changed = false;
+
+		for (SkillNode node : SkillNodeLoader.getNodes().values()) {
+			if (p.getCompletedNodes().contains(node.id())) continue;
+			if (isAvailable(player, node) && !p.getAvailableNodes().contains(node.id())) {
+				p.addAvailableNode(node.id());
+				changed = true;
+			}
+
+			if (hasNoConsumedReqs(node) && isAvailable(player, node) && meetsRequirements(player, node)) {
+				p.addCompletedNode(node.id());
+				changed = true;
+			}
+		}
+	}
+
+	private static boolean hasNoConsumedReqs(SkillNode node) {
+		for (SkillNodeRequirement req : node.requirements()) {
+			if (req instanceof SkillNodeRequirement.StatRequirement s && s.consumed()) return false;
+			if (req instanceof SkillNodeRequirement.PointRequirement p && p.consumed()) return false;
+		}
+		return true;
+	}
 }
