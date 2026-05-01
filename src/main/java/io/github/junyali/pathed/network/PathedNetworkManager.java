@@ -2,6 +2,7 @@ package io.github.junyali.pathed.network;
 
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.network.payload.c2s.ChoosePathPacket;
+import io.github.junyali.pathed.network.payload.s2c.NodeCompletedPacket;
 import io.github.junyali.pathed.network.payload.s2c.OpenPathSelectPacket;
 import io.github.junyali.pathed.network.payload.s2c.SyncSkillDataPacket;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -25,6 +26,12 @@ public class PathedNetworkManager {
 				SyncSkillDataPacket.TYPE,
 				SyncSkillDataPacket.STREAM_CODEC,
 				SyncSkillDataPacket::handle
+		);
+
+		registrar.playToClient(
+				NodeCompletedPacket.TYPE,
+				NodeCompletedPacket.STREAM_CODEC,
+				NodeCompletedPacket::handle
 		);
 
 		registrar.playToServer(
