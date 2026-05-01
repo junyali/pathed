@@ -10,20 +10,7 @@
     "type": "item",
     "value": "minecraft:wooden_pickaxe"
   },
-  "requirements": [
-    {
-      "type": "pathed:stat_count",
-      "stat": "entities_killed",
-      "target": "minecraft:wither",
-      "count": 1,
-      "consumed": false
-    },
-    {
-      "type": "pathed:class_points",
-      "amount": 3,
-      "consumed": true
-    }
-  ],
+  "requirements": [],
   "rewards": [
     {
       "type": "pathed:item",

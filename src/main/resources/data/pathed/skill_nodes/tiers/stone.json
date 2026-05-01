@@ -25,9 +25,11 @@
       "consumed": false
     },
     {
-      "type": "pathed:class_points",
-      "amount": 3,
-      "consumed": true
+      "type": "pathed:stat_count",
+      "stat": "blocks_broken",
+      "target": "minecraft:stone",
+      "count": 5,
+      "consumed": false
     }
   ],
   "rewards": [
