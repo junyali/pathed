@@ -4,6 +4,7 @@ import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.PathDataHolder;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.skill.SkillCategoryLoader;
+import io.github.junyali.pathed.data.skill.SkillNodeEvaluator;
 import io.github.junyali.pathed.data.skill.SkillNodeLoader;
 import io.github.junyali.pathed.network.payload.s2c.OpenPathSelectPacket;
 import io.github.junyali.pathed.network.payload.s2c.SyncSkillDataPacket;
@@ -31,7 +32,9 @@ public class PathedEvents {
 			PacketDistributor.sendToPlayer(player, new OpenPathSelectPacket());
 		}
 
-		ProgressionAttachment.get(player).sync(player);
+		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
+		SkillNodeEvaluator.evaluateAll(player);
+		progressionAttachment.sync(player);
 	}
 
 	@SubscribeEvent

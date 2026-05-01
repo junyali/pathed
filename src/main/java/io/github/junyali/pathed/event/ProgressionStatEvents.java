@@ -109,7 +109,9 @@ public class ProgressionStatEvents {
 				int fixedPoint = (int)(dist * 100);
 				ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 				progressionAttachment.addDistanceTravelled(fixedPoint);
-				evaluateAndSync(player, progressionAttachment);
+				progressionAttachment.sync(player);
+				// ts is likely too heavy on performance :wilted_rose:
+				// evaluateAndSync(player, progressionAttachment);
 			}
 		}
 
