@@ -3,7 +3,7 @@
   "description": "pathed.skill.tiers.diamond.desc",
   "category": "pathed:tiers",
   "node_type": "goal",
-  "type": "pathed:skill",
+  "type": "pathed:progression",
   "position": {
     "x": 180,
     "y": 0
@@ -22,22 +22,11 @@
   "requirements": [
     {
       "type": "pathed:stat_count",
-      "stat": "entities_killed",
-      "target": "minecraft:wither",
+      "stat": "blocks_broken",
+      "target": "minecraft:diamond_ore",
       "count": 1,
       "consumed": false
-    },
-    {
-      "type": "pathed:class_points",
-      "amount": 3,
-      "consumed": true
     }
   ],
-  "rewards": [
-    {
-      "type": "pathed:item",
-      "item": "minecraft:nether_star",
-      "count": 1
-    }
-  ]
+  "rewards": []
 }

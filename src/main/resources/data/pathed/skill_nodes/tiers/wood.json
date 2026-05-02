@@ -3,7 +3,7 @@
   "description": "pathed.skill.tiers.wood.desc",
   "category": "pathed:tiers",
   "node_type": "task",
-  "type": "pathed:skill",
+  "type": "pathed:progression",
   "position": {
     "x": 0,
     "y": 0
