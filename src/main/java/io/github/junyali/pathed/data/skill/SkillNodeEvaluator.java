@@ -126,10 +126,12 @@ public final class SkillNodeEvaluator {
 	private static void announceCompletion(ServerPlayer player, SkillNode node) {
 		PacketDistributor.sendToPlayer(player, new NodeCompletedPacket(node.id()));
 
+		/*
 		Component name = Component.translatable(node.nameKey());
 		player.sendSystemMessage(
 				Component.translatable("pathed.chat.node_get", player.getDisplayName(), name)
 		);
+		*/
 	}
 
 	private static boolean removeItems(ServerPlayer player, ResourceLocation itemId, int count) {
