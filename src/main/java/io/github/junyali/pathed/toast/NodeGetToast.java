@@ -19,9 +19,7 @@ public class NodeGetToast implements Toast {
 	private static final ResourceLocation BACKGROUND = ResourceLocation.withDefaultNamespace("toast/advancement");
 
 	private final ResourceLocation nodeId;
-	private final Component header = Component.translatable("pathed.toast.node_get");
 	private long firstDrawn = -1L;
-	private boolean played;
 
 	public NodeGetToast(ResourceLocation nodeId) {
 		this.nodeId = nodeId;
@@ -33,10 +31,19 @@ public class NodeGetToast implements Toast {
 		if (firstDrawn == -1L) firstDrawn = timeSinceLastVisible;
 
 		SkillNode node = ClientSkillData.getNodes().get(nodeId);
+		boolean challenge = node != null && "challenge".equals(node.nodeType());
+
+		Component header = challenge
+				? Component.translatable("pathed.toast.node_get_challenge")
+				: Component.translatable("pathed.toast.node_get");
+
+		int colour = challenge
+				? 0xFFFF66FF
+				: 0xFFFFFF00;
 
 		guiGraphics.blitSprite(BACKGROUND, 0, 0, width(), height());
 		Font font = Minecraft.getInstance().font;
-		guiGraphics.drawString(font, header, 30, 7, 0xFFFFFFFF, false);
+		guiGraphics.drawString(font, header, 30, 7, colour, false);
 
 		Component title = node != null
 				? Component.translatable(node.nameKey())
