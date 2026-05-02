@@ -1,16 +1,19 @@
 package io.github.junyali.pathed.screen.progression;
 
+import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.skill.ClientSkillData;
 import io.github.junyali.pathed.data.skill.SkillCategory;
 import io.github.junyali.pathed.data.skill.SkillNode;
 import io.github.junyali.pathed.screen.progression.components.ConnectionRenderer;
 import io.github.junyali.pathed.screen.progression.components.NodeRenderer;
 import io.github.junyali.pathed.screen.progression.components.NodeTooltipRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class SkillTreePanel {
 	private final ProgressionScreen screen;
@@ -118,9 +121,12 @@ public class SkillTreePanel {
 			ConnectionRenderer.render(guiGraphics, node, nodeMap, centreX, centreY);
 		}
 
+		Set<ResourceLocation> completed = getCompletedNodesForLocalPlayer();
+
 		for (SkillNode node : category.getNodes()) {
 			boolean hovered = node.id().equals(hoveredNode);
-			NodeRenderer.render(guiGraphics, node, centreX, centreY, false, hovered);
+			boolean isCompleted = completed.contains(node.id());
+			NodeRenderer.render(guiGraphics, node, centreX, centreY, isCompleted, hovered);
 		}
 	}
 
@@ -185,5 +191,11 @@ public class SkillTreePanel {
 	public void resetScroll() {
 		this.scrollX = 0;
 		this.scrollY = 0;
+	}
+
+	private static Set<ResourceLocation> getCompletedNodesForLocalPlayer() {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.player == null) return Set.of();
+		return ProgressionAttachment.get(mc.player).getCompletedNodes();
 	}
 }
