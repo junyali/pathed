@@ -76,15 +76,36 @@ public final class SkillNodeEvaluator {
 			if (p.getCompletedNodes().contains(node.id())) continue;
 			if (isAvailable(player, node) && !p.getAvailableNodes().contains(node.id())) {
 				p.addAvailableNode(node.id());
-				announceCompletion(player, node);
 				changed = true;
 			}
 
-			if (hasNoConsumedReqs(node) && isAvailable(player, node) && meetsRequirements(player, node)) {
-				p.addCompletedNode(node.id());
-				announceCompletion(player, node);
+			if (node.type() == NodeType.PROGRESSION && hasNoConsumedReqs(node) && isAvailable(player, node) && meetsRequirements(player, node)) {
+				completeNode(player, p, node);
 				changed = true;
 			}
+		}
+
+		if (changed) p.sync(player);
+	}
+
+	public static void applyBaseNodes(ServerPlayer player) {
+		ProgressionAttachment p = ProgressionAttachment.get(player);
+		boolean changed = false;
+		for (SkillNode node : SkillNodeLoader.getNodes().values()) {
+			if (!node.base()) continue;
+			if (p.getCompletedNodes().contains(node.id())) continue;
+			p.addCompletedNode(node.id());
+			// grant reward??
+			changed = true;
+		}
+		if (changed) p.sync(player);
+	}
+
+	private static void completeNode(ServerPlayer player, ProgressionAttachment p, SkillNode node) {
+		p.addCompletedNode(node.id());
+		// grant reward??
+		if (!node.base()) {
+			announceCompletion(player, node);
 		}
 	}
 

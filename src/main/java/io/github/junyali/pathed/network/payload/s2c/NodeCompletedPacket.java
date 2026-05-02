@@ -1,6 +1,8 @@
 package io.github.junyali.pathed.network.payload.s2c;
 
 import io.github.junyali.pathed.Pathed;
+import io.github.junyali.pathed.data.skill.ClientSkillData;
+import io.github.junyali.pathed.data.skill.SkillNode;
 import io.github.junyali.pathed.toast.NodeGetToast;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -32,6 +34,10 @@ public record NodeCompletedPacket(ResourceLocation nodeId) implements CustomPack
 		context.enqueueWork(() -> {
 			Minecraft mc = Minecraft.getInstance();
 			if (mc.player == null) return;
+
+			SkillNode node = ClientSkillData.getNodes().get(packet.nodeId());
+			if (node != null && node.base()) return;
+
 			mc.getToasts().addToast(new NodeGetToast(packet.nodeId));
 			mc.player.playSound(
 					SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f

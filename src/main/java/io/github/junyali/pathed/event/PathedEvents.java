@@ -32,8 +32,9 @@ public class PathedEvents {
 			PacketDistributor.sendToPlayer(player, new OpenPathSelectPacket());
 		}
 
-		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
+		SkillNodeEvaluator.applyBaseNodes(player);
 		SkillNodeEvaluator.evaluateAll(player);
+		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 		progressionAttachment.sync(player);
 	}
 
@@ -43,10 +44,21 @@ public class PathedEvents {
 				SkillCategoryLoader.getCategories(),
 				SkillNodeLoader.getNodes()
 		);
-		if (event.getPlayer() != null) {
-			PacketDistributor.sendToPlayer(event.getPlayer(), packet);
+		if (event.getPlayer() != null && event.getPlayer() instanceof ServerPlayer player) {
+			SkillNodeEvaluator.applyBaseNodes(player);
+			SkillNodeEvaluator.evaluateAll(player);
+			ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
+			progressionAttachment.sync(player);
+			PacketDistributor.sendToPlayer(player, packet);
 		} else {
 			PacketDistributor.sendToAllPlayers(packet);
+
+			for (ServerPlayer player : event.getPlayerList().getPlayers()) {
+				SkillNodeEvaluator.applyBaseNodes(player);
+				SkillNodeEvaluator.evaluateAll(player);
+				ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
+				progressionAttachment.sync(player);
+			}
 		}
 	}
 
