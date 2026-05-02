@@ -54,6 +54,8 @@ public record SyncSkillDataPacket (
 						String iconType = buf.readUtf();
 						String iconValue = buf.readUtf();
 						String nodeType = buf.readUtf();
+						NodeType type = buf.readEnum(NodeType.class);
+						boolean base = buf.readBoolean();
 						int preCount = buf.readVarInt();
 						List<ResourceLocation> prereqs = new ArrayList<>();
 						for (int j = 0; j < preCount; j++) {
@@ -80,6 +82,8 @@ public record SyncSkillDataPacket (
 								new SkillNode.NodePosition(x, y),
 								new SkillNode.NodeIcon(iconType, iconValue),
 								nodeType,
+								type,
+								base,
 								prereqs,
 								prevnodes,
 								requirements,
@@ -123,6 +127,8 @@ public record SyncSkillDataPacket (
 						buf.writeUtf(n.icon().type());
 						buf.writeUtf(n.icon().value());
 						buf.writeUtf(n.nodeType());
+						buf.writeEnum(n.type());
+						buf.writeBoolean(n.base());
 						buf.writeVarInt(n.prerequisites().size());
 						for (ResourceLocation pre : n.prerequisites()) {
 							ResourceLocation.STREAM_CODEC.encode(buf, pre);
