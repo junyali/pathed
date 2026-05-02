@@ -2,6 +2,8 @@
   "name": "pathed.skill.tiers.gold.name",
   "description": "pathed.skill.tiers.gold.desc",
   "category": "pathed:tiers",
+  "node_type": "task",
+  "type": "pathed:skill",
   "position": {
     "x": -50,
     "y": 30

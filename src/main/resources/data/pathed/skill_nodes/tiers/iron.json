@@ -3,6 +3,7 @@
   "description": "pathed.skill.tiers.iron.desc",
   "category": "pathed:tiers",
   "node_type": "goal",
+  "type": "pathed:skill",
   "position": {
     "x": 120,
     "y": 0

@@ -2,6 +2,8 @@
   "name": "pathed.skill.tiers.netherite.name",
   "description": "pathed.skill.tiers.netherite.desc",
   "category": "pathed:tiers",
+  "node_type": "challenge",
+  "type": "pathed:skill",
   "position": {
     "x": 240,
     "y": 0

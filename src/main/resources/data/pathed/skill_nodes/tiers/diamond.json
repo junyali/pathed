@@ -2,7 +2,8 @@
   "name": "pathed.skill.tiers.diamond.name",
   "description": "pathed.skill.tiers.diamond.desc",
   "category": "pathed:tiers",
-  "node_type": "challenge",
+  "node_type": "goal",
+  "type": "pathed:skill",
   "position": {
     "x": 180,
     "y": 0

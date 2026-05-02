@@ -2,6 +2,8 @@
   "name": "pathed.skill.tiers.stone.name",
   "description": "pathed.skill.tiers.stone.desc",
   "category": "pathed:tiers",
+  "node_type": "task",
+  "type": "pathed:skill",
   "position": {
     "x": 60,
     "y": 0
