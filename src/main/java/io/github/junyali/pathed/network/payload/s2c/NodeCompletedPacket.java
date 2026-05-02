@@ -5,10 +5,12 @@ import io.github.junyali.pathed.data.skill.ClientSkillData;
 import io.github.junyali.pathed.data.skill.SkillNode;
 import io.github.junyali.pathed.toast.NodeGetToast;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
@@ -36,11 +38,15 @@ public record NodeCompletedPacket(ResourceLocation nodeId) implements CustomPack
 			if (mc.player == null) return;
 
 			SkillNode node = ClientSkillData.getNodes().get(packet.nodeId());
-			if (node != null && node.base()) return;
+			if (node == null) return;
+			if (node.base()) return;
 
 			mc.getToasts().addToast(new NodeGetToast(packet.nodeId));
+			SoundEvent sound = "challenge".equals(node.nodeType())
+					? SoundEvents.UI_TOAST_CHALLENGE_COMPLETE
+					: SoundEvents.UI_TOAST_IN;
 			mc.player.playSound(
-					SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f
+					sound, 1.0f, 1.0f
 			);
 		});
 	}
