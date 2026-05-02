@@ -13,9 +13,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
-import net.neoforged.neoforge.event.entity.player.TradeWithVillagerEvent;
+import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
@@ -160,6 +158,20 @@ public class ProgressionStatEvents {
 
 		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 		progressionAttachment.incrementTradingCount(professionId);
+		evaluateAndSync(player, progressionAttachment);
+	}
+
+	@SubscribeEvent
+	public static void onItemEntityPickup(ItemEntityPickupEvent.Post event) {
+		if (!(event.getPlayer() instanceof ServerPlayer player)) return;
+		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
+		evaluateAndSync(player, progressionAttachment);
+	}
+
+	@SubscribeEvent
+	public static void onContainerClose(PlayerContainerEvent.Close event) {
+		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 		evaluateAndSync(player, progressionAttachment);
 	}
 }

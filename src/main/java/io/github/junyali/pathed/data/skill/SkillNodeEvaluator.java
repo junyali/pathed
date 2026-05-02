@@ -4,9 +4,13 @@ import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.network.payload.s2c.NodeCompletedPacket;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class SkillNodeEvaluator {
@@ -35,7 +39,7 @@ public final class SkillNodeEvaluator {
 	public static boolean meetsRequirements(ServerPlayer player, SkillNode node) {
 		ProgressionAttachment p = ProgressionAttachment.get(player);
 		for (SkillNodeRequirement req : node.requirements()) {
-			if (!SkillRequirementChecker.isMet(p, req)) return false;
+			if (!SkillRequirementChecker.isMet(player, p, req)) return false;
 		}
 
 		return true;
@@ -59,6 +63,8 @@ public final class SkillNodeEvaluator {
 						: p.spendGeneralPoints(pr.amount());
 				if (!ok) return false;
 				// consume
+			} else if (req instanceof SkillNodeRequirement.ItemRequirement ir && ir.consumed()) {
+				if (!removeItems(player, ir.item(), ir.count())) return false;
 			}
 		}
 
@@ -124,5 +130,36 @@ public final class SkillNodeEvaluator {
 		player.sendSystemMessage(
 				Component.translatable("pathed.chat.node_get", player.getDisplayName(), name)
 		);
+	}
+
+	private static boolean removeItems(ServerPlayer player, ResourceLocation itemId, int count) {
+		Item item = BuiltInRegistries.ITEM.get(itemId);
+		if (item == Items.AIR) return false;
+
+		int remaining = count;
+
+		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+			ItemStack stack = player.getInventory().getItem(i);
+			if (stack.getItem() != item) continue;
+
+			int toRemove = Math.min(remaining, stack.getCount());
+			stack.shrink(toRemove);
+			remaining -= toRemove;
+
+			if (remaining <= 0) return true;
+		}
+
+		for (int i = 0; i < player.getEnderChestInventory().getContainerSize(); i++) {
+			ItemStack stack = player.getEnderChestInventory().getItem(i);
+			if (stack.getItem() != item) continue;
+
+			int toRemove = Math.min(remaining, stack.getCount());
+			stack.shrink(toRemove);
+			remaining -= toRemove;
+
+			if (remaining <= 0) return true;
+		}
+
+		return false;
 	}
 }

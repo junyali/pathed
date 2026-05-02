@@ -59,7 +59,7 @@ public class NodeTooltipRenderer {
 				String prereqCategory = prereq.getPath().substring(0, prereq.getPath().lastIndexOf("/"));
 				String prereqNode = prereq.getPath().substring(prereq.getPath().lastIndexOf("/") + 1);
 
-				lines.add(Component.literal(" ->")
+				lines.add(Component.literal(" -> ")
 						.append(Component.translatable("pathed.skill." + prereqCategory + "." + prereqNode + ".name"))
 						.withStyle(style -> style.withColor(COLOUR_PREREQ)));
 			}
@@ -112,6 +112,13 @@ public class NodeTooltipRenderer {
 				String node = r.nodeId().getPath().substring(slash + 1);
 				yield Component.translatable("pathed.skill.tooltip.req.node",
 						Component.translatable("pathed.skill." + cat + "." + node + ".name"));
+			}
+			case SkillNodeRequirement.ItemRequirement r -> {
+				ItemStack stack = BuiltInRegistries.ITEM.get(r.item()).getDefaultInstance();
+				String key = r.consumed()
+						? "pathed.skill.tooltip.req.item_consumed"
+						: "pathed.skill.tooltip.req.item";
+				yield Component.translatable(key, r.count(), stack.getHoverName());
 			}
 		};
 

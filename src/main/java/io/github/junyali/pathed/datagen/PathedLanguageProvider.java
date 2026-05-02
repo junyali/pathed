@@ -64,6 +64,8 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.skill.tooltip.req.class_points", "%1$s Class Points");
 		add("pathed.skill.tooltip.req.general_points", "%1$s General Points");
 		add("pathed.skill.tooltip.req.node", "Unlock %1$s");
+		add("pathed.skill.tooltip.req.item", "Obtain %s x %s");
+		add("pathed.skill.tooltip.req.item_consumed", "Hand over %s x %s");
 
 		add("pathed.skill.tooltip.reward.item", "%1$s x %2$s");
 		add("pathed.skill.tooltip.reward.class_points", "+%1$s Class Points");

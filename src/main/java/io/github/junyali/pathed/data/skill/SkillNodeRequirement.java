@@ -10,20 +10,23 @@ import java.util.Optional;
 public sealed interface SkillNodeRequirement permits
 		SkillNodeRequirement.StatRequirement,
 		SkillNodeRequirement.PointRequirement,
-		SkillNodeRequirement.NodeRequirement {
+		SkillNodeRequirement.NodeRequirement,
+		SkillNodeRequirement.ItemRequirement {
 
 	Codec<SkillNodeRequirement> CODEC = Codec.STRING.dispatch(
 			req -> switch (req) {
-				case StatRequirement r -> "pathed:stat_count";
+				case StatRequirement r  -> "pathed:stat_count";
 				case PointRequirement r -> r.classPoints() ? "pathed:class_points" : "pathed:general_points";
-				case NodeRequirement r -> "pathed:node";
+				case NodeRequirement r  -> "pathed:node";
+				case ItemRequirement r  -> "pathed:item_obtained";
 			},
 			type -> switch (type) {
-				case "pathed:stat_count" -> StatRequirement.CODEC;
-				case "pathed:class_points" -> PointRequirement.CLASS_CODEC;
-				case "pathed:general_points" -> PointRequirement.GENERAL_CODEC;
-				case "pathed:node" -> NodeRequirement.CODEC;
-				default -> throw new IllegalArgumentException("Unknown req type: " + type);
+				case "pathed:stat_count"        -> StatRequirement.CODEC;
+				case "pathed:class_points"      -> PointRequirement.CLASS_CODEC;
+				case "pathed:general_points"    -> PointRequirement.GENERAL_CODEC;
+				case "pathed:node"              -> NodeRequirement.CODEC;
+				case "pathed:item_obtained"     -> ItemRequirement.CODEC;
+				default                         -> throw new IllegalArgumentException("Unknown req type: " + type);
 			}
 	);
 
@@ -51,5 +54,13 @@ public sealed interface SkillNodeRequirement permits
 		static final MapCodec<NodeRequirement> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
 				ResourceLocation.CODEC.fieldOf("node").forGetter(NodeRequirement::nodeId)
 		).apply(i, NodeRequirement::new));
+	}
+
+	record ItemRequirement(ResourceLocation item, int count, boolean consumed) implements SkillNodeRequirement {
+		static final MapCodec<ItemRequirement> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+				ResourceLocation.CODEC.fieldOf("item").forGetter(ItemRequirement::item),
+				Codec.INT.fieldOf("count").forGetter(ItemRequirement::count),
+				Codec.BOOL.optionalFieldOf("consumed", false).forGetter(ItemRequirement::consumed)
+		).apply(i, ItemRequirement::new));
 	}
 }
