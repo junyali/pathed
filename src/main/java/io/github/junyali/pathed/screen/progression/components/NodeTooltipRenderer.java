@@ -1,8 +1,10 @@
 package io.github.junyali.pathed.screen.progression.components;
 
+import io.github.junyali.pathed.data.skill.ClientRequirementCheck;
 import io.github.junyali.pathed.data.skill.SkillNode;
 import io.github.junyali.pathed.data.skill.SkillNodeRequirement;
 import io.github.junyali.pathed.data.skill.SkillNodeReward;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -10,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -22,9 +25,17 @@ public class NodeTooltipRenderer {
 	private static final int COLOUR_REQUIREMENT = 0xFF5555;
 	private static final int COLOUR_REWARD = 0x55FF55;
 	private static final int COLOUR_MUTED = 0x808080;
+	private static final int COLOUR_FULFILLED = 0x55FF55;
+	private static final int COLOUR_UNFULFILLED = 0xFF5555;
+
+	private static final String GLYPH_CHECK = "\u2714";
+	private static final String GLYPH_CROSS = "\u2718";
 
 	public static void render(GuiGraphics guiGraphics, SkillNode node, Font font, int mouseX, int mouseY) {
-		List<Component> lines = buildTooltipLines(node);
+		Player player = Minecraft.getInstance().player;
+		boolean nodeCompleted = player != null && ClientRequirementCheck.isCompleted(player, node);
+
+		List<Component> lines = buildTooltipLines(node, player, nodeCompleted);
 		if (lines.isEmpty()) {
 			return;
 		}
@@ -37,7 +48,7 @@ public class NodeTooltipRenderer {
 		guiGraphics.renderTooltip(font, visual, mouseX, mouseY);
 	}
 
-	private static List<Component> buildTooltipLines(SkillNode node) {
+	private static List<Component> buildTooltipLines(SkillNode node, Player player, boolean nodeCompleted) {
 		List<Component> lines = new ArrayList<>();
 
 		String categoryId = node.category().getPath();
@@ -56,12 +67,17 @@ public class NodeTooltipRenderer {
 					.withStyle(style -> style.withColor(COLOUR_PREREQ).withBold(true)));
 
 			for (ResourceLocation prereq : node.prerequisites()) {
+				boolean met = nodeCompleted || (player != null && ClientRequirementCheck.isPrereqMet(player, prereq));
+
 				String prereqCategory = prereq.getPath().substring(0, prereq.getPath().lastIndexOf("/"));
 				String prereqNode = prereq.getPath().substring(prereq.getPath().lastIndexOf("/") + 1);
 
-				lines.add(Component.literal(" -> ")
-						.append(Component.translatable("pathed.skill." + prereqCategory + "." + prereqNode + ".name"))
-						.withStyle(style -> style.withColor(COLOUR_PREREQ)));
+				MutableComponent name = Component.translatable("pathed.skill." + prereqCategory + "." + prereqNode + ".name")
+								.withStyle(style -> style.withColor(0xFFFFFF));
+
+				lines.add(Component.literal(" ")
+						.append(prefix(met))
+						.append(name));
 			}
 		}
 
@@ -70,7 +86,8 @@ public class NodeTooltipRenderer {
 			lines.add(Component.translatable("pathed.skill.tooltip.requirements")
 					.withStyle(style -> style.withColor(COLOUR_REQUIREMENT).withBold(true)));
 			for (SkillNodeRequirement req : node.requirements()) {
-				lines.add(formatRequirement(req));
+				boolean met = nodeCompleted || (player != null && ClientRequirementCheck.isMet(player, req));
+				lines.add(formatRequirement(req, met));
 			}
 		}
 
@@ -86,8 +103,8 @@ public class NodeTooltipRenderer {
 		return lines;
 	}
 
-	private static Component formatRequirement(SkillNodeRequirement req) {
-		MutableComponent line = switch (req) {
+	private static Component formatRequirement(SkillNodeRequirement req, boolean met) {
+		MutableComponent body = switch (req) {
 			case SkillNodeRequirement.StatRequirement r -> {
 				Component target = r.target()
 						.map(NodeTooltipRenderer::lookupTargetName)
@@ -122,8 +139,11 @@ public class NodeTooltipRenderer {
 			}
 		};
 
-		return Component.literal(" - ").append(line)
-				.withStyle(style -> style.withColor(COLOUR_REQUIREMENT));
+		body.withStyle(style -> style.withColor(0xFFFFFF));
+
+		return Component.literal(" ")
+				.append(prefix(met))
+				.append(body);
 	}
 
 	private static Component formatReward(SkillNodeReward reward) {
@@ -157,5 +177,10 @@ public class NodeTooltipRenderer {
 		if (item != null) return item.getDescription();
 
 		return Component.literal(target.toString());
+	}
+
+	private static MutableComponent prefix(boolean met) {
+		return Component.literal((met ? GLYPH_CHECK : GLYPH_CROSS) + " ")
+				.withStyle(style -> style.withColor(met ? COLOUR_FULFILLED : COLOUR_UNFULFILLED));
 	}
 }
