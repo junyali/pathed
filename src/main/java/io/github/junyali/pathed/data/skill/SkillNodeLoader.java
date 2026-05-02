@@ -48,6 +48,8 @@ public class SkillNodeLoader extends SimpleJsonResourceReloadListener {
 						parsed.position(),
 						parsed.icon(),
 						parsed.nodeType(),
+						parsed.type(),
+						parsed.base(),
 						parsed.prerequisites(),
 						parsed.previousNodes(),
 						parsed.requirements(),

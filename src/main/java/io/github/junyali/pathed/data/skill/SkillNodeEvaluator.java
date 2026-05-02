@@ -58,6 +58,7 @@ public final class SkillNodeEvaluator {
 						? p.spendClassPoints(pr.amount())
 						: p.spendGeneralPoints(pr.amount());
 				if (!ok) return false;
+				// consume
 			}
 		}
 
