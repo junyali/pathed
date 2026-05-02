@@ -57,7 +57,7 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.skill.tooltip.rewards", "Rewards:");
 
 		add("pathed.skill.tooltip.req.stat.entities_killed", "Kill %1$s %2$s");
-		add("pathed.skill.tooltip.req.stat.blocks_mined", "Mine %1$s %2$s");
+		add("pathed.skill.tooltip.req.stat.blocks_broken", "Mine %1$s %2$s");
 		add("pathed.skill.tooltip.req.stat.items_crafted", "Craft %1$s %2$s");
 		add("pathed.skill.tooltip.req.stat.distance_walked", "Walk %1$s blocks");
 
