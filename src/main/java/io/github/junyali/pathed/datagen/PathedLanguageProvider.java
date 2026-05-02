@@ -71,6 +71,10 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.skill.tooltip.reward.class_points", "+%1$s Class Points");
 		add("pathed.skill.tooltip.reward.general_points", "+%1$s General Points");
 
+		// TOASTS
+		add("pathed.toast.node_get", "Node Completed!");
+		add("pathed.toast.node_get_challenge", "Challenge Node Completed!");
+
 		// KEYMAPPINGS
 
 		add("key.categories.pathed", "Pathed");
