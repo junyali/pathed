@@ -25,6 +25,12 @@
       "target": "minecraft:ancient_debris",
       "count": 1,
       "consumed": false
+    },
+    {
+      "type": "pathed:item_obtained",
+      "item": "minecraft:ancient_debris",
+      "count": 1,
+      "consumed": false
     }
   ],
   "rewards": [
