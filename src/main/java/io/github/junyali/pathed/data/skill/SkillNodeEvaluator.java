@@ -182,7 +182,6 @@ public final class SkillNodeEvaluator {
 					Optional<RecipeHolder<?>> recipe = Objects.requireNonNull(player.getServer()).getRecipeManager().byKey(r.recipe());
 					recipe.ifPresent(recipeHolder -> player.awardRecipes(List.of(recipeHolder)));
 				}
-				default -> throw new IllegalStateException("Unexpected value: " + reward);
 			}
 		}
 	}
