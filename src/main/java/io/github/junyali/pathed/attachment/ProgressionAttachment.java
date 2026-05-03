@@ -11,10 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ProgressionAttachment {
 	public static class ProgressionStats {
@@ -183,7 +180,11 @@ public class ProgressionAttachment {
 				ToolTier.CODEC.optionalFieldOf("currentToolTier", ToolTier.WOOD)
 						.forGetter(UpgradeData::getCurrentToolTier),
 				Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
-						.optionalFieldOf("unlockedAttributes", new HashMap<>())
+						.optionalFieldOf("unlockedAttributes")
+						.xmap(
+								opt -> opt.orElseGet(HashMap::new),
+								Optional::of
+						)
 						.forGetter(UpgradeData::getUnlockedAttributes)
 		).apply(i, UpgradeData::new));
 	}
