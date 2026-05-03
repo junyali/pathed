@@ -64,10 +64,11 @@ public sealed interface SkillNodeReward permits
 		).apply(i, AttributeUpgradeReward::new));
 	}
 
-	record ExperienceReward(String amount, boolean vanilla) implements SkillNodeReward {
+	record ExperienceReward(int amount, boolean levels, boolean vanilla) implements SkillNodeReward {
 		static final MapCodec<ExperienceReward> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-				Codec.STRING.fieldOf("amount").forGetter(ExperienceReward::amount),
-				Codec.BOOL.fieldOf("vanilla").forGetter(ExperienceReward::vanilla)
+				Codec.INT.fieldOf("amount").forGetter(ExperienceReward::amount),
+				Codec.BOOL.optionalFieldOf("levels", false).forGetter(ExperienceReward::levels),
+				Codec.BOOL.optionalFieldOf("vanilla", false).forGetter(ExperienceReward::vanilla)
 		).apply(i, ExperienceReward::new));
 	}
 

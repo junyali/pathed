@@ -151,20 +151,16 @@ public final class SkillNodeEvaluator {
 				case SkillNodeReward.AttributeUpgradeReward r -> p.getUpgradeData().incrementAttribute(r.attribute(), r.levels());
 				case SkillNodeReward.ExperienceReward r -> {
 					if (r.vanilla()) {
-						if (r.amount().endsWith("L")) {
-							int levels = Integer.parseInt(r.amount().substring(0, r.amount().length() - 1));
-							player.giveExperienceLevels(levels);
+						if (r.levels()) {
+							player.giveExperienceLevels(r.amount());
 						} else {
-							int exp = Integer.parseInt(r.amount());
-							player.giveExperiencePoints(exp);
+							player.giveExperiencePoints(r.amount());
 						}
 					} else {
-						if (r.amount().endsWith("L")) {
-							int levels = Integer.parseInt(r.amount().substring(0, r.amount().length() -1 ));
-							p.addLevel(levels);
+						if (r.levels()) {
+							p.addLevel(r.amount());
 						} else {
-							int exp = Integer.parseInt(r.amount());
-							p.addExperience(exp);
+							p.addExperience(r.amount());
 						}
 					}
 				}

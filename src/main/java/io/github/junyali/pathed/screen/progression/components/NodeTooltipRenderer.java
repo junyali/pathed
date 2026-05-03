@@ -178,16 +178,14 @@ public class NodeTooltipRenderer {
 			}
 			case SkillNodeReward.ExperienceReward r -> {
 				if (r.vanilla()) {
-					if (r.amount().endsWith("L")) {
-						String levels = r.amount().substring(0, r.amount().length() - 1);
-						yield Component.translatable("pathed.skill.tooltip.reward.minecraft_experience_levels", levels);
+					if (r.levels()) {
+						yield Component.translatable("pathed.skill.tooltip.reward.minecraft_experience_levels", r.amount());
 					} else {
 						yield Component.translatable("pathed.skill.tooltip.reward.minecraft_experience", r.amount());
 					}
 				} else {
-					if (r.amount().endsWith("L")) {
-						String levels = r.amount().substring(0, r.amount().length() - 1);
-						yield Component.translatable("pathed.skill.tooltip.reward.pathed_experience_levels", levels);
+					if (r.levels()) {
+						yield Component.translatable("pathed.skill.tooltip.reward.pathed_experience_levels", r.amount());
 					} else {
 						yield Component.translatable("pathed.skill.tooltip.reward.pathed_experience", r.amount());
 					}
