@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -162,6 +163,51 @@ public class NodeTooltipRenderer {
 					c.append(Component.translatable("pathed.skill.tooltip.reward.general_points"));
 				}
 				yield c;
+			}
+			case SkillNodeReward.AttributeReward r -> {
+				yield Component.translatable("pathed.skill.tooltip.reward.attribute",
+						Component.translatable("pathed.attribute." + r.attribute().getPath()),
+						r.level()
+				);
+			}
+			case SkillNodeReward.AttributeUpgradeReward r -> {
+				yield Component.translatable("pathed.skill.tooltip.reward.attribute_upgrade",
+						Component.translatable("pathed.attribute." + r.attribute().getPath()),
+						r.levels()
+				);
+			}
+			case SkillNodeReward.ExperienceReward r -> {
+				if (r.vanilla()) {
+					if (r.amount().endsWith("L")) {
+						String levels = r.amount().substring(0, r.amount().length() - 1);
+						yield Component.translatable("pathed.skill.tooltip.reward.minecraft_experience_levels", levels);
+					} else {
+						yield Component.translatable("pathed.skill.tooltip.reward.minecraft_experience", r.amount());
+					}
+				} else {
+					if (r.amount().endsWith("L")) {
+						String levels = r.amount().substring(0, r.amount().length() - 1);
+						yield Component.translatable("pathed.skill.tooltip.reward.pathed_experience_levels", levels);
+					} else {
+						yield Component.translatable("pathed.skill.tooltip.reward.pathed_experience", r.amount());
+					}
+				}
+			}
+			case SkillNodeReward.EffectReward r -> {
+				MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(r.effect());
+				Component effectName = effect != null
+						? effect.getDisplayName()
+						: Component.literal(r.effect().toString());
+				yield Component.translatable("pathed.skill.tooltip.reward.effect",
+						effectName,
+						r.duration() / 20,
+						r.amplifier() + 1
+				);
+			}
+			case SkillNodeReward.RecipeReward r -> {
+				yield Component.translatable("pathed.skill.tooltip.reward.recipe",
+						Component.literal(r.recipe().getPath())
+				);
 			}
 		};
 

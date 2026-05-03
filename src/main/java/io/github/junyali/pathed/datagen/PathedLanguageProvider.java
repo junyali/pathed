@@ -70,6 +70,14 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.skill.tooltip.reward.item", "%1$s x %2$s");
 		add("pathed.skill.tooltip.reward.class_points", "+%1$s Class Points");
 		add("pathed.skill.tooltip.reward.general_points", "+%1$s General Points");
+		add("pathed.skill.tooltip.reward.attribute", "Unlock %1$s (Level %2$s)");
+		add("pathed.skill.tooltip.reward.attribute_upgrade", "Upgrade %1$s (+%2$s Levels)");
+		add("pathed.skill.tooltip.reward.minecraft_experience", "+%1$s Vanilla EXP");
+		add("pathed.skill.tooltip.reward.minecraft_experience_levels", "+%1$s Vanilla XP Levels");
+		add("pathed.skill.tooltip.reward.pathed_experience", "+%1$s Path EXP");
+		add("pathed.skill.tooltip.reward.pathed_experience_levels", "+%1$s Path Levels");
+		add("pathed.skill.tooltip.reward.effect", "%1$s for %2$ss (Potency %3$s)");
+		add("pathed.skill.tooltip.reward.recipe", "Unlock Recipe: %1$s");
 
 		// TOASTS
 		add("pathed.toast.node_get", "Node Completed!");
