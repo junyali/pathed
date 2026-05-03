@@ -132,15 +132,15 @@ public class ProgressionAttachment {
 
 	public static class UpgradeData {
 		private ToolTier currentToolTier;
-		private final Set<ResourceLocation> unlockedAttributes;
+		private final Map<ResourceLocation, Integer> unlockedAttributes;
 
 		public UpgradeData() {
-			this(ToolTier.WOOD, new HashSet<>());
+			this(ToolTier.WOOD, new HashMap<>());
 		}
 
-		private UpgradeData(ToolTier currentToolTier, Set<ResourceLocation> unlockedAttributes) {
+		private UpgradeData(ToolTier currentToolTier, Map<ResourceLocation, Integer> unlockedAttributes) {
 			this.currentToolTier = currentToolTier;
-			this.unlockedAttributes = new HashSet<>(unlockedAttributes);
+			this.unlockedAttributes = new HashMap<>(unlockedAttributes);
 		}
 
 		public ToolTier getCurrentToolTier() {
@@ -151,24 +151,40 @@ public class ProgressionAttachment {
 			this.currentToolTier = tier;
 		}
 
-		public Set<ResourceLocation> getUnlockedAttributes() {
+		public Map<ResourceLocation, Integer> getUnlockedAttributes() {
 			return unlockedAttributes;
 		}
 
 		public void unlockAttribute(ResourceLocation attribute) {
-			unlockedAttributes.add(attribute);
+			unlockedAttributes.put(attribute, 1);
+		}
+
+		public void setAttributeLevel(ResourceLocation attribute, int level) {
+			if (level <= 0) {
+				unlockedAttributes.remove(attribute);
+			} else {
+				unlockedAttributes.put(attribute, level);
+			}
+		}
+
+		public void incrementAttribute(ResourceLocation attribute, int level) {
+			unlockedAttributes.merge(attribute, level, Integer::sum);
+		}
+
+		public int getAttributeLevel(ResourceLocation attribute) {
+			return unlockedAttributes.getOrDefault(attribute, 0);
 		}
 
 		public boolean hasAttribute(ResourceLocation attribute) {
-			return unlockedAttributes.contains(attribute);
+			return unlockedAttributes.containsKey(attribute) && unlockedAttributes.get(attribute) > 0;
 		}
 
 		static final Codec<UpgradeData> CODEC = RecordCodecBuilder.create(i -> i.group(
 				ToolTier.CODEC.optionalFieldOf("currentToolTier", ToolTier.WOOD)
 						.forGetter(UpgradeData::getCurrentToolTier),
-				ResourceLocation.CODEC.listOf().xmap(HashSet::new, list -> list.stream().toList())
-						.optionalFieldOf("unlockedAttributes", new HashSet<>())
-						.forGetter(d -> new HashSet<>(d.getUnlockedAttributes()))
+				Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
+						.optionalFieldOf("unlockedAttributes", new HashMap<>())
+						.forGetter(UpgradeData::getUnlockedAttributes)
 		).apply(i, UpgradeData::new));
 	}
 
