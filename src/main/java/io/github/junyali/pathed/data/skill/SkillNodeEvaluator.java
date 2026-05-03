@@ -124,6 +124,7 @@ public final class SkillNodeEvaluator {
 		for (SkillNodeRequirement req : node.requirements()) {
 			if (req instanceof SkillNodeRequirement.StatRequirement s && s.consumed()) return false;
 			if (req instanceof SkillNodeRequirement.PointRequirement p && p.consumed()) return false;
+			if (req instanceof SkillNodeRequirement.ItemRequirement i && i.consumed()) return false;
 		}
 		return true;
 	}
