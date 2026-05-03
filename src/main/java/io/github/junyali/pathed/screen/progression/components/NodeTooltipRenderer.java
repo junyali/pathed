@@ -160,7 +160,7 @@ public class NodeTooltipRenderer {
 					c.append(Component.translatable("pathed.skill.tooltip.reward.class_points", r.classPoints()));
 				}
 				if (r.generalPoints() > 0) {
-					c.append(Component.translatable("pathed.skill.tooltip.reward.general_points"));
+					c.append(Component.translatable("pathed.skill.tooltip.reward.general_points", r.generalPoints()));
 				}
 				yield c;
 			}
