@@ -4,6 +4,7 @@ import io.github.junyali.pathed.Pathed;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -11,13 +12,14 @@ public abstract class Attribute {
 	private final ResourceLocation id;
 	private final int maxLevel;
 	private final ItemStack icon;
-	private final Optional<ResourceLocation> pathLocked;
+	@Nullable
+	private final ResourceLocation pathLocked;
 
 	protected Attribute(String path, int maxLevel, ItemStack icon) {
-		this(path, maxLevel, icon, Optional.empty());
+		this(path, maxLevel, icon, null);
 	}
 
-	protected Attribute(String path, int maxLevel, ItemStack icon, Optional<ResourceLocation> pathLocked) {
+	protected Attribute(String path, int maxLevel, ItemStack icon, @Nullable ResourceLocation pathLocked) {
 		this.id = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, path);
 		this.maxLevel = maxLevel;
 		this.icon = icon;
@@ -37,7 +39,7 @@ public abstract class Attribute {
 	}
 
 	public Optional<ResourceLocation> getPathLocked() {
-		return pathLocked;
+		return Optional.ofNullable(pathLocked);
 	}
 
 	public String getNameKey() {
