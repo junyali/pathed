@@ -5,7 +5,6 @@ import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.network.payload.s2c.NodeCompletedPacket;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -148,7 +147,8 @@ public final class SkillNodeEvaluator {
 					p.addClassPoints(r.classPoints());
 					p.addGeneralPoints(r.generalPoints());
 				}
-				// case SkillNodeReward.AttributeReward r -> p.getUpgradeData().unlockAttribute(r.attribute());
+				case SkillNodeReward.AttributeReward r -> p.getUpgradeData().setAttributeLevel(r.attribute(), r.level());
+				case SkillNodeReward.AttributeUpgradeReward r -> p.getUpgradeData().incrementAttribute(r.attribute(), r.levels());
 				case SkillNodeReward.ExperienceReward r -> {
 					if (r.vanilla()) {
 						if (r.amount().endsWith("L")) {
@@ -188,6 +188,8 @@ public final class SkillNodeEvaluator {
 	}
 
 	private static void giveItem(ServerPlayer player, ResourceLocation itemId, int count) {
+		// TODO: replace with stash system
+
 		Item item = BuiltInRegistries.ITEM.get(itemId);
 		if (item == Items.AIR || count <= 0) return;
 
