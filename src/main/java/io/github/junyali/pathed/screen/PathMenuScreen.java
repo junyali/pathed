@@ -4,6 +4,7 @@ import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.data.path.PathIcon;
+import io.github.junyali.pathed.screen.attribute.AttributeScreen;
 import io.github.junyali.pathed.screen.progression.ProgressionScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -114,6 +115,16 @@ public class PathMenuScreen extends Screen {
 					// for collecting rewards
 					if (this.minecraft != null) {
 						this.minecraft.setScreen(new RewardStashScreen(this.showDirtBackground));
+					}
+				}
+		).bounds(x, y, buttonWidth, buttonHeight).build());
+		y += buttonSpacing;
+
+		this.addRenderableWidget(Button.builder(
+				Component.translatable("pathed.gui.path_menu.button.attributes"),
+				btn -> {
+					if (this.minecraft != null) {
+						this.minecraft.setScreen(new AttributeScreen(this.showDirtBackground));
 					}
 				}
 		).bounds(x, y, buttonWidth, buttonHeight).build());
