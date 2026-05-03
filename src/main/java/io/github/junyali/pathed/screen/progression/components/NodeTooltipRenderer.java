@@ -165,15 +165,15 @@ public class NodeTooltipRenderer {
 				yield c;
 			}
 			case SkillNodeReward.AttributeReward r -> {
+				String nameKey = "pathed.attribute." + r.attribute().getPath() + ".name";
 				yield Component.translatable("pathed.skill.tooltip.reward.attribute",
-						Component.translatable("pathed.attribute." + r.attribute().getPath()),
-						r.level()
+						Component.translatable(nameKey), r.level()
 				);
 			}
 			case SkillNodeReward.AttributeUpgradeReward r -> {
+				String nameKey = "pathed.attribute." + r.attribute().getPath() + ".name";
 				yield Component.translatable("pathed.skill.tooltip.reward.attribute_upgrade",
-						Component.translatable("pathed.attribute." + r.attribute().getPath()),
-						r.levels()
+						Component.translatable(nameKey), r.levels()
 				);
 			}
 			case SkillNodeReward.ExperienceReward r -> {

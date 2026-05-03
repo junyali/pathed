@@ -2,6 +2,8 @@ package io.github.junyali.pathed.data.skill;
 
 import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
+import io.github.junyali.pathed.data.attribute.Attribute;
+import io.github.junyali.pathed.data.attribute.AttributeRegistry;
 import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.network.payload.s2c.NodeCompletedPacket;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -148,8 +150,26 @@ public final class SkillNodeEvaluator {
 					p.addClassPoints(r.classPoints());
 					p.addGeneralPoints(r.generalPoints());
 				}
-				case SkillNodeReward.AttributeReward r -> p.getUpgradeData().setAttributeLevel(r.attribute(), r.level());
-				case SkillNodeReward.AttributeUpgradeReward r -> p.getUpgradeData().incrementAttribute(r.attribute(), r.levels());
+				case SkillNodeReward.AttributeReward r -> {
+					Attribute attr = AttributeRegistry.get(r.attribute());
+					if (attr == null) break;
+					int oldLevel = p.getUpgradeData().getAttributeLevel(r.attribute());
+					int newLevel = Math.min(Math.max(oldLevel, r.level()), attr.getMaxLevel());
+					if (newLevel != oldLevel) {
+						p.getUpgradeData().setAttributeLevel(r.attribute(), newLevel);
+						attr.onLevelChange(player, oldLevel, newLevel);
+					}
+				}
+				case SkillNodeReward.AttributeUpgradeReward r -> {
+					Attribute attr = AttributeRegistry.get(r.attribute());
+					if (attr == null) break;
+					int oldLevel = p.getUpgradeData().getAttributeLevel(r.attribute());
+					int newLevel = Math.min(oldLevel + r.levels(), attr.getMaxLevel());
+					if (newLevel != oldLevel) {
+						p.getUpgradeData().setAttributeLevel(r.attribute(), newLevel);
+						attr.onLevelChange(player, oldLevel, newLevel);
+					}
+				}
 				case SkillNodeReward.ExperienceReward r -> {
 					if (r.vanilla()) {
 						if (r.levels()) {

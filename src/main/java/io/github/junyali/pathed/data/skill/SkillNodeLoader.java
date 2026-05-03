@@ -129,6 +129,13 @@ public class SkillNodeLoader extends SimpleJsonResourceReloadListener {
 			}
 		}
 
+		List<String> rewardErrors = SkillRewardValidator.validate(node);
+		if (!rewardErrors.isEmpty()) {
+			for (String err : rewardErrors) {
+				Pathed.LOGGER.warn("Node '{}' has invalid rewards: {}", node.id(), err);
+			}
+			return false;
+		}
 		return true;
 	}
 
