@@ -8,10 +8,17 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public final class SkillNodeEvaluator {
 	private SkillNodeEvaluator() {}
@@ -62,14 +69,12 @@ public final class SkillNodeEvaluator {
 						? p.spendClassPoints(pr.amount())
 						: p.spendGeneralPoints(pr.amount());
 				if (!ok) return false;
-				// consume
 			} else if (req instanceof SkillNodeRequirement.ItemRequirement ir && ir.consumed()) {
 				if (!removeItems(player, ir.item(), ir.count())) return false;
 			}
 		}
 
-		p.addCompletedNode(node.id());
-		// TODO: grant rewards here
+		completeNode(player, p, node, true);
 		p.sync(player);
 		return true;
 	}
@@ -86,7 +91,7 @@ public final class SkillNodeEvaluator {
 			}
 
 			if (node.type() == NodeType.PROGRESSION && hasNoConsumedReqs(node) && isAvailable(player, node) && meetsRequirements(player, node)) {
-				completeNode(player, p, node);
+				completeNode(player, p, node, true);
 				changed = true;
 			}
 		}
@@ -100,18 +105,19 @@ public final class SkillNodeEvaluator {
 		for (SkillNode node : SkillNodeLoader.getNodes().values()) {
 			if (!node.base()) continue;
 			if (p.getCompletedNodes().contains(node.id())) continue;
-			p.addCompletedNode(node.id());
-			// grant reward??
+			completeNode(player, p, node, false);
 			changed = true;
 		}
 		if (changed) p.sync(player);
 	}
 
-	private static void completeNode(ServerPlayer player, ProgressionAttachment p, SkillNode node) {
+	private static void completeNode(ServerPlayer player, ProgressionAttachment p, SkillNode node, boolean grant) {
 		p.addCompletedNode(node.id());
-		// grant reward??
-		if (!node.base()) {
-			announceCompletion(player, node);
+		if (grant) {
+			grantRewards(player, p, node);
+			if (!node.base() && node.type() == NodeType.PROGRESSION) {
+				announceCompletion(player, node);
+			}
 		}
 	}
 
@@ -132,6 +138,69 @@ public final class SkillNodeEvaluator {
 				Component.translatable("pathed.chat.node_get", player.getDisplayName(), name)
 		);
 		*/
+	}
+
+	private static void grantRewards(ServerPlayer player, ProgressionAttachment p, SkillNode node) {
+		for (SkillNodeReward reward : node.rewards()) {
+			switch (reward) {
+				case SkillNodeReward.ItemReward r -> giveItem(player, r.item(), r.count());
+				case SkillNodeReward.PointReward r -> {
+					p.addClassPoints(r.classPoints());
+					p.addGeneralPoints(r.generalPoints());
+				}
+				// case SkillNodeReward.AttributeReward r -> p.getUpgradeData().unlockAttribute(r.attribute());
+				case SkillNodeReward.ExperienceReward r -> {
+					if (r.vanilla()) {
+						if (r.amount().endsWith("L")) {
+							int levels = Integer.parseInt(r.amount().substring(0, r.amount().length() - 1));
+							player.giveExperienceLevels(levels);
+						} else {
+							int exp = Integer.parseInt(r.amount());
+							player.giveExperiencePoints(exp);
+						}
+					} else {
+						if (r.amount().endsWith("L")) {
+							int levels = Integer.parseInt(r.amount().substring(0, r.amount().length() -1 ));
+							p.addLevel(levels);
+						} else {
+							int exp = Integer.parseInt(r.amount());
+							p.addExperience(exp);
+						}
+					}
+				}
+				case SkillNodeReward.EffectReward r -> {
+					MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(r.effect());
+					if (effect != null) {
+						player.addEffect(new MobEffectInstance(
+								BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect),
+								r.duration(),
+								r.amplifier()
+						));
+					}
+				}
+				case SkillNodeReward.RecipeReward r -> {
+					Optional<RecipeHolder<?>> recipe = Objects.requireNonNull(player.getServer()).getRecipeManager().byKey(r.recipe());
+					recipe.ifPresent(recipeHolder -> player.awardRecipes(List.of(recipeHolder)));
+				}
+				default -> throw new IllegalStateException("Unexpected value: " + reward);
+			}
+		}
+	}
+
+	private static void giveItem(ServerPlayer player, ResourceLocation itemId, int count) {
+		Item item = BuiltInRegistries.ITEM.get(itemId);
+		if (item == Items.AIR || count <= 0) return;
+
+		int remaining = count;
+		int max = item.getDefaultMaxStackSize();
+		while (remaining > 0) {
+			int n = Math.min(remaining, max);
+			ItemStack stack = new ItemStack(item, n);
+			if (!player.getInventory().add(stack)) {
+				player.drop(stack, false);
+			}
+			remaining -= n;
+		}
 	}
 
 	private static boolean removeItems(ServerPlayer player, ResourceLocation itemId, int count) {
