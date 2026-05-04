@@ -130,4 +130,13 @@ public class AttributeScreen extends Screen {
 	public boolean isPauseScreen() {
 		return false;
 	}
+
+	public boolean isShowAll() {
+		return showAll;
+	}
+
+	public void setShowAll(boolean v) {
+		if (this.showAll == v) return;
+		this.showAll = v;
+	}
 }
