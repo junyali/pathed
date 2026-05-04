@@ -21,25 +21,19 @@ public class AttributeScreen extends Screen {
 	private static final int BOTTOMBAR_H = 24;
 	private static final int LEFT_PANEL_W = 120;
 
-	private static final int COLOUR_BACKGROUND_PRIMARY = 0xFF1E1E2A;
-	private static final int COLOUR_BACKGROUND_SECONDARY = 0xFF16161F;
-	private static final int COLOUR_BACKGROUND_TOPBAR = 0xFF252535;
-	private static final int COLOUR_BACKGROUND_CHIP = 0xFF2AA3C;
-	private static final int COLOUR_BACKGROUND_CHIP_SELECTED = 0xFF2E2B50;
-	private static final int COLOUR_BACKGROUNF_CHIP_LOCK = 0xFF1C1C28;
+	private static final int COLOUR_TEXT = 0xFFFFFFFF;
+	private static final int COLOUR_TEXT_DIM = 0xFFAAAAAA;
+	private static final int COLOUR_TEXT_MUTED = 0xFF555555;
+	private static final int COLOUR_TEXT_HIGHLIGHT = 0xFFFFFF55;
+	private static final int COLOUR_TEXT_GOOD = 0xFF55FF55;
+	private static final int COLOUR_TEXT_BAD = 0xFFFF5555;
 
-	private static final int COLOUR_BORDER = 0xFF3A3A50;
-	private static final int COLOUR_BORDER_SELECTED = 0xFF7F77DD;
-	private static final int COLOUR_BORDER_WARN = 0xFFF0997B;
-
-	private static final int COLOUR_TEXT_PRIMARY = 0xFFE8E8F0;
-	private static final int COLOUR_TEXT_SECONDARY = 0xFF9090A8;
-	private static final int COLOUR_EXT_TERTIARY = 0xFF5A5A70;
-	private static final int COLOUR_TEXT_WARN = 0xFFF0997B;
-
-	private static final int COLOUR_TAB_BACKGROUND = 0xFF1E1E2A;
-	private static final int COLOUR_TAB_BACKGROUND_ACTIVE = 0XFF2E2B50;
-	private static final int COLOUR_TAB_BORDER = 0XFF3A3A50;
+	private static final int COLOUR_PANEL_BG = 0xFF555555;
+	private static final int COLOUR_CHIP_BG = 0xC0202020;
+	private static final int COLOUR_CHIP_HOVER = 0xC0404040;
+	private static final int COLOUR_CHIP_SELECTED = 0xC0606060;
+	private static final int COLOUR_BORDER = 0xFF000000;
+	private static final int COLOUR_BORDER_HIGHLIGHT = 0xFFFFFF55;
 
 	private final Map<String, Integer> pendingLevels = new HashMap<>();
 	private final Map<String, Integer> pendingActive = new HashMap<>();
