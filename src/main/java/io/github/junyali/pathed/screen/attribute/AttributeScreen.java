@@ -1,25 +1,23 @@
 package io.github.junyali.pathed.screen.attribute;
 
+import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.attribute.Attribute;
+import io.github.junyali.pathed.data.attribute.AttributeRegistry;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AttributeScreen extends Screen {
-	private static final int SCREEN_W = 340;
-	private static final int SCREEN_H = 220;
-
-	private static final int TOPBAR_H = 24;
-	private static final int BOTTOMBAR_H = 24;
-	private static final int LEFT_PANEL_W = 120;
+	private static final int FRAME_BORDER = 9;
+	private static final int LIST_PANEL_W = 124;
+	private static final int FOOTER_H = 28;
 
 	private static final int COLOUR_TEXT = 0xFFFFFFFF;
 	private static final int COLOUR_TEXT_DIM = 0xFFAAAAAA;
@@ -35,20 +33,17 @@ public class AttributeScreen extends Screen {
 	private static final int COLOUR_BORDER = 0xFF000000;
 	private static final int COLOUR_BORDER_HIGHLIGHT = 0xFFFFFF55;
 
+	private AttributeListPanel listPanel;
+	private AttributeDetailPanel detailPanel;
+
 	private final Map<String, Integer> pendingLevels = new HashMap<>();
-	private final Map<String, Integer> pendingActive = new HashMap<>();
-
-	private List<Attribute> displayedAttributes = new ArrayList<>();
-
-	private boolean showAllAttributes = false;
+	private final Map<String, Boolean> pendingActive = new HashMap<>();
 
 	@Nullable
-	private Attribute selectedAttributes = null;
+	private Attribute selected;
+	private boolean showAll;
 
 	private final boolean showDirtBackground;
-
-	private int originX;
-	private int originY;
 
 	public AttributeScreen(boolean showDirtBackground) {
 		super(Component.translatable("pathed.gui.attributes.title"));
@@ -57,49 +52,63 @@ public class AttributeScreen extends Screen {
 
 	@Override
 	protected void init() {
-		originX = (width - SCREEN_W) / 2;
-		originY = (height - SCREEN_H) / 2;
+		super.init();
 
-		// populate pending maps
+		Player player = this.getMinecraft().player;
+		if (player != null) {
+			ProgressionAttachment p = ProgressionAttachment.get(player);
+			for (Attribute attr : AttributeRegistry.all()) {
+				String key = attr.getId().getPath();
+				int level = p.getUpgradeData().getAttributeLevel(attr.getId());
+				pendingLevels.put(key, level);
+				pendingActive.put(key, level > 0);
+				// pendingActive.put();
+				// to be used later
+			}
+		}
 
-		refreshDisplayedList();
-		addNativeButtons();
+		int panelTop = 10;
+		int panelBottom = this.height - FOOTER_H - 4;
+		int panelHeight = panelBottom - panelTop;
+
+		// this.listPanel
+
+		// this.detailPanel
+
+		int btnY = this.height - FOOTER_H + (FOOTER_H - 20) / 2;
+		int btnW = 100;
+		int doneX = this.width / 2 + 4;
+		int cancelX = this.width / 2 - 4 - btnW;
+
+		this.addRenderableWidget(
+				Button.builder(
+						Component.translatable("gui.cancel"),
+						btn -> this.onCancel()
+				).bounds(cancelX, btnY, btnW, 20).build()
+		);
+
+		this.addRenderableWidget(
+				Button.builder(
+						Component.translatable("gui.done"),
+						btn -> this.onDone()
+				).bounds(doneX, btnY, btnW, 20).build()
+		);
 	}
 
-	private void addNativeButtons() {
-		int bY = originY + TOPBAR_H + (SCREEN_H - TOPBAR_H - BOTTOMBAR_H) + (BOTTOMBAR_H - 16) / 2;
-		int applyX = originX + SCREEN_W - 4 - 50;
-		int backX = applyX - 4 - 50;
-
-		addRenderableWidget(Button.builder(
-				Component.translatable("gui.done"),
-				btn -> {
-					// on apply
-				}
-		).bounds(applyX, bY, 50, 16).build());
-		addRenderableWidget(Button.builder(
-				Component.translatable("gui.back"),
-				btn -> {
-					// go back
-				}
-		).bounds(backX, bY, 50, 16).build());
+	private void onDone() {
+		if (this.minecraft != null) {
+			this.minecraft.setScreen(null);
+		}
 	}
 
-	private void refreshDisplayedList() {
-		displayedAttributes.clear();
-		// do refresh here
+	private void onCancel() {
+		if (this.minecraft != null) {
+			this.minecraft.setScreen(null);
+		}
 	}
 
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-		renderBackground(guiGraphics, mouseX, mouseY, delta);
-
-		renderPanel(guiGraphics);
-		renderTopBar(guiGraphics, mouseX, mouseY);
-		renderLeftPanel(guiGraphics, mouseX, mouseY);
-		renderDetailPanel(guiGraphics, mouseX, mouseY);
-		renderBottomBar(guiGraphics);
-
 		super.render(guiGraphics, mouseX, mouseY, delta);
 	}
 
@@ -117,97 +126,8 @@ public class AttributeScreen extends Screen {
 		guiGraphics.fillGradient(0, 0, this.width, this.height, -5, 1678774288, -2112876528);
 	}
 
-	private void renderPanel(GuiGraphics guiGraphics) {
-		guiGraphics.fill(originX - 1, originY, originX + SCREEN_W + 1, originY + SCREEN_H + 1, COLOUR_BORDER);
-		guiGraphics.fill(originX, originY, originX + SCREEN_W, originY + SCREEN_H, COLOUR_BACKGROUND_SECONDARY);
-	}
-
-	private void renderTopBar(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		int x = originX;
-		int y = originY;
-
-		guiGraphics.fill(x, y, x + SCREEN_W, y + TOPBAR_H, COLOUR_BACKGROUND_TOPBAR);
-		guiGraphics.fill(x, y + TOPBAR_H - 1, x + SCREEN_W, y + TOPBAR_H, COLOUR_BORDER);
-
-		guiGraphics.drawString(
-				font,
-				Component.translatable("pathed.gui.attributes.title"),
-				x + 8,
-				y + (TOPBAR_H - font.lineHeight) / 2,
-				COLOUR_TEXT_PRIMARY,
-				false
-		);
-
-		renderTabButton(
-				guiGraphics,
-				x + SCREEN_W - 4 - 82 - 4 - 72,
-				y + 4,
-				82,
-				TOPBAR_H - 8,
-				"pathed.gui.attributes.tab.mine",
-				!showAllAttributes,
-				mouseX,
-				mouseY
-		);
-
-		renderTabButton(guiGraphics,
-				x + SCREEN_W - 4 - 82,
-				y + 4,
-				82,
-				TOPBAR_H - 8,
-				"pathed.gui.attributes.tab.all",
-				showAllAttributes,
-				mouseX,
-				mouseY
-		);
-	}
-
-	private void renderBottomBar(GuiGraphics guiGraphics) {
-		int x = originX;
-		int y = originY + SCREEN_H - BOTTOMBAR_H;
-
-		guiGraphics.fill(x, y, x + SCREEN_W, y + BOTTOMBAR_H, COLOUR_BACKGROUND_TOPBAR);
-		guiGraphics.fill(x, y, x + SCREEN_W, y + 1, COLOUR_BORDER);
-	}
-
-	private void renderLeftPanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		int x = originX;
-		int y = originY + TOPBAR_H;
-		int listH = SCREEN_H - TOPBAR_H - BOTTOMBAR_H;
-
-		guiGraphics.fill(x, y, x + LEFT_PANEL_W, y + listH, COLOUR_BACKGROUND_PRIMARY);
-		guiGraphics.fill(x + LEFT_PANEL_W - 1, y, x + LEFT_PANEL_W, y + listH, COLOUR_BORDER);
-	}
-
-	private void renderDetailPanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		int x = originX + LEFT_PANEL_W;
-		int y = originY + TOPBAR_H;
-		int w = SCREEN_W - LEFT_PANEL_W;
-		int h = SCREEN_H - TOPBAR_H - BOTTOMBAR_H;
-
-		guiGraphics.fill(x, y, x + w, y + h, COLOUR_BACKGROUND_PRIMARY);
-	}
-
-	private void renderTabButton(GuiGraphics guiGraphics, int x, int y, int w, int h, String translationKey, boolean active, int mouseX, int mouseY) {
-		boolean hovered = mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + h;
-		int bg = active ? COLOUR_TAB_BACKGROUND_ACTIVE : (hovered ? COLOUR_BACKGROUND_CHIP : COLOUR_TAB_BACKGROUND);
-		int border = active ? COLOUR_BORDER_SELECTED : COLOUR_TAB_BORDER;
-		int text = active ? COLOUR_TEXT_PRIMARY : COLOUR_TEXT_SECONDARY;
-
-		guiGraphics.fill(x, y, x + w, y + h, bg);
-		guiGraphics.fill(x, y, x + w, y + 1, border);
-		guiGraphics.fill(x, y + h - 1, x + w, y + h, border);
-		guiGraphics.fill(x, y, x + 1, y + h, border);
-		guiGraphics.fill(x + w - 1, y, x + w, y + h, border);
-
-		String label = Component.translatable(translationKey).getString();
-		guiGraphics.drawString(
-				font,
-				label,
-				x + (w - font.width(label)) / 2,
-				y + (h - font.lineHeight) / 2,
-				text,
-				false
-		);
+	@Override
+	public boolean isPauseScreen() {
+		return false;
 	}
 }
