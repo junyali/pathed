@@ -102,6 +102,8 @@ public class AttributeScreen extends Screen {
 
 		renderPanel(guiGraphics);
 		renderTopBar(guiGraphics, mouseX, mouseY);
+		renderLeftPanel(guiGraphics, mouseX, mouseY);
+		renderDetailPanel(guiGraphics, mouseX, mouseY);
 		renderBottomBar(guiGraphics);
 
 		super.render(guiGraphics, mouseX, mouseY, delta);
@@ -172,6 +174,24 @@ public class AttributeScreen extends Screen {
 
 		guiGraphics.fill(x, y, x + SCREEN_W, y + BOTTOMBAR_H, COLOUR_BACKGROUND_TOPBAR);
 		guiGraphics.fill(x, y, x + SCREEN_W, y + 1, COLOUR_BORDER);
+	}
+
+	private void renderLeftPanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		int x = originX;
+		int y = originY + TOPBAR_H;
+		int listH = SCREEN_H - TOPBAR_H - BOTTOMBAR_H;
+
+		guiGraphics.fill(x, y, x + LEFT_PANEL_W, y + listH, COLOUR_BACKGROUND_PRIMARY);
+		guiGraphics.fill(x + LEFT_PANEL_W - 1, y, x + LEFT_PANEL_W, y + listH, COLOUR_BORDER);
+	}
+
+	private void renderDetailPanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		int x = originX + LEFT_PANEL_W;
+		int y = originY + TOPBAR_H;
+		int w = SCREEN_W - LEFT_PANEL_W;
+		int h = SCREEN_H - TOPBAR_H - BOTTOMBAR_H;
+
+		guiGraphics.fill(x, y, x + w, y + h, COLOUR_BACKGROUND_PRIMARY);
 	}
 
 	private void renderTabButton(GuiGraphics guiGraphics, int x, int y, int w, int h, String translationKey, boolean active, int mouseX, int mouseY) {
