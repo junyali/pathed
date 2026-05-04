@@ -23,7 +23,23 @@ public class AttributeScreen extends Screen {
 
 	private static final int COLOUR_BACKGROUND_PRIMARY = 0xFF1E1E2A;
 	private static final int COLOUR_BACKGROUND_SECONDARY = 0xFF16161F;
+	private static final int COLOUR_BACKGROUND_TOPBAR = 0xFF252535;
+	private static final int COLOUR_BACKGROUND_CHIP = 0xFF2AA3C;
+	private static final int COLOUR_BACKGROUND_CHIP_SELECTED = 0xFF2E2B50;
+	private static final int COLOUR_BACKGROUNF_CHIP_LOCK = 0xFF1C1C28;
+
 	private static final int COLOUR_BORDER = 0xFF3A3A50;
+	private static final int COLOUR_BORDER_SELECTED = 0xFF7F77DD;
+	private static final int COLOUR_BORDER_WARN = 0xFFF0997B;
+
+	private static final int COLOUR_TEXT_PRIMARY = 0xFFE8E8F0;
+	private static final int COLOUR_TEXT_SECONDARY = 0xFF9090A8;
+	private static final int COLOUR_EXT_TERTIARY = 0xFF5A5A70;
+	private static final int COLOUR_TEXT_WARN = 0xFFF0997B;
+
+	private static final int COLOUR_TAB_BACKGROUND = 0xFF1E1E2A;
+	private static final int COLOUR_TAB_BACKGROUND_ACTIVE = 0XFF2E2B50;
+	private static final int COLOUR_TAB_BORDER = 0XFF3A3A50;
 
 	private final Map<String, Integer> pendingLevels = new HashMap<>();
 	private final Map<String, Integer> pendingActive = new HashMap<>();
@@ -84,6 +100,10 @@ public class AttributeScreen extends Screen {
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 		renderBackground(guiGraphics, mouseX, mouseY, delta);
 
+		renderPanel(guiGraphics);
+		renderTopBar(guiGraphics, mouseX, mouseY);
+		renderBottomBar(guiGraphics);
+
 		super.render(guiGraphics, mouseX, mouseY, delta);
 	}
 
@@ -104,5 +124,76 @@ public class AttributeScreen extends Screen {
 	private void renderPanel(GuiGraphics guiGraphics) {
 		guiGraphics.fill(originX - 1, originY, originX + SCREEN_W + 1, originY + SCREEN_H + 1, COLOUR_BORDER);
 		guiGraphics.fill(originX, originY, originX + SCREEN_W, originY + SCREEN_H, COLOUR_BACKGROUND_SECONDARY);
+	}
+
+	private void renderTopBar(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		int x = originX;
+		int y = originY;
+
+		guiGraphics.fill(x, y, x + SCREEN_W, y + TOPBAR_H, COLOUR_BACKGROUND_TOPBAR);
+		guiGraphics.fill(x, y + TOPBAR_H - 1, x + SCREEN_W, y + TOPBAR_H, COLOUR_BORDER);
+
+		guiGraphics.drawString(
+				font,
+				Component.translatable("pathed.gui.attributes.title"),
+				x + 8,
+				y + (TOPBAR_H - font.lineHeight) / 2,
+				COLOUR_TEXT_PRIMARY,
+				false
+		);
+
+		renderTabButton(
+				guiGraphics,
+				x + SCREEN_W - 4 - 82 - 4 - 72,
+				y + 4,
+				82,
+				TOPBAR_H - 8,
+				"pathed.gui.attributes.tab.mine",
+				!showAllAttributes,
+				mouseX,
+				mouseY
+		);
+
+		renderTabButton(guiGraphics,
+				x + SCREEN_W - 4 - 82,
+				y + 4,
+				82,
+				TOPBAR_H - 8,
+				"pathed.gui.attributes.tab.all",
+				showAllAttributes,
+				mouseX,
+				mouseY
+		);
+	}
+
+	private void renderBottomBar(GuiGraphics guiGraphics) {
+		int x = originX;
+		int y = originY + SCREEN_H - BOTTOMBAR_H;
+
+		guiGraphics.fill(x, y, x + SCREEN_W, y + BOTTOMBAR_H, COLOUR_BACKGROUND_TOPBAR);
+		guiGraphics.fill(x, y, x + SCREEN_W, y + 1, COLOUR_BORDER);
+	}
+
+	private void renderTabButton(GuiGraphics guiGraphics, int x, int y, int w, int h, String translationKey, boolean active, int mouseX, int mouseY) {
+		boolean hovered = mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + h;
+		int bg = active ? COLOUR_TAB_BACKGROUND_ACTIVE : (hovered ? COLOUR_BACKGROUND_CHIP : COLOUR_TAB_BACKGROUND);
+		int border = active ? COLOUR_BORDER_SELECTED : COLOUR_TAB_BORDER;
+		int text = active ? COLOUR_TEXT_PRIMARY : COLOUR_TEXT_SECONDARY;
+
+		guiGraphics.fill(x, y, x + w, y + h, bg);
+		guiGraphics.fill(x, y, x + w, y + 1, border);
+		guiGraphics.fill(x, y + h - 1, x + w, y + h, border);
+		guiGraphics.fill(x, y, x + 1, y + h, border);
+		guiGraphics.fill(x + w - 1, y, x + w, y + h, border);
+
+		String label = Component.translatable(translationKey).getString();
+		guiGraphics.drawString(
+				font,
+				label,
+				x + (w - font.width(label)) / 2,
+				y + (h - font.lineHeight) / 2,
+				text,
+				false
+		);
 	}
 }
