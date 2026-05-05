@@ -176,13 +176,17 @@ public class ProgressionAttachment {
 		public void setAttributeLevel(ResourceLocation attribute, int level) {
 			if (level <= 0) {
 				unlockedAttributes.remove(attribute);
+				selectedAttributeLevels.remove(attribute);
+				activeAttributes.remove(attribute);
 			} else {
 				unlockedAttributes.put(attribute, level);
+				Integer selected = selectedAttributeLevels.get(attribute);
+				if (selected == null || selected > level) selectedAttributeLevels.put(attribute, level);
 			}
 		}
 
 		public void incrementAttribute(ResourceLocation attribute, int level) {
-			unlockedAttributes.merge(attribute, level, Integer::sum);
+			setAttributeLevel(attribute, getAttributeLevel(attribute) + level);
 		}
 
 		public int getAttributeLevel(ResourceLocation attribute) {
