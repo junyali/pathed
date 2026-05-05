@@ -10,7 +10,7 @@
   },
   "icon": {
     "type": "item",
-    "value": "minecraft:golden_pickaxe"
+    "value": "minecraft:gold_ingot"
   },
   "previous_nodes": [
     "pathed:tiers/wood"
@@ -27,5 +27,11 @@
       "consumed": false
     }
   ],
-  "rewards": []
+  "rewards": [
+    {
+      "type": "pathed:attribute",
+      "attribute": "pathed:tier",
+      "level": 1
+    }
+  ]
 }

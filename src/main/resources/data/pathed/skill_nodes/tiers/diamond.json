@@ -10,7 +10,7 @@
   },
   "icon": {
     "type": "item",
-    "value": "minecraft:diamond_pickaxe"
+    "value": "minecraft:diamond"
   },
   "previous_nodes": [
     "pathed:tiers/iron"
@@ -28,5 +28,11 @@
       "consumed": false
     }
   ],
-  "rewards": []
+  "rewards": [
+    {
+      "type": "pathed:attribute",
+      "attribute": "pathed:tier",
+      "level": 4
+    }
+  ]
 }

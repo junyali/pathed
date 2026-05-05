@@ -10,7 +10,7 @@
   },
   "icon": {
     "type": "item",
-    "value": "minecraft:netherite_pickaxe"
+    "value": "minecraft:netherite_ingot"
   },
   "previous_nodes": [
     "pathed:tiers/diamond"
@@ -35,9 +35,9 @@
   ],
   "rewards": [
     {
-      "type": "pathed:item",
-      "item": "minecraft:nether_star",
-      "count": 1
+      "type": "pathed:attribute",
+      "attribute": "pathed:tier",
+      "level": 5
     }
   ]
 }

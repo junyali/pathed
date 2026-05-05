@@ -10,9 +10,15 @@
   },
   "icon": {
     "type": "item",
-    "value": "minecraft:wooden_pickaxe"
+    "value": "minecraft:oak_log"
   },
   "requirements": [],
-  "rewards": [],
+  "rewards": [
+    {
+      "type": "pathed:attribute",
+      "attribute": "pathed:tier",
+      "level": 1
+    }
+  ],
   "base": true
 }
