@@ -3,6 +3,7 @@ package io.github.junyali.pathed.screen.attribute;
 import io.github.junyali.pathed.data.attribute.Attribute;
 import io.github.junyali.pathed.data.attribute.AttributeRegistry;
 import io.github.junyali.pathed.screen.attribute.components.AttributeChip;
+import io.github.junyali.pathed.screen.attribute.components.AttributeTab;
 import io.github.junyali.pathed.screen.progression.ProgressionRenderer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -82,7 +83,9 @@ public class AttributeListPanel {
 				AttributeScreen.COLOUR_PANEL_BG
 		);
 
-		// render tabs here
+		int tabW = innerW / 2;
+		AttributeTab.render(guiGraphics, innerL, innerT, tabW, TAB_BAR_H, Component.translatable("pathed.gui.attributes.tab.mine"), !screen.isShowAll(), mouseX, mouseY);
+		AttributeTab.render(guiGraphics, innerL + tabW, innerT, innerW - tabW, TAB_BAR_H, Component.translatable("pathed.gui.attributes.tab.all"), screen.isShowAll(), mouseX, mouseY);
 
 		int bodyTop = innerT + TAB_BAR_H;
 		int bodyBottom = bodyTop + innerH;
