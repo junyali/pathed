@@ -38,10 +38,10 @@ public final class LevelPipBar {
 				background = AttributeScreen.COLOUR_TEXT_GOOD;
 				border = AttributeScreen.COLOUR_BORDER;
 			} else if (available) {
-				background = hovered ? 0xFF666666 : 0xFF444444;
+				background = hovered ? AttributeScreen.COLOUR_PIP_HOVER : AttributeScreen.COLOUR_PIP_AVAILABLE;
 				border = AttributeScreen.COLOUR_TEXT_DIM;
 			} else {
-				background = 0xFF222222;
+				background = AttributeScreen.COLOUR_PIP_DISABLED;
 				border = AttributeScreen.COLOUR_BORDER;
 			}
 

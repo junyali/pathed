@@ -16,7 +16,7 @@ public final class ToggleSwitch {
 	public static void render(GuiGraphics guiGraphics, int x, int y, boolean active, int mouseX, int mouseY) {
 		boolean hovered = contains(x, y, mouseX, mouseY);
 
-		int trackBackground = active ? 0xFF2C7A2C : 0xFF2A2A2A;
+		int trackBackground = active ? AttributeScreen.COLOUR_TOGGLE_ON_BG : AttributeScreen.COLOUR_TOGGLE_OFF_BG;
 		int trackBorder = hovered ? AttributeScreen.COLOUR_TEXT_HIGHLIGHT : AttributeScreen.COLOUR_BORDER;
 		int thumbColour = active ? AttributeScreen.COLOUR_TEXT_GOOD : AttributeScreen.COLOUR_TEXT_DIM;
 		int thumbSize = HEIGHT - 4;

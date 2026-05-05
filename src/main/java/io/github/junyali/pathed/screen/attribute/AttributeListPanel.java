@@ -132,7 +132,7 @@ public class AttributeListPanel {
 			int sbH = innerH;
 			int thumbH = Math.max(16, sbH * innerH / (innerH + maxScroll));
 			int thumbY = bodyTop + (sbH - thumbH) * scrollPos / maxScroll;
-			guiGraphics.fill(sbX, bodyTop, sbX + SCROLLBAR_W, bodyTop + sbH, 0xFF333333);
+			guiGraphics.fill(sbX, bodyTop, sbX + SCROLLBAR_W, bodyTop + sbH, AttributeScreen.COLOUR_SLOT_BG);
 			guiGraphics.fill(sbX, thumbY, sbX + SCROLLBAR_W, thumbY + thumbH, AttributeScreen.COLOUR_TEXT_DIM);
 		}
 	}

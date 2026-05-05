@@ -41,6 +41,13 @@ public class AttributeScreen extends Screen {
 	public static final int COLOUR_TAB_BG = 0xFF333333;
 	public static final int COLOUR_TAB_HOVERED = 0xFF444444;
 
+	public static final int COLOUR_SLOT_BG = 0xFF333333;
+	public static final int COLOUR_PIP_AVAILABLE = 0xFF444444;
+	public static final int COLOUR_PIP_HOVER = 0xFF666666;
+	public static final int COLOUR_PIP_DISABLED = 0xFF222222;
+	public static final int COLOUR_TOGGLE_ON_BG = 0xFF2C7A2C;
+	public static final int COLOUR_TOGGLE_OFF_BG = 0xFF2A2A2A;
+
 	private AttributeListPanel listPanel;
 	private AttributeDetailPanel detailPanel;
 

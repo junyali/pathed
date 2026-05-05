@@ -70,7 +70,7 @@ public class AttributeDetailPanel {
 		int cY = innerT + PADDING;
 		int contentW = innerW - PADDING * 2;
 
-		guiGraphics.fill(cX, cY, cX + ICON_BOX, cY + ICON_BOX, 0xFF333333);
+		guiGraphics.fill(cX, cY, cX + ICON_BOX, cY + ICON_BOX, AttributeScreen.COLOUR_SLOT_BG);
 		outline(guiGraphics, cX, cY, ICON_BOX, ICON_BOX, AttributeScreen.COLOUR_BORDER);
 		guiGraphics.renderItem(attr.getIcon(), cX + 4, cY + 4);
 
