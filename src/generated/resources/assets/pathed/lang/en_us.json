@@ -28,6 +28,7 @@
   "pathed.attribute.tier.name": "Tier",
   "pathed.gui.attributes.detail.active": "Active",
   "pathed.gui.attributes.detail.active.on": "Currently active",
+  "pathed.gui.attributes.detail.always_active": "Always Active",
   "pathed.gui.attributes.detail.conflict": "Conflicts with: %1$s",
   "pathed.gui.attributes.detail.level": "Level",
   "pathed.gui.attributes.detail.locked": "Locked",
