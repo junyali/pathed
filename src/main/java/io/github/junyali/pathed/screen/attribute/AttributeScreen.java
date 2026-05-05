@@ -15,23 +15,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AttributeScreen extends Screen {
-	private static final int FRAME_BORDER = 9;
-	private static final int LIST_PANEL_W = 124;
-	private static final int FOOTER_H = 28;
+	public static final int FRAME_BORDER = 9;
+	public static final int LIST_PANEL_W = 124;
+	public static final int FOOTER_H = 28;
 
-	private static final int COLOUR_TEXT = 0xFFFFFFFF;
-	private static final int COLOUR_TEXT_DIM = 0xFFAAAAAA;
-	private static final int COLOUR_TEXT_MUTED = 0xFF555555;
-	private static final int COLOUR_TEXT_HIGHLIGHT = 0xFFFFFF55;
-	private static final int COLOUR_TEXT_GOOD = 0xFF55FF55;
-	private static final int COLOUR_TEXT_BAD = 0xFFFF5555;
+	public static final int COLOUR_TEXT = 0xFFFFFFFF;
+	public static final int COLOUR_TEXT_DIM = 0xFFAAAAAA;
+	public static final int COLOUR_TEXT_MUTED = 0xFF555555;
+	public static final int COLOUR_TEXT_HIGHLIGHT = 0xFFFFFF55;
+	public static final int COLOUR_TEXT_GOOD = 0xFF55FF55;
+	public static final int COLOUR_TEXT_BAD = 0xFFFF5555;
 
-	private static final int COLOUR_PANEL_BG = 0xFF555555;
-	private static final int COLOUR_CHIP_BG = 0xC0202020;
-	private static final int COLOUR_CHIP_HOVER = 0xC0404040;
-	private static final int COLOUR_CHIP_SELECTED = 0xC0606060;
-	private static final int COLOUR_BORDER = 0xFF000000;
-	private static final int COLOUR_BORDER_HIGHLIGHT = 0xFFFFFF55;
+	public static final int COLOUR_PANEL_BG = 0xFF555555;
+	public static final int COLOUR_CHIP_BG = 0xC0202020;
+	public static final int COLOUR_CHIP_HOVER = 0xC0404040;
+	public static final int COLOUR_CHIP_SELECTED = 0xC0606060;
+	public static final int COLOUR_BORDER = 0xFF000000;
+	public static final int COLOUR_BORDER_HIGHLIGHT = 0xFFFFFF55;
 
 	private AttributeListPanel listPanel;
 	private AttributeDetailPanel detailPanel;
@@ -131,6 +131,15 @@ public class AttributeScreen extends Screen {
 		return false;
 	}
 
+	@Nullable
+	public Attribute getSelected() {
+		return selected;
+	}
+
+	public void setSelected(@Nullable Attribute a) {
+		this.selected = a;
+	}
+
 	public boolean isShowAll() {
 		return showAll;
 	}
@@ -138,5 +147,17 @@ public class AttributeScreen extends Screen {
 	public void setShowAll(boolean v) {
 		if (this.showAll == v) return;
 		this.showAll = v;
+	}
+
+	public boolean isObtained(Attribute attr) {
+		Player p = this.getMinecraft().player;
+		if (p == null) return false;
+		return ProgressionAttachment.get(p).getUpgradeData().hasAttribute(attr.getId());
+	}
+
+	public int getObtainedLevel(Attribute attr) {
+		Player p = this.getMinecraft().player;
+		if (p == null) return 0;
+		return ProgressionAttachment.get(p).getUpgradeData().getAttributeLevel(attr.getId());
 	}
 }
