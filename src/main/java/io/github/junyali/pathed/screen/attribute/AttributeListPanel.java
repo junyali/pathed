@@ -2,6 +2,7 @@ package io.github.junyali.pathed.screen.attribute;
 
 import io.github.junyali.pathed.data.attribute.Attribute;
 import io.github.junyali.pathed.data.attribute.AttributeRegistry;
+import io.github.junyali.pathed.screen.attribute.components.AttributeChip;
 import io.github.junyali.pathed.screen.progression.ProgressionRenderer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -101,7 +102,14 @@ public class AttributeListPanel {
 				bodyBottom
 		);
 
-		// render chips here
+		int chipX = innerL + 3;
+		int chipY = bodyTop + 4 - scrollPos;
+		int chipW = innerW - 6 - (maxScroll > 0 ? SCROLLBAR_W : 0);
+
+		for (Attribute a : visible) {
+			AttributeChip.render(guiGraphics, screen, a, chipX, chipY, chipW, CHIP_H, mouseX, mouseY);
+			chipY += CHIP_H + CHIP_GAP;
+		}
 
 		if (visible.isEmpty()) {
 			Font font = screen.getMinecraft().font;

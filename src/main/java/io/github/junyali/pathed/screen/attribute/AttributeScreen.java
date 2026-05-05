@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -174,6 +175,31 @@ public class AttributeScreen extends Screen {
 	public void setShowAll(boolean v) {
 		if (this.showAll == v) return;
 		this.showAll = v;
+	}
+
+	public int getPendingLevel(Attribute attr) {
+		return pendingLevels.getOrDefault(attr.getId().getPath(), 0);
+	}
+
+	public void setPendingLevel(Attribute attr, int level) {
+		pendingLevels.put(attr.getId().getPath(), Math.clamp(level, 0, attr.getMaxLevel()));
+	}
+
+	public boolean getPendingActive(Attribute attr) {
+		return pendingActive.getOrDefault(attr.getId().getPath(), false);
+	}
+
+	public void setPendingActive(Attribute attr, boolean active) {
+		if (active && conflictsWithPendingActive(attr)) return;;
+		pendingActive.put(attr.getId().getPath(), active);
+	}
+
+	public boolean conflictsWithPendingActive(Attribute attr) {
+		for (ResourceLocation other : attr.getIncompatibleWith()) {
+			Attribute o = AttributeRegistry.get(other);
+			if (o != null && getPendingActive(o)) return true;
+		}
+		return false;
 	}
 
 	public boolean isObtained(Attribute attr) {
