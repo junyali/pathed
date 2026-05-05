@@ -107,7 +107,7 @@ public class AttributeDetailPanel {
 		);
 
 		String levelInfo = obtained
-				? currentLevel + "/" + obtainedLevel
+				? currentLevel + "/" + attr.getMaxLevel()
 				: Component.translatable("pathed.gui.attributes.detail.locked").getString();
 		guiGraphics.drawString(font, levelInfo, pipRowX + LevelPipBar.totalWidth(attr.getMaxLevel()) + 6, cY + 1, obtained ? AttributeScreen.COLOUR_TEXT_DIM : AttributeScreen.COLOUR_TEXT_MUTED, false);
 		cY += LevelPipBar.HEIGHT + PADDING;
