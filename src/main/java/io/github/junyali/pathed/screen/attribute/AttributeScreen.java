@@ -3,16 +3,20 @@ package io.github.junyali.pathed.screen.attribute;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.attribute.Attribute;
 import io.github.junyali.pathed.data.attribute.AttributeRegistry;
+import io.github.junyali.pathed.network.payload.c2s.SetAttributePacket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AttributeScreen extends Screen {
@@ -112,9 +116,26 @@ public class AttributeScreen extends Screen {
 	}
 
 	private void onDone() {
-		if (this.minecraft != null) {
-			this.minecraft.setScreen(null);
+		Player player = this.getMinecraft().player;
+		if (player != null) {
+			ProgressionAttachment.UpgradeData data = ProgressionAttachment.get(player).getUpgradeData();
+			List<SetAttributePacket.Entry> difference = new ArrayList<>();
+			for (Attribute attr : AttributeRegistry.all()) {
+				if (!isObtained(attr)) continue;
+				int pendingLevel = getPendingLevel(attr);
+				boolean pendingOn = getPendingActive(attr);
+				int currentLevel = data.getSelectedLevel(attr.getId());
+				boolean currentOn = data.isActive(attr.getId());
+				if (pendingLevel != currentLevel || pendingOn != currentOn) {
+					difference.add(new SetAttributePacket.Entry(attr.getId(), pendingLevel, pendingOn));
+				}
+			}
+			if (!difference.isEmpty()) {
+				PacketDistributor.sendToServer(new SetAttributePacket(difference));
+			}
 		}
+
+		if (this.minecraft != null) this.minecraft.setScreen(null);
 	}
 
 	private void onCancel() {
