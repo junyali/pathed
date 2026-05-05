@@ -1,5 +1,6 @@
 package io.github.junyali.pathed;
 
+import io.github.junyali.pathed.component.PathedDataComponents;
 import io.github.junyali.pathed.data.attribute.AttributeRegistry;
 import io.github.junyali.pathed.registry.PathedAttachments;
 import io.github.junyali.pathed.data.path.PathRegistry;
@@ -29,6 +30,7 @@ public class Pathed {
         PathedAttachments.register(modEventBus);
         PathedMenuTypes.register(modEventBus);
         PathedItems.register(modEventBus);
+        PathedDataComponents.register(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
     }
