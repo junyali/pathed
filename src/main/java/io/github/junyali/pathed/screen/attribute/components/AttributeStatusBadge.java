@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 
-public class AttributeStatusBadge {
+public final class AttributeStatusBadge {
 	public static final int HEIGHT = 9;
 	private static final int PADDING_X = 3;
 
