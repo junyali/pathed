@@ -254,4 +254,10 @@ public class AttributeScreen extends Screen {
 		if (p == null) return 0;
 		return ProgressionAttachment.get(p).getUpgradeData().getAttributeLevel(attr.getId());
 	}
+
+	public int getSelectedLevel(Attribute attr) {
+		Player p = this.getMinecraft().player;
+		if (p == null) return 0;
+		return ProgressionAttachment.get(p).getUpgradeData().getSelectedLevel(attr.getId());
+	}
 }
