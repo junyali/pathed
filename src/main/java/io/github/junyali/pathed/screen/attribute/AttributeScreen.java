@@ -80,7 +80,7 @@ public class AttributeScreen extends Screen {
 			for (Attribute attr : AttributeRegistry.all()) {
 				String key = attr.getId().getPath();
 				pendingLevels.put(key, p.getUpgradeData().getSelectedLevel(attr.getId()));
-				pendingActive.put(key, p.getUpgradeData().isActive(attr.getId()));
+				pendingActive.put(key, attr.isForceActive() || p.getUpgradeData().isActive(attr.getId()));
 			}
 		}
 
@@ -237,6 +237,10 @@ public class AttributeScreen extends Screen {
 	}
 
 	public void setPendingActive(Attribute attr, boolean active) {
+		if (attr.isForceActive()) {
+			pendingActive.put(attr.getId().getPath(), true);
+			return;
+		}
 		if (active && conflictsWithPendingActive(attr)) return;
 		pendingActive.put(attr.getId().getPath(), active);
 	}

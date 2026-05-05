@@ -113,28 +113,34 @@ public class AttributeDetailPanel {
 		cY += LevelPipBar.HEIGHT + PADDING;
 
 		if (obtained) {
-			String activeLabel = Component.translatable("pathed.gui.attributes.detail.active").getString();
-			guiGraphics.drawString(font, activeLabel, cX, cY + 2, AttributeScreen.COLOUR_TEXT_DIM, false);
-			toggleX = cX + font.width(activeLabel) + 8;
-			toggleY = cY;
+			if (attr.isForceActive()) {
+				toggleY = -1;
+				guiGraphics.drawString(font, Component.translatable("pathed.gui.attributes.detail.always_active"), cX, cY + 2, AttributeScreen.COLOUR_TEXT_GOOD, false);
+				cY += font.lineHeight + PADDING;
+			} else {
+				String activeLabel = Component.translatable("pathed.gui.attributes.detail.active").getString();
+				guiGraphics.drawString(font, activeLabel, cX, cY + 2, AttributeScreen.COLOUR_TEXT_DIM, false);
+				toggleX = cX + font.width(activeLabel) + 8;
+				toggleY = cY;
 
-			ToggleSwitch.render(guiGraphics, toggleX, cY, active, mouseX, mouseY);
+				ToggleSwitch.render(guiGraphics, toggleX, cY, active, mouseX, mouseY);
 
-			Component statusText = active
-					? Component.translatable("pathed.gui.attributes.detail.active.on")
-					: Component.translatable("pathed.gui.attributes.detail.active.off");
+				Component statusText = active
+						? Component.translatable("pathed.gui.attributes.detail.active.on")
+						: Component.translatable("pathed.gui.attributes.detail.active.off");
 
-			int statusColour = active ? AttributeScreen.COLOUR_TEXT_GOOD : AttributeScreen.COLOUR_TEXT_MUTED;
+				int statusColour = active ? AttributeScreen.COLOUR_TEXT_GOOD : AttributeScreen.COLOUR_TEXT_MUTED;
 
-			guiGraphics.drawString(font, statusText, toggleX + ToggleSwitch.WIDTH + 6, cY + 2, statusColour, false);
-			cY += ToggleSwitch.HEIGHT + PADDING;
+				guiGraphics.drawString(font, statusText, toggleX + ToggleSwitch.WIDTH + 6, cY + 2, statusColour, false);
+				cY += ToggleSwitch.HEIGHT + PADDING;
 
-			if (conflicts && !active) {
-				MutableComponent warning = buildConflictWarning(attr);
-				List<FormattedCharSequence> warnLines = font.split(warning, contentW);
-				for (FormattedCharSequence line : warnLines) {
-					guiGraphics.drawString(font, line, cX, cY, AttributeScreen.COLOUR_TEXT_BAD, false);
-					cY += font.lineHeight + 1;
+				if (conflicts && !active) {
+					MutableComponent warning = buildConflictWarning(attr);
+					List<FormattedCharSequence> warnLines = font.split(warning, contentW);
+					for (FormattedCharSequence line : warnLines) {
+						guiGraphics.drawString(font, line, cX, cY, AttributeScreen.COLOUR_TEXT_BAD, false);
+						cY += font.lineHeight + 1;
+					}
 				}
 			}
 		} else {

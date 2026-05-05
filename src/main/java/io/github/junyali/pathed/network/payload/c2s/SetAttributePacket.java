@@ -66,7 +66,7 @@ public record SetAttributePacket(List<Entry> changes) implements CustomPacketPay
 
 				int selected = Math.clamp(e.selectedLevel(), 1, obtained);
 
-				boolean wantActive = e.active();
+				boolean wantActive = attr.isForceActive() || e.active();
 				if (wantActive) {
 					if (attr.getPathLocked().isPresent()) {
 						Path pathId = PathAttachment.get(player).getPath();
