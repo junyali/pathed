@@ -20,7 +20,7 @@ public final class ToggleSwitch {
 		int trackBorder = hovered ? AttributeScreen.COLOUR_TEXT_HIGHLIGHT : AttributeScreen.COLOUR_BORDER;
 		int thumbColour = active ? AttributeScreen.COLOUR_TEXT_GOOD : AttributeScreen.COLOUR_TEXT_DIM;
 		int thumbSize = HEIGHT - 4;
-		int thumbX = active ? x + WIDTH - 2 - thumbSize : x - 2;
+		int thumbX = active ? x + WIDTH - 2 - thumbSize : x + 2;
 
 		guiGraphics.fill(x, y, x + WIDTH, y + HEIGHT, trackBackground);
 		guiGraphics.fill(x, y, x + WIDTH, y + 1, trackBorder);
@@ -28,6 +28,6 @@ public final class ToggleSwitch {
 		guiGraphics.fill(x, y, x + 1, y + HEIGHT, trackBorder);
 		guiGraphics.fill(x + WIDTH - 1, y, x + WIDTH, y + HEIGHT, trackBorder);
 
-		guiGraphics.fill(thumbX, y + 2, thumbX + thumbSize, y + 2, thumbSize, thumbColour);
+		guiGraphics.fill(thumbX, y + 2, thumbX + thumbSize, y + 2 + thumbSize, thumbColour);
 	}
 }

@@ -54,7 +54,7 @@ public class AttributeDetailPanel {
 		if (attr == null) {
 			String hint = Component.translatable("pathed.gui.attributes.detail.no_selection").getString();
 			guiGraphics.drawString(font, hint, innerL + (innerW - font.width(hint)) / 2, innerT + (innerH - font.lineHeight) / 2, AttributeScreen.COLOUR_TEXT_DIM, false);
-			pipRowX = -1;
+			pipRowY = -1;
 			toggleY = -1;
 			return;
 		}

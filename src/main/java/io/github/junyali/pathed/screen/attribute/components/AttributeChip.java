@@ -7,8 +7,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
-import java.awt.*;
-
 public final class AttributeChip {
 	private static final int ICON_SIZE = 16;
 	private static final int PADDING = 3;
@@ -20,7 +18,7 @@ public final class AttributeChip {
 		boolean obtained = screen.isObtained(attr);
 		boolean active = screen.getPendingActive(attr);
 		boolean conflict = screen.conflictsWithPendingActive(attr);
-		boolean hovered = mouseX >= x && mouseY < x + w && mouseY >= y && mouseY < y + h;
+		boolean hovered = mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + h;
 
 		int background = selected ? AttributeScreen.COLOUR_CHIP_SELECTED : hovered ? AttributeScreen.COLOUR_CHIP_HOVER : AttributeScreen.COLOUR_CHIP_BG;
 		int border = selected ? AttributeScreen.COLOUR_BORDER_HIGHLIGHT : conflict ? AttributeScreen.COLOUR_TEXT_BAD : AttributeScreen.COLOUR_BORDER;
@@ -46,7 +44,7 @@ public final class AttributeChip {
 		);
 
 		int textColour = obtained ? AttributeScreen.COLOUR_TEXT : AttributeScreen.COLOUR_TEXT_MUTED;
-		guiGraphics.drawString(font, name, textW, y + 4, textColour, false);
+		guiGraphics.drawString(font, name, textX, y + 4, textColour, false);
 
 		String subtext = obtained ? "Level " + screen.getPendingLevel(attr) + " / " + attr.getMaxLevel() : Component.translatable("pathed.gui.attributes.list.locked").getString();
 

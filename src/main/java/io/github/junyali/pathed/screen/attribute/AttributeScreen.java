@@ -70,8 +70,6 @@ public class AttributeScreen extends Screen {
 				int level = p.getUpgradeData().getAttributeLevel(attr.getId());
 				pendingLevels.put(key, level);
 				pendingActive.put(key, level > 0);
-				// pendingActive.put();
-				// to be used later
 			}
 		}
 
@@ -190,6 +188,7 @@ public class AttributeScreen extends Screen {
 	public void setShowAll(boolean v) {
 		if (this.showAll == v) return;
 		this.showAll = v;
+		this.listPanel.refresh();
 	}
 
 	public int getPendingLevel(Attribute attr) {
@@ -205,7 +204,7 @@ public class AttributeScreen extends Screen {
 	}
 
 	public void setPendingActive(Attribute attr, boolean active) {
-		if (active && conflictsWithPendingActive(attr)) return;;
+		if (active && conflictsWithPendingActive(attr)) return;
 		pendingActive.put(attr.getId().getPath(), active);
 	}
 

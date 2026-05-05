@@ -149,9 +149,9 @@ public class AttributeListPanel {
 			boolean inBody = mouseY >= bodyTop && mouseY < bodyTop + innerHeight();
 			boolean onChip = mouseX >= chipX && mouseX < chipX + chipW && mouseY >= chipY && mouseY < chipY + CHIP_H;
 			if (inBody && onChip) {
-				guiGraphics.renderTooltip(
+				guiGraphics.renderComponentTooltip(
 						screen.getMinecraft().font,
-						(Component) List.of(
+						List.of(
 								Component.translatable(a.getNameKey()),
 								Component.literal(a.getId().toString()).withStyle(style -> style.withColor(AttributeScreen.COLOUR_TEXT_DIM))
 						),
@@ -185,7 +185,7 @@ public class AttributeListPanel {
 			int sbH = innerHeight();
 			int thumbH = Math.max(16, sbH * sbH / (sbH + maxScroll));
 			int thumbY = sbY + (sbH - thumbH) * scrollPos / maxScroll;
-			if (within(mouseX, mouseY, sbX, thumbY, SCROLLBAR_W, thumbY)) {
+			if (within(mouseX, mouseY, sbX, thumbY, SCROLLBAR_W, thumbH)) {
 				draggingScroll = true;
 				dragStartMouseY = mouseY;
 				dragStartScroll = scrollPos;

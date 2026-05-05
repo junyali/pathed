@@ -16,7 +16,7 @@ public final class AttributeTab {
 		int text = active ? AttributeScreen.COLOUR_TEXT_HIGHLIGHT : AttributeScreen.COLOUR_TEXT;
 
 		guiGraphics.fill(x, y, x + w, y + h, background);
-		guiGraphics.fill(x, y, x+ w, y + 1, border);
+		guiGraphics.fill(x, y, x + w, y + 1, border);
 		guiGraphics.fill(x, y, x + 1, y +h, border);
 		guiGraphics.fill(x + w - 1, y, x + w, y + h, border);
 		if (!active) guiGraphics.fill(x, y + h - 1, x + w, y + h, border);
