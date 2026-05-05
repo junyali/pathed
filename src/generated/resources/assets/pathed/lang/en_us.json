@@ -38,7 +38,7 @@
   "pathed.gui.attributes.list.empty": "Nothing here yet",
   "pathed.gui.attributes.list.locked": "Locked",
   "pathed.gui.attributes.tab.all": "All",
-  "pathed.gui.attributes.tab.mine": "Mine",
+  "pathed.gui.attributes.tab.mine": "Available",
   "pathed.gui.attributes.title": "Attributes",
   "pathed.gui.attritubes.detail.active.off": "Inactive",
   "pathed.gui.choose_path.button.select": "Select",

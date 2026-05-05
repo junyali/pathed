@@ -53,7 +53,7 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.gui.progression.categories", "Categories");
 
 		add("pathed.gui.attributes.title", "Attributes");
-		add("pathed.gui.attributes.tab.mine", "Mine");
+		add("pathed.gui.attributes.tab.mine", "Available");
 		add("pathed.gui.attributes.tab.all", "All");
 		add("pathed.gui.attributes.list.empty", "Nothing here yet");
 		add("pathed.gui.attributes.list.locked", "Locked");
