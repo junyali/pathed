@@ -95,6 +95,17 @@ public class AttributeDetailPanel {
 		pipRowX = cX + font.width(levelLabel) + 8;
 		pipRowY = cY;
 
+		LevelPipBar.render(
+				guiGraphics,
+				pipRowX,
+				cY,
+				attr.getMaxLevel(),
+				currentLevel,
+				obtained ? obtainedLevel : 0,
+				mouseX,
+				mouseY
+		);
+
 		String levelInfo = obtained
 				? currentLevel + "/" + obtainedLevel
 				: Component.translatable("pathed.gui.attributes.detail.locked").getString();
