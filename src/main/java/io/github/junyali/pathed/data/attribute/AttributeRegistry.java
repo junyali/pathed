@@ -1,6 +1,7 @@
 package io.github.junyali.pathed.data.attribute;
 
 import io.github.junyali.pathed.Pathed;
+import io.github.junyali.pathed.data.attribute.attributes.TierAttribute;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collection;
@@ -10,6 +11,8 @@ import java.util.Map;
 
 public class AttributeRegistry {
 	private static final Map<ResourceLocation, Attribute> ATTRIBUTES = new LinkedHashMap<>();
+
+	public static final Attribute TIER = register(new TierAttribute());
 
 	private AttributeRegistry() {}
 
