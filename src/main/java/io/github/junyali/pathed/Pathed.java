@@ -1,5 +1,6 @@
 package io.github.junyali.pathed;
 
+import io.github.junyali.pathed.data.attribute.AttributeRegistry;
 import io.github.junyali.pathed.registry.PathedAttachments;
 import io.github.junyali.pathed.data.path.PathRegistry;
 import io.github.junyali.pathed.item.PathedItems;
@@ -35,6 +36,7 @@ public class Pathed {
     private void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("HELLO FROM COMMON SETUP");
         PathRegistry.init();
+        AttributeRegistry.init();
     }
 
     @SubscribeEvent
