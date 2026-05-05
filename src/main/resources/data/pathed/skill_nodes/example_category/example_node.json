@@ -1,0 +1,55 @@
+{
+  "name": "pathed.skill.example_category.example_node.name",
+  "description": "pathed.skill.examplde_category.example_node.desc",
+  "category": "pathed:example_category",
+  "node_type": "task",
+  "type": "pathed:progression",
+  "position": {
+    "x": 50,
+    "y": 0
+  },
+  "icon": {
+    "type": "item",
+    "value": "minecraft:wooden_pickaxe"
+  },
+  "previous_nodes": [
+    "pathed:example_category/node_2"
+  ],
+  "prerequisites": [
+    "pathed:tiers/netherite",
+    "pathed:example_category/node_2"
+  ],
+  "requirements": [
+    {
+      "type": "pathed:stat_count",
+      "stat": "blocks_broken",
+      "target": "minecraft:ancient_debris",
+      "count": 1,
+      "consumed": false
+    }
+  ],
+  "rewards": [
+    {
+      "type": "pathed:item",
+      "item": "minecraft:stone",
+      "count": 64
+    },
+    {
+      "type": "pathed:experience",
+      "amount": 100,
+      "levels": false,
+      "vanilla": true
+    },
+    {
+      "type": "pathed:effect",
+      "effect": "minecraft:speed",
+      "duration": 600,
+      "amplifier": 1
+    },
+    {
+      "type": "pathed:recipe",
+      "recipe": "minecraft:diamond_pickaxe"
+    }
+  ],
+  "base": false
+}

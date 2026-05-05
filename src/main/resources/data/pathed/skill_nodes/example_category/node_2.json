@@ -1,0 +1,19 @@
+{
+  "name": "pathed.skill.example_category.node_2.name",
+  "description": "pathed.skill.examplde_category.node_2.desc",
+  "category": "pathed:example_category",
+  "node_type": "task",
+  "type": "pathed:progression",
+  "position": {
+    "x": 0,
+    "y": 0
+  },
+  "icon": {
+    "type": "item",
+    "value": "minecraft:wooden_pickaxe"
+  },
+  "prerequisites": [],
+  "requirements": [],
+  "rewards": [],
+  "base": true
+}
