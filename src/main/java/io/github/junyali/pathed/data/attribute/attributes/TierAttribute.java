@@ -10,7 +10,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public class TierAttribute extends Attribute {
 	public TierAttribute() {
-		super("tier", 5, createIcon());
+		super("tier", 5, createIcon(), true);
 	}
 
 	private static ItemStack createIcon() {

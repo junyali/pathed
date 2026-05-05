@@ -16,25 +16,31 @@ public abstract class Attribute {
 	private final List<ResourceLocation> incompatibleWith;
 	@Nullable
 	private final ResourceLocation pathLocked;
+	private final boolean forceActive;
 
 	protected Attribute(String path, int maxLevel, ItemStack icon) {
-		this(path, maxLevel, icon, List.of(), null);
+		this(path, maxLevel, icon, List.of(), null, false);
+	}
+
+	protected Attribute(String path, int maxLevel, ItemStack icon, boolean forceActive) {
+		this(path, maxLevel, icon, List.of(), null, forceActive);
 	}
 
 	protected Attribute(String path, int maxLevel, ItemStack icon, List<ResourceLocation> incompatibleWith) {
-		this(path, maxLevel, icon, List.copyOf(incompatibleWith), null);
+		this(path, maxLevel, icon, List.copyOf(incompatibleWith), null, false);
 	}
 
 	protected Attribute(String path, int maxLevel, ItemStack icon, @Nullable ResourceLocation pathLocked) {
-		this(path, maxLevel, icon, List.of(), pathLocked);
+		this(path, maxLevel, icon, List.of(), pathLocked, false);
 	}
 
-	protected Attribute(String path, int maxLevel, ItemStack icon, List<ResourceLocation> incompatibleWith, @Nullable ResourceLocation pathLocked) {
+	protected Attribute(String path, int maxLevel, ItemStack icon, List<ResourceLocation> incompatibleWith, @Nullable ResourceLocation pathLocked, boolean forceActive) {
 		this.id = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, path);
 		this.maxLevel = maxLevel;
 		this.icon = icon;
 		this.pathLocked = pathLocked;
 		this.incompatibleWith = List.copyOf(incompatibleWith);
+		this.forceActive = forceActive;
 	}
 
 	public ResourceLocation getId() {
@@ -55,6 +61,10 @@ public abstract class Attribute {
 
 	public Optional<ResourceLocation> getPathLocked() {
 		return Optional.ofNullable(pathLocked);
+	}
+
+	public boolean isForceActive() {
+		return forceActive;
 	}
 
 	public String getNameKey() {
