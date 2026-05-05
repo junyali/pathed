@@ -106,7 +106,7 @@ public final class SkillNodeEvaluator {
 		for (SkillNode node : SkillNodeLoader.getNodes().values()) {
 			if (!node.base()) continue;
 			if (p.getCompletedNodes().contains(node.id())) continue;
-			completeNode(player, p, node, false);
+			completeNode(player, p, node, true);
 			changed = true;
 		}
 		if (changed) p.sync(player);
