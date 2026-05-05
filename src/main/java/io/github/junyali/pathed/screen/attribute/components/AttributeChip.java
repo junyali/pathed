@@ -36,8 +36,9 @@ public final class AttributeChip {
 		guiGraphics.renderItem(attr.getIcon(), iconX, iconY);
 
 		Font font = Minecraft.getInstance().font;
+		int badgeW = AttributeStatusBadge.widthFor(active, conflict, obtained, font);
 		int textX = iconX + ICON_SIZE + 4;
-		int textW = w - PADDING * 2 - ICON_SIZE - 4 - 3;
+		int textW = w - PADDING * 2 - ICON_SIZE - 4 - badgeW - 3;
 
 		String name = font.plainSubstrByWidth(
 				Component.translatable(attr.getNameKey()).getString(),
@@ -50,5 +51,7 @@ public final class AttributeChip {
 		String subtext = obtained ? "Level " + screen.getPendingLevel(attr) + " / " + attr.getMaxLevel() : Component.translatable("pathed.gui.attributes.list.locked").getString();
 
 		guiGraphics.drawString(font, subtext, textX, y + h - 4 - font.lineHeight, AttributeScreen.COLOUR_TEXT_DIM, false);
+
+		AttributeStatusBadge.render(guiGraphics, x + w - PADDING - badgeW, y + (h - AttributeStatusBadge.HEIGHT) / 2, active, conflict, obtained);
 	}
 }

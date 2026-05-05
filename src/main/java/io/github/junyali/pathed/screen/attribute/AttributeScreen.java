@@ -34,6 +34,10 @@ public class AttributeScreen extends Screen {
 	public static final int COLOUR_BORDER = 0xFF000000;
 	public static final int COLOUR_BORDER_HIGHLIGHT = 0xFFFFFF55;
 
+	public static final int COLOUR_LOCKED = 0xC0202020;
+	public static final int COLOUR_ACTIVE = 0xC0142D14;
+	public static final int COLOUR_CONFLICT = 0xC02D1414;
+
 	private AttributeListPanel listPanel;
 	private AttributeDetailPanel detailPanel;
 
