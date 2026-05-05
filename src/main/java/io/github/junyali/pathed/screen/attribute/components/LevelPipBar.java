@@ -17,15 +17,15 @@ public final class LevelPipBar {
 	public static int hoveredIndex(int x, int y, int max, int mouseX, int mouseY) {
 		if (mouseY < y || mouseY >= y + SIZE) return 0;
 		for (int i = 1; i <= max; i++) {
-			int px = x + (i - 1) * (SIZE * GAP);
-			if (mouseX >= px && mouseX < px + SIZE);
+			int px = x + (i - 1) * (SIZE + GAP);
+			if (mouseX >= px && mouseX < px + SIZE) return i;
 		}
 		return 0;
 	}
 
 	public static void render(GuiGraphics guiGraphics, int x, int y, int max, int currentLevel, int obtainedLevel, int mouseX, int mouseY) {
 		for (int i = 1; i <= max; i++) {
-			int px = x + (i - 1) * (SIZE * GAP);
+			int px = x + (i - 1) * (SIZE + GAP);
 
 			boolean filled = i <= currentLevel;
 			boolean available = i <= obtainedLevel;
@@ -48,8 +48,8 @@ public final class LevelPipBar {
 			guiGraphics.fill(px, y, px + SIZE, y + SIZE, background);
 			guiGraphics.fill(px, y, px + SIZE, y + 1, border);
 			guiGraphics.fill(px, y + SIZE - 1, px + SIZE, y + SIZE, border);
-			guiGraphics.fill(px, y, px + 1, y + SIZE, background);
-			guiGraphics.fill(px + SIZE - 1, y, px + SIZE, y + SIZE, background);
+			guiGraphics.fill(px, y, px + 1, y + SIZE, border);
+			guiGraphics.fill(px + SIZE - 1, y, px + SIZE, y + SIZE, border);
 		}
 	}
 }
