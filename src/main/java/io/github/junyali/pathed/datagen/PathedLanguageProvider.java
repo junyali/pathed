@@ -96,6 +96,10 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.skill.tooltip.reward.effect", "%1$s for %2$ss (Potency %3$s)");
 		add("pathed.skill.tooltip.reward.recipe", "Unlock Recipe: %1$s");
 
+		// ATTRIBUTES
+		add("pathed.attribute.tier.name", "Tier");
+		add("pathed.attribute.tier.desc", "Dictates the level of blocks your tool is able to mine.");
+
 		// TOASTS
 		add("pathed.toast.node_get", "Node Completed!");
 		add("pathed.toast.node_get_challenge", "Challenge Node Completed!");

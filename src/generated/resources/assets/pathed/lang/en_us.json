@@ -24,6 +24,8 @@
   "path.pathed.spelunker.description": "A master of the deep. Thrive underground as the surface holds little for you.",
   "path.pathed.spelunker.name": "Spelunker",
   "path.pathed.spelunker.tool_description": "It remembers every cave it has touched.",
+  "pathed.attribute.tier.desc": "Dictates the level of blocks your tool is able to mine.",
+  "pathed.attribute.tier.name": "Tier",
   "pathed.gui.attributes.detail.active": "Active",
   "pathed.gui.attributes.detail.active.on": "Currently active",
   "pathed.gui.attributes.detail.conflict": "Conflicts with: %1$s",
