@@ -6,6 +6,7 @@ import io.github.junyali.pathed.screen.progression.ProgressionRenderer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,17 @@ public class AttributeListPanel {
 				if (screen.isObtained(a)) visible.add(a);
 			}
 		}
-		if (screen.getSelected() != null && !visible.contains(screen.getSelected()));
+		if (screen.getSelected() != null && !visible.contains(screen.getSelected())) {
+			screen.setSelected(null);
+		}
+		recalcScroll();
+	}
+
+	private void recalcScroll() {
+		int contentH = visible.size() * (CHIP_H + CHIP_GAP);
+		int innerH = innerHeight();
+		maxScroll = Math.max(0, contentH - innerH);
+		scrollPos = Math.min(scrollPos, maxScroll);
 	}
 
 	private int innerHeight() {
@@ -104,5 +115,80 @@ public class AttributeListPanel {
 			);
 		}
 		guiGraphics.disableScissor();
+	}
+
+	public boolean mouseClicked(double mouseX, double mouseY) {
+		int innerL = left + AttributeScreen.FRAME_BORDER;
+		int innerT = top + AttributeScreen.FRAME_BORDER;
+		int innerW = width - 2 * AttributeScreen.FRAME_BORDER;
+
+		int tabW = innerW / 2;
+		if (within(mouseX, mouseY, innerL, innerT, tabW, TAB_BAR_H)) {
+			screen.setShowAll(false);
+			return true;
+		}
+		if (within(mouseX, mouseY, innerL + tabW, innerT, innerW - tabW, TAB_BAR_H)) {
+			screen.setShowAll(true);
+			return true;
+		}
+
+		if (maxScroll > 0) {
+			int sbX = innerL + innerW - SCROLLBAR_W;
+			int sbY = innerT + TAB_BAR_H;
+			int sbH = innerHeight();
+			int thumbH = Math.max(16, sbH * sbH / (sbH + maxScroll));
+			int thumbY = sbY + (sbH - thumbH) * scrollPos / maxScroll;
+			if (within(mouseX, mouseY, sbX, thumbY, SCROLLBAR_W, thumbY)) {
+				draggingScroll = true;
+				dragStartMouseY = mouseY;
+				dragStartScroll = scrollPos;
+				return true;
+			}
+		}
+
+		int bodyTop = innerT + TAB_BAR_H;
+		int chipX = innerL + 3;
+		int chipY = bodyTop + 4 - scrollPos;
+		int chipW = innerW - 6 - (maxScroll > 0 ? SCROLLBAR_W : 0);
+		if (within(mouseX, mouseY, innerL, bodyTop, innerW, innerHeight())) {
+			for (Attribute a : visible) {
+				if (within(mouseX, mouseY, chipX, chipY, chipW, CHIP_H)) {
+					screen.setSelected(a);
+					return true;
+				}
+				chipY += CHIP_H + CHIP_GAP;
+			}
+		}
+		return false;
+	}
+
+	private static boolean within(double mouseX, double mouseY, int x, int y, int w, int h) {
+		return mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + h;
+	}
+
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+		int innerL = left + AttributeScreen.FRAME_BORDER;
+		int innerW = width - 2 * AttributeScreen.FRAME_BORDER;
+		int bodyTop = top + AttributeScreen.FRAME_BORDER + TAB_BAR_H;
+		if (!within(mouseX, mouseY, innerL, bodyTop, innerW, innerHeight())) return false;
+		if (maxScroll <= 0) return false;
+		scrollPos = Mth.clamp((int) (scrollPos - scrollY * 8), 0, maxScroll);
+		return true;
+	}
+
+	public boolean mouseDragged(double mouseX, double mouseY) {
+		if (!draggingScroll) return false;
+		int sbH = innerHeight();
+		int thumbH = Math.max(16, sbH * sbH / (sbH + maxScroll));
+		int movable = sbH - thumbH;
+		if (movable > 0) {
+			int delta = (int) ((mouseY - dragStartMouseY) * maxScroll / movable);
+			scrollPos = Mth.clamp(dragStartScroll + delta, 0, maxScroll);
+		}
+		return true;
+	}
+
+	public void mouseReleased() {
+		draggingScroll = false;
 	}
 }

@@ -71,7 +71,7 @@ public class AttributeScreen extends Screen {
 		int panelBottom = this.height - FOOTER_H - 4;
 		int panelHeight = panelBottom - panelTop;
 
-		// this.listPanel
+		this.listPanel = new AttributeListPanel(this, 10, panelTop, LIST_PANEL_W, panelHeight);
 
 		// this.detailPanel
 
@@ -124,6 +124,32 @@ public class AttributeScreen extends Screen {
 	@Override
 	public void renderTransparentBackground(@NotNull GuiGraphics guiGraphics) {
 		guiGraphics.fillGradient(0, 0, this.width, this.height, -5, 1678774288, -2112876528);
+	}
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (button == 0) {
+			if (this.listPanel.mouseClicked(mouseX, mouseY)) return true;
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		if (this.listPanel.mouseScrolled(mouseX, mouseY, scrollY)) return true;
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+	}
+
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		if (this.listPanel.mouseDragged(mouseX, mouseY)) return true;
+		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	}
+
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		this.listPanel.mouseReleased();
+		return super.mouseReleased(mouseX, mouseY, button);
 	}
 
 	@Override
