@@ -81,7 +81,9 @@ public class AttributeScreen extends Screen {
 
 		this.listPanel = new AttributeListPanel(this, 10, panelTop, LIST_PANEL_W, panelHeight);
 
-		// this.detailPanel
+		int detailLeft = 10 + LIST_PANEL_W + 8;
+		int detailWidth = this.width - detailLeft - 10;
+		this.detailPanel = new AttributeDetailPanel(this, detailLeft, panelTop, detailWidth, panelHeight);
 
 		int btnY = this.height - FOOTER_H + (FOOTER_H - 20) / 2;
 		int btnW = 100;
@@ -118,6 +120,7 @@ public class AttributeScreen extends Screen {
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 		this.listPanel.render(guiGraphics, mouseX, mouseY);
+		this.detailPanel.render(guiGraphics, mouseX, mouseY);
 		super.render(guiGraphics, mouseX, mouseY, delta);
 	}
 
@@ -139,6 +142,7 @@ public class AttributeScreen extends Screen {
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (button == 0) {
 			if (this.listPanel.mouseClicked(mouseX, mouseY)) return true;
+			if (this.detailPanel.mouseClicked(mouseX, mouseY)) return true;
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
