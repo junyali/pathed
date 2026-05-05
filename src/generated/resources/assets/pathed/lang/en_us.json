@@ -31,6 +31,8 @@
   "pathed.gui.attributes.detail.locked": "Locked",
   "pathed.gui.attributes.detail.locked.hint": "Not yet obtained",
   "pathed.gui.attributes.detail.no_selection": "Select an attribute",
+  "pathed.gui.attributes.detail.pip.locked": "Not yet obtained",
+  "pathed.gui.attributes.detail.pip.set": "Set to level %1$s",
   "pathed.gui.attributes.list.empty": "Nothing here yet",
   "pathed.gui.attributes.list.locked": "Locked",
   "pathed.gui.attributes.tab.all": "All",

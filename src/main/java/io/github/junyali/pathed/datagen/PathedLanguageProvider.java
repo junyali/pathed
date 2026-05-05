@@ -65,6 +65,8 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.gui.attributes.detail.active.on", "Currently active");
 		add("pathed.gui.attritubes.detail.active.off", "Inactive");
 		add("pathed.gui.attributes.detail.conflict", "Conflicts with: %1$s");
+		add("pathed.gui.attributes.detail.pip.set", "Set to level %1$s");
+		add("pathed.gui.attributes.detail.pip.locked", "Not yet obtained");
 
 		// NODE TOOLTIPS
 		add("pathed.skill.tooltip.prerequisites", "Prerequisites:");
