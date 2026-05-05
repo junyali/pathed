@@ -2,6 +2,7 @@ package io.github.junyali.pathed.screen.attribute;
 
 import io.github.junyali.pathed.data.attribute.Attribute;
 import io.github.junyali.pathed.data.attribute.AttributeRegistry;
+import io.github.junyali.pathed.screen.attribute.components.LevelPipBar;
 import io.github.junyali.pathed.screen.attribute.components.ToggleSwitch;
 import io.github.junyali.pathed.screen.progression.ProgressionRenderer;
 import net.minecraft.client.gui.Font;
@@ -62,6 +63,9 @@ public class AttributeDetailPanel {
 		boolean active = screen.getPendingActive(attr);
 		boolean conflicts = screen.conflictsWithPendingActive(attr);
 
+		int currentLevel = screen.getPendingLevel(attr);
+		int obtainedLevel = screen.getObtainedLevel(attr);
+
 		int cX = innerL + PADDING;
 		int cY = innerT + PADDING;
 		int contentW = innerW - PADDING * 2;
@@ -85,6 +89,17 @@ public class AttributeDetailPanel {
 		cY += 4;
 		guiGraphics.fill(cX, cY, cX + contentW, cY + 1, AttributeScreen.COLOUR_BORDER);
 		cY += 6;
+
+		String levelLabel = Component.translatable("pathed.gui.attributes.detail.level").getString();
+		guiGraphics.drawString(font, levelLabel, cX, cY + 1, AttributeScreen.COLOUR_TEXT_DIM, false);
+		pipRowX = cX + font.width(levelLabel) + 8;
+		pipRowY = cY;
+
+		String levelInfo = obtained
+				? currentLevel + "/" + obtainedLevel
+				: Component.translatable("pathed.gui.attributes.detail.locked").getString();
+		guiGraphics.drawString(font, levelInfo, pipRowX + LevelPipBar.totalWidth(attr.getMaxLevel()) + 6, cY + 1, obtained ? AttributeScreen.COLOUR_TEXT_DIM : AttributeScreen.COLOUR_TEXT_MUTED, false);
+		cY += LevelPipBar.HEIGHT + PADDING;
 
 		if (obtained) {
 			String activeLabel = Component.translatable("pathed.gui.attributes.detail.active").getString();
@@ -120,6 +135,14 @@ public class AttributeDetailPanel {
 	public boolean mouseClicked(double mouseX, double mouseY) {
 		Attribute attr = screen.getSelected();
 		if (attr == null) return false;
+
+		if (pipRowY >= 0 && screen.isObtained(attr)) {
+			int index = LevelPipBar.hoveredIndex(pipRowX, pipRowY, attr.getMaxLevel(), (int) mouseX, (int) mouseY);
+			if (index > 0 && index <= screen.getObtainedLevel(attr)) {
+				screen.setPendingLevel(attr, index);
+				return true;
+			}
+		}
 
 		if (toggleY >= 0 && ToggleSwitch.contains(toggleX, toggleY, mouseX, mouseY)) {
 			screen.setPendingActive(attr, !screen.getPendingActive(attr));
