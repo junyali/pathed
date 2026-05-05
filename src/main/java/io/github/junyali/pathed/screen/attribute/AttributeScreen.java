@@ -109,6 +109,7 @@ public class AttributeScreen extends Screen {
 
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+		this.listPanel.render(guiGraphics, mouseX, mouseY);
 		super.render(guiGraphics, mouseX, mouseY, delta);
 	}
 
