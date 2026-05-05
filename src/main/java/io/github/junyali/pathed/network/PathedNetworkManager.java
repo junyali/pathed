@@ -2,6 +2,7 @@ package io.github.junyali.pathed.network;
 
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.network.payload.c2s.ChoosePathPacket;
+import io.github.junyali.pathed.network.payload.c2s.SetAttributePacket;
 import io.github.junyali.pathed.network.payload.s2c.NodeCompletedPacket;
 import io.github.junyali.pathed.network.payload.s2c.OpenPathSelectPacket;
 import io.github.junyali.pathed.network.payload.s2c.SyncSkillDataPacket;
@@ -38,6 +39,12 @@ public class PathedNetworkManager {
 				ChoosePathPacket.TYPE,
 				ChoosePathPacket.STREAM_CODEC,
 				ChoosePathPacket::handle
+		);
+
+		registrar.playToServer(
+				SetAttributePacket.TYPE,
+				SetAttributePacket.STREAM_CODEC,
+				SetAttributePacket::handle
 		);
 	}
 }
