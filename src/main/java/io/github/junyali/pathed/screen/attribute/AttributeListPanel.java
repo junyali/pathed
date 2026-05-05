@@ -97,7 +97,7 @@ public class AttributeListPanel {
 				AttributeScreen.COLOUR_BORDER
 		);
 
-		int contentRight = innerL + innerW;
+		int contentRight = innerL + innerW - (maxScroll > 0 ? SCROLLBAR_W : 0);
 		guiGraphics.enableScissor(
 				innerL,
 				bodyTop + 1,
@@ -126,6 +126,42 @@ public class AttributeListPanel {
 			);
 		}
 		guiGraphics.disableScissor();
+
+		if (maxScroll > 0) {
+			int sbX = innerL + innerW - SCROLLBAR_W;
+			int sbH = innerH;
+			int thumbH = Math.max(16, sbH * innerH / (innerH + maxScroll));
+			int thumbY = bodyTop + (sbH - thumbH) * scrollPos / maxScroll;
+			guiGraphics.fill(sbX, bodyTop, sbX + SCROLLBAR_W, bodyTop + sbH, 0xFF333333);
+			guiGraphics.fill(sbX, thumbY, sbX + SCROLLBAR_W, thumbY + thumbH, AttributeScreen.COLOUR_TEXT_DIM);
+		}
+	}
+
+	public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		int innerL = left + AttributeScreen.FRAME_BORDER;
+		int innerW = width - 2 * AttributeScreen.FRAME_BORDER;
+		int chipX = innerL + 3;
+		int chipW = innerW - 6 - (maxScroll > 0 ? SCROLLBAR_W : 0);
+		int bodyTop = top + AttributeScreen.FRAME_BORDER + TAB_BAR_H;
+		int chipY = bodyTop + 4 - scrollPos;
+
+		for (Attribute a : visible) {
+			boolean inBody = mouseY >= bodyTop && mouseY < bodyTop + innerHeight();
+			boolean onChip = mouseX >= chipX && mouseX < chipX + chipW && mouseY >= chipY && mouseY < chipY + CHIP_H;
+			if (inBody && onChip) {
+				guiGraphics.renderTooltip(
+						screen.getMinecraft().font,
+						(Component) List.of(
+								Component.translatable(a.getNameKey()),
+								Component.literal(a.getId().toString()).withStyle(style -> style.withColor(AttributeScreen.COLOUR_TEXT_DIM))
+						),
+						mouseX,
+						mouseY
+				);
+				return;
+			}
+			chipY += CHIP_H + CHIP_GAP;
+		}
 	}
 
 	public boolean mouseClicked(double mouseX, double mouseY) {

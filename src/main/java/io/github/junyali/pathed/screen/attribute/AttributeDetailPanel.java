@@ -132,6 +132,18 @@ public class AttributeDetailPanel {
 		}
 	}
 
+	public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		Attribute attr = screen.getSelected();
+		if (attr == null || pipRowY < 0) return;
+		if (!screen.isObtained(attr)) return;
+		int hovered = LevelPipBar.hoveredIndex(pipRowX, pipRowY, attr.getMaxLevel(), mouseX, mouseY);
+		if (hovered <= 0) return;
+		Component line = (hovered <= screen.getObtainedLevel(attr))
+				? Component.translatable("pathed.gui.attributes.detail.pip.set", hovered)
+				: Component.translatable("pathed.gui.attributes.detail.pip.locked");
+		guiGraphics.renderTooltip(screen.getMinecraft().font, line, mouseX, mouseY);
+	}
+
 	public boolean mouseClicked(double mouseX, double mouseY) {
 		Attribute attr = screen.getSelected();
 		if (attr == null) return false;

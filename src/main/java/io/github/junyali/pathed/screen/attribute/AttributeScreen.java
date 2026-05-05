@@ -103,6 +103,8 @@ public class AttributeScreen extends Screen {
 						btn -> this.onDone()
 				).bounds(doneX, btnY, btnW, 20).build()
 		);
+
+		this.listPanel.refresh();
 	}
 
 	private void onDone() {
@@ -122,6 +124,8 @@ public class AttributeScreen extends Screen {
 		this.listPanel.render(guiGraphics, mouseX, mouseY);
 		this.detailPanel.render(guiGraphics, mouseX, mouseY);
 		super.render(guiGraphics, mouseX, mouseY, delta);
+		this.listPanel.renderTooltip(guiGraphics, mouseX, mouseY);
+		this.detailPanel.renderTooltip(guiGraphics, mouseX, mouseY);
 	}
 
 	@Override
