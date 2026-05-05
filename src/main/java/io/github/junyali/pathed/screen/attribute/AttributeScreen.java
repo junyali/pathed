@@ -74,9 +74,8 @@ public class AttributeScreen extends Screen {
 			ProgressionAttachment p = ProgressionAttachment.get(player);
 			for (Attribute attr : AttributeRegistry.all()) {
 				String key = attr.getId().getPath();
-				int level = p.getUpgradeData().getAttributeLevel(attr.getId());
-				pendingLevels.put(key, level);
-				pendingActive.put(key, level > 0);
+				pendingLevels.put(key, p.getUpgradeData().getSelectedLevel(attr.getId()));
+				pendingActive.put(key, p.getUpgradeData().isActive(attr.getId()));
 			}
 		}
 

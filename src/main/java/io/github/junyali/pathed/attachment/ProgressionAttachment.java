@@ -130,14 +130,23 @@ public class ProgressionAttachment {
 	public static class UpgradeData {
 		private ToolTier currentToolTier;
 		private final Map<ResourceLocation, Integer> unlockedAttributes;
+		private final Map<ResourceLocation, Integer> selectedAttributeLevels;
+		private final Set<ResourceLocation> activeAttributes;
 
 		public UpgradeData() {
-			this(ToolTier.WOOD, new HashMap<>());
+			this(ToolTier.WOOD, new HashMap<>(), new HashMap<>(), new HashSet<>());
 		}
 
-		private UpgradeData(ToolTier currentToolTier, Map<ResourceLocation, Integer> unlockedAttributes) {
+		private UpgradeData(
+				ToolTier currentToolTier,
+				Map<ResourceLocation, Integer> unlockedAttributes,
+				Map<ResourceLocation, Integer> selectedAttributeLevels,
+				Set<ResourceLocation> activeAttributes
+		) {
 			this.currentToolTier = currentToolTier;
 			this.unlockedAttributes = new HashMap<>(unlockedAttributes);
+			this.selectedAttributeLevels = new HashMap<>(selectedAttributeLevels);
+			this.activeAttributes = new HashSet<>(activeAttributes);
 		}
 
 		public ToolTier getCurrentToolTier() {
@@ -150,6 +159,14 @@ public class ProgressionAttachment {
 
 		public Map<ResourceLocation, Integer> getUnlockedAttributes() {
 			return unlockedAttributes;
+		}
+
+		public Map<ResourceLocation, Integer> getSelectedAttributeLevels() {
+			return selectedAttributeLevels;
+		}
+
+		public Set<ResourceLocation> getActiveAttributes() {
+			return activeAttributes;
 		}
 
 		public void unlockAttribute(ResourceLocation attribute) {
@@ -176,16 +193,39 @@ public class ProgressionAttachment {
 			return unlockedAttributes.containsKey(attribute) && unlockedAttributes.get(attribute) > 0;
 		}
 
+		public int getSelectedLevel(ResourceLocation id) {
+			return selectedAttributeLevels.getOrDefault(id, getAttributeLevel(id));
+		}
+
+		public boolean setSelectedLevel(ResourceLocation id, int level) {
+			int max = getAttributeLevel(id);
+			if (max <= 0) return false;
+			int clamped = Math.clamp(level, 1, max);
+			selectedAttributeLevels.put(id, clamped);
+			return true;
+		}
+
+		public boolean isActive(ResourceLocation id) {
+			return activeAttributes.contains(id);
+		}
+
+		public void setActive(ResourceLocation id, boolean active) {
+			if (active) activeAttributes.add(id);
+			else activeAttributes.remove(id);
+		}
+
 		static final Codec<UpgradeData> CODEC = RecordCodecBuilder.create(i -> i.group(
 				ToolTier.CODEC.optionalFieldOf("currentToolTier", ToolTier.WOOD)
 						.forGetter(UpgradeData::getCurrentToolTier),
 				Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
-						.optionalFieldOf("unlockedAttributes")
-						.xmap(
-								opt -> opt.orElseGet(HashMap::new),
-								Optional::of
-						)
-						.forGetter(UpgradeData::getUnlockedAttributes)
+						.optionalFieldOf("unlockedAttributes", new HashMap<>())
+						.forGetter(UpgradeData::getUnlockedAttributes),
+				Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
+						.optionalFieldOf("selectedAttributeLevels", new HashMap<>())
+						.forGetter(UpgradeData::getSelectedAttributeLevels),
+				ResourceLocation.CODEC.listOf().xmap(HashSet::new, list -> list.stream().toList())
+						.optionalFieldOf("activeAttributes", new HashSet<>())
+						.forGetter(d -> new HashSet<>(d.getActiveAttributes()))
 		).apply(i, UpgradeData::new));
 	}
 
