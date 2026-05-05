@@ -6,6 +6,7 @@ import io.github.junyali.pathed.data.attribute.AttributeRegistry;
 import io.github.junyali.pathed.network.payload.c2s.SetAttributePacket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -146,9 +147,14 @@ public class AttributeScreen extends Screen {
 
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+		this.renderBackground(guiGraphics, mouseX, mouseY, delta);
+		guiGraphics.flush();
 		this.listPanel.render(guiGraphics, mouseX, mouseY);
 		this.detailPanel.render(guiGraphics, mouseX, mouseY);
-		super.render(guiGraphics, mouseX, mouseY, delta);
+		guiGraphics.flush();
+		for (Renderable r : this.renderables) {
+			r.render(guiGraphics, mouseX, mouseY, delta);
+		}
 		this.listPanel.renderTooltip(guiGraphics, mouseX, mouseY);
 		this.detailPanel.renderTooltip(guiGraphics, mouseX, mouseY);
 	}
