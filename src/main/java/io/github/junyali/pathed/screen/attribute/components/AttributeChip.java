@@ -44,11 +44,11 @@ public final class AttributeChip {
 		);
 
 		int textColour = obtained ? AttributeScreen.COLOUR_TEXT : AttributeScreen.COLOUR_TEXT_MUTED;
-		guiGraphics.drawString(font, name, textX, y + 4, textColour, false);
+		guiGraphics.drawString(font, name, textX, y + 3, textColour, false);
 
 		String subtext = obtained ? "Level " + screen.getPendingLevel(attr) + " / " + attr.getMaxLevel() : Component.translatable("pathed.gui.attributes.list.locked").getString();
 
-		guiGraphics.drawString(font, subtext, textX, y + h - 4 - font.lineHeight, AttributeScreen.COLOUR_TEXT_DIM, false);
+		guiGraphics.drawString(font, subtext, textX, y + 3 + font.lineHeight + 1, AttributeScreen.COLOUR_TEXT_DIM, false);
 
 		AttributeStatusBadge.render(guiGraphics, x + w - PADDING - badgeW, y + (h - AttributeStatusBadge.HEIGHT) / 2, active, conflict, obtained);
 	}
