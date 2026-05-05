@@ -104,6 +104,21 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.toast.node_get", "Node Completed!");
 		add("pathed.toast.node_get_challenge", "Challenge Node Completed!");
 
+		// NODES
+		add("pathed.skill_category.tiers.name", "Tiers");
+		add("pathed.skill.tiers.wood.name", "Wood Tier");
+		add("pathed.skill.tiers.wood.desc", "The beginning of a new world...");
+		add("pathed.skill.tiers.gold.name", "Gold Tier");
+		add("pathed.skill.tiers.gold.desc", "GOLD!!!");
+		add("pathed.skill.tiers.stone.name", "Stone Tier");
+		add("pathed.skill.tiers.stone.desc", "Getting an upgrade");
+		add("pathed.skill.tiers.iron.name", "Iron Tier");
+		add("pathed.skill.tiers.iron.desc", "Hardware obtained!!");
+		add("pathed.skill.tiers.diamond.name", "Diamond Tier");
+		add("pathed.skill.tiers.diamond.desc", "Mineeeee diamonds (take on me)");
+		add("pathed.skill.tiers.netherite.name", "Netherite Tier");
+		add("pathed.skill.tiers.netherite.desc", "The end?");
+
 		// KEYMAPPINGS
 
 		add("key.categories.pathed", "Pathed");
