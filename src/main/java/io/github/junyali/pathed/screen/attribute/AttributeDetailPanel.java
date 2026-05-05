@@ -1,12 +1,17 @@
 package io.github.junyali.pathed.screen.attribute;
 
 import io.github.junyali.pathed.data.attribute.Attribute;
+import io.github.junyali.pathed.data.attribute.AttributeRegistry;
+import io.github.junyali.pathed.screen.attribute.components.ToggleSwitch;
 import io.github.junyali.pathed.screen.progression.ProgressionRenderer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AttributeDetailPanel {
@@ -79,13 +84,60 @@ public class AttributeDetailPanel {
 
 		cY += 4;
 		guiGraphics.fill(cX, cY, cX + contentW, cY + 1, AttributeScreen.COLOUR_BORDER);
+		cY += 6;
+
+		if (obtained) {
+			String activeLabel = Component.translatable("pathed.gui.attributes.detail.active").getString();
+			guiGraphics.drawString(font, activeLabel, cX, cY + 2, AttributeScreen.COLOUR_TEXT_DIM, false);
+			toggleX = cX + font.width(activeLabel) + 8;
+			toggleY = cY;
+
+			ToggleSwitch.render(guiGraphics, toggleX, cY, active, mouseX, mouseY);
+
+			Component statusText = active
+					? Component.translatable("pathed.gui.attributes.detail.active.on")
+					: Component.translatable("pathed.gui.attributes.detail.active.off");
+
+			int statusColour = active ? AttributeScreen.COLOUR_TEXT_GOOD : AttributeScreen.COLOUR_TEXT_MUTED;
+
+			guiGraphics.drawString(font, statusText, toggleX + ToggleSwitch.WIDTH + 6, cY + 2, statusColour, false);
+			cY += ToggleSwitch.HEIGHT + PADDING;
+
+			if (conflicts && !active) {
+				MutableComponent warning = buildConflictWarning(attr);
+				List<FormattedCharSequence> warnLines = font.split(warning, contentW);
+				for (FormattedCharSequence line : warnLines) {
+					guiGraphics.drawString(font, line, cX, cY, AttributeScreen.COLOUR_TEXT_BAD, false);
+					cY += font.lineHeight + 1;
+				}
+			}
+		} else {
+			toggleY = -1;
+			guiGraphics.drawString(font, Component.translatable("pathed.gui.attributes.detail.locked.hint"), cX, cY + 2, AttributeScreen.COLOUR_TEXT_MUTED, false);
+		}
 	}
 
 	public boolean mouseClicked(double mouseX, double mouseY) {
 		Attribute attr = screen.getSelected();
 		if (attr == null) return false;
 
+		if (toggleY >= 0 && ToggleSwitch.contains(toggleX, toggleY, mouseX, mouseY)) {
+			screen.setPendingActive(attr, !screen.getPendingActive(attr));
+			return true;
+		}
+
 		return false;
+	}
+
+	private MutableComponent buildConflictWarning(Attribute attr) {
+		List<String> names = new ArrayList<>();
+		for (ResourceLocation rl : attr.getIncompatibleWith()) {
+			Attribute other = AttributeRegistry.get(rl);
+			if (other != null && screen.getPendingActive(other)) {
+				names.add(Component.translatable(other.getNameKey()).getString());
+			}
+		}
+		return Component.translatable("pathed.gui.attributes.detail.conflict", String.join(", ", names));
 	}
 
 	private static void outline(GuiGraphics guiGraphics, int x, int y, int w, int h, int colour) {
