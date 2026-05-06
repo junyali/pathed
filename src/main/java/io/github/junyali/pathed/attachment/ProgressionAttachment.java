@@ -128,33 +128,22 @@ public class ProgressionAttachment {
 	}
 
 	public static class UpgradeData {
-		private ToolTier currentToolTier;
 		private final Map<ResourceLocation, Integer> unlockedAttributes;
 		private final Map<ResourceLocation, Integer> selectedAttributeLevels;
 		private final Set<ResourceLocation> activeAttributes;
 
 		public UpgradeData() {
-			this(ToolTier.WOOD, new HashMap<>(), new HashMap<>(), new HashSet<>());
+			this(new HashMap<>(), new HashMap<>(), new HashSet<>());
 		}
 
 		private UpgradeData(
-				ToolTier currentToolTier,
 				Map<ResourceLocation, Integer> unlockedAttributes,
 				Map<ResourceLocation, Integer> selectedAttributeLevels,
 				Set<ResourceLocation> activeAttributes
 		) {
-			this.currentToolTier = currentToolTier;
 			this.unlockedAttributes = new HashMap<>(unlockedAttributes);
 			this.selectedAttributeLevels = new HashMap<>(selectedAttributeLevels);
 			this.activeAttributes = new HashSet<>(activeAttributes);
-		}
-
-		public ToolTier getCurrentToolTier() {
-			return currentToolTier;
-		}
-
-		public void setToolTier(ToolTier tier) {
-			this.currentToolTier = tier;
 		}
 
 		public Map<ResourceLocation, Integer> getUnlockedAttributes() {
@@ -219,8 +208,6 @@ public class ProgressionAttachment {
 		}
 
 		static final Codec<UpgradeData> CODEC = RecordCodecBuilder.create(i -> i.group(
-				ToolTier.CODEC.optionalFieldOf("currentToolTier", ToolTier.WOOD)
-						.forGetter(UpgradeData::getCurrentToolTier),
 				Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
 						.optionalFieldOf("unlockedAttributes", new HashMap<>())
 						.forGetter(UpgradeData::getUnlockedAttributes),
