@@ -6,6 +6,7 @@ import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.attribute.Attribute;
 import io.github.junyali.pathed.data.attribute.AttributeRegistry;
 import io.github.junyali.pathed.data.path.Path;
+import io.github.junyali.pathed.data.path.PathToolService;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -98,7 +99,10 @@ public record SetAttributePacket(List<Entry> changes) implements CustomPacketPay
 				}
 			}
 
-			if (changed) ProgressionAttachment.get(player).sync(player);
+			if (changed) {
+				PathToolService.refreshAll(player);
+				ProgressionAttachment.get(player).sync(player);
+			}
 		});
 	}
 }

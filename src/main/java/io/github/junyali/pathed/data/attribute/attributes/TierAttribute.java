@@ -1,9 +1,11 @@
 package io.github.junyali.pathed.data.attribute.attributes;
 
 import io.github.junyali.pathed.data.attribute.Attribute;
+import io.github.junyali.pathed.data.path.PathToolService;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
@@ -20,5 +22,10 @@ public class TierAttribute extends Attribute {
 		stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
 		stack.remove(DataComponents.LORE);
 		return stack;
+	}
+
+	@Override
+	public void onLevelChange(ServerPlayer player, int oldLevel, int newLevel) {
+		PathToolService.refreshAll(player);
 	}
 }

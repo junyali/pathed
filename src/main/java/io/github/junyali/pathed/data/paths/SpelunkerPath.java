@@ -4,9 +4,13 @@ import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.data.path.PathIcon;
 import io.github.junyali.pathed.data.path.StartingKit;
+import io.github.junyali.pathed.item.PathedItems;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+
+import java.util.List;
 
 public class SpelunkerPath extends Path {
 	public SpelunkerPath() {
@@ -20,6 +24,11 @@ public class SpelunkerPath extends Path {
 
 	@Override
 	public StartingKit getStartingItems() {
-		return StartingKit.EMPTY;
+		return StartingKit.of(new ItemStack(PathedItems.SPELUNKER_PICKAXE.get()));
+	}
+
+	@Override
+	public List<Item> getToolItems() {
+		return List.of(PathedItems.SPELUNKER_PICKAXE.get());
 	}
 }

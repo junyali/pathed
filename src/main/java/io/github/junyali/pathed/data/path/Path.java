@@ -2,6 +2,7 @@ package io.github.junyali.pathed.data.path;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -39,5 +40,9 @@ public abstract class Path {
 
 	public int getOrder() {
 		return order;
+	}
+
+	public List<Item> getToolItems() {
+		return List.of();
 	}
 }

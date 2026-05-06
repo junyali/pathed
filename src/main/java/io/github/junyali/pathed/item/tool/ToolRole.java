@@ -68,7 +68,7 @@ public enum ToolRole {
 		double damage = baseDamage + tier.getLevel() - 1.0;
 		return ItemAttributeModifiers.builder()
 				.add(Attributes.ATTACK_DAMAGE,
-						new AttributeModifier(dmgId, damage - 1.0, AttributeModifier.Operation.ADD_VALUE),
+						new AttributeModifier(dmgId, damage, AttributeModifier.Operation.ADD_VALUE),
 						EquipmentSlotGroup.MAINHAND)
 				.add(Attributes.ATTACK_SPEED,
 						new AttributeModifier(spdId, baseAttackSpeed, AttributeModifier.Operation.ADD_VALUE),

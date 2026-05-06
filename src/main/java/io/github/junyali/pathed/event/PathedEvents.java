@@ -3,6 +3,7 @@ package io.github.junyali.pathed.event;
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.PathDataHolder;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
+import io.github.junyali.pathed.data.path.PathToolService;
 import io.github.junyali.pathed.data.skill.SkillCategoryLoader;
 import io.github.junyali.pathed.data.skill.SkillNodeEvaluator;
 import io.github.junyali.pathed.data.skill.SkillNodeLoader;
@@ -36,6 +37,7 @@ public class PathedEvents {
 		SkillNodeEvaluator.evaluateAll(player);
 		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 		progressionAttachment.sync(player);
+		PathToolService.refreshAll(player);
 	}
 
 	@SubscribeEvent
@@ -50,6 +52,7 @@ public class PathedEvents {
 			ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 			progressionAttachment.sync(player);
 			PacketDistributor.sendToPlayer(player, packet);
+			PathToolService.refreshAll(player);
 		} else {
 			PacketDistributor.sendToAllPlayers(packet);
 
@@ -58,6 +61,7 @@ public class PathedEvents {
 				SkillNodeEvaluator.evaluateAll(player);
 				ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 				progressionAttachment.sync(player);
+				PathToolService.refreshAll(player);
 			}
 		}
 	}

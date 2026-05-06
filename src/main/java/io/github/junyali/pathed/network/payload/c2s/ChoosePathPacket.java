@@ -3,6 +3,7 @@ package io.github.junyali.pathed.network.payload.c2s;
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.PathDataHolder;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
+import io.github.junyali.pathed.data.path.PathToolService;
 import io.github.junyali.pathed.data.skill.SkillNodeEvaluator;
 import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.data.path.PathRegistry;
@@ -51,6 +52,7 @@ public record ChoosePathPacket(ResourceLocation pathId) implements CustomPacketP
 			path.getStartingItems().giveToPlayer(player);
 			SkillNodeEvaluator.evaluateAll(player);
 			ProgressionAttachment.get(player).sync(player);
+			PathToolService.refreshAll(player);
 		});
 	}
 }
