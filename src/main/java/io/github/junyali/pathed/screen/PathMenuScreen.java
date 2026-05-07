@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 public class PathMenuScreen extends Screen {
 	private static final int PANEL_WIDTH = 160;
 	private static final int PANEL_HEIGHT = 220;
-	private static final int ICON_PANEL_WIDTH = 28;
-	private static final int ICON_PANEL_PADDING = 6;
 	private static final int OPTIONS_PANEL_WIDTH = 120;
 	private static final int PANEL_GAP = 6;
 
@@ -41,7 +39,6 @@ public class PathMenuScreen extends Screen {
 
 	private int panelLeft;
 	private int panelTop;
-	private int iconPanelLeft;
 	private int optionsPanelLeft;
 
 	private Path path;
@@ -58,12 +55,10 @@ public class PathMenuScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		int totalWidth = PANEL_WIDTH + PANEL_GAP + ICON_PANEL_WIDTH + PANEL_GAP + OPTIONS_PANEL_WIDTH;
 		int layoutLeft = 20;
 
 		this.panelLeft = layoutLeft;
-		this.iconPanelLeft = layoutLeft + PANEL_WIDTH + PANEL_GAP;
-		this.optionsPanelLeft = layoutLeft + PANEL_WIDTH + PANEL_GAP + ICON_PANEL_WIDTH + PANEL_GAP;
+		this.optionsPanelLeft = layoutLeft + PANEL_WIDTH + PANEL_GAP;
 		this.panelTop = (this.height - PANEL_HEIGHT) / 2;
 
 		this.addOptionsPanelButtons();
@@ -149,7 +144,6 @@ public class PathMenuScreen extends Screen {
 		super.render(guiGraphics, mouseX, mouseY, delta);
 		this.refreshData();
 		this.renderLeftPanel(guiGraphics, mouseX, mouseY);
-		this.renderOptionsPanel(guiGraphics);
 	}
 
 	private void renderLeftPanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -207,19 +201,6 @@ public class PathMenuScreen extends Screen {
 		y += 14;
 
 		renderXpBar(guiGraphics, centreX, y);
-	}
-
-	private void renderOptionsPanel(GuiGraphics guiGraphics) {
-		guiGraphics.fill(
-				iconPanelLeft,
-				panelTop,
-				iconPanelLeft + ICON_PANEL_WIDTH,
-				panelTop + PANEL_HEIGHT,
-				0xAA000000
-		);
-
-		int iconX = iconPanelLeft + ICON_PANEL_PADDING;
-		int y = panelTop + ICON_PANEL_PADDING;
 	}
 
 	private void renderPlayerModel(GuiGraphics guiGraphics, LivingEntity entity, int x, int y, int mouseX, int mouseY) {
