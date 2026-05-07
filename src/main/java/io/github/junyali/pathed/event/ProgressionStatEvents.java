@@ -2,7 +2,9 @@ package io.github.junyali.pathed.event;
 
 import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
+import io.github.junyali.pathed.data.path.PathToolService;
 import io.github.junyali.pathed.data.skill.SkillNodeEvaluator;
+import io.github.junyali.pathed.item.tool.PathTool;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -166,6 +168,10 @@ public class ProgressionStatEvents {
 		if (!(event.getPlayer() instanceof ServerPlayer player)) return;
 		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 		evaluateAndSync(player, progressionAttachment);
+
+		if (event.getOriginalStack().getItem() instanceof PathTool) {
+			PathToolService.refreshAll(player);
+		}
 	}
 
 	@SubscribeEvent
@@ -173,5 +179,12 @@ public class ProgressionStatEvents {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		ProgressionAttachment progressionAttachment = ProgressionAttachment.get(player);
 		evaluateAndSync(player, progressionAttachment);
+		PathToolService.refreshAll(player);
+	}
+
+	@SubscribeEvent
+	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		PathToolService.refreshAll(player);
 	}
 }
