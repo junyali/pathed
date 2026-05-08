@@ -343,6 +343,7 @@ public class PathMenuScreen extends Screen {
 		final ItemStack icon;
 		final Component tooltip;
 		final Runnable action;
+		final int halfDiagonal;
 
 		DiamondButton(int x, int y, int size, ItemStack icon, Component tooltip, Runnable action) {
 			this.x = x;
@@ -351,13 +352,13 @@ public class PathMenuScreen extends Screen {
 			this.icon = icon;
 			this.tooltip = tooltip;
 			this.action = action;
+			this.halfDiagonal = (int) Math.round((double) size / 2 * Math.sqrt(2));
 		}
 
 		boolean isHovered(int mouseX, int mouseY) {
 			int cX = x + size / 2;
 			int cY = y + size / 2;
-
-			return Math.abs(mouseX - cX) + Math.abs(mouseY - cY) <= size / 2;
+			return Math.abs(mouseX - cX) + Math.abs(mouseY - cY) <= halfDiagonal;
 		}
 	}
 }
