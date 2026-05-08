@@ -35,13 +35,16 @@ public class PathMenuScreen extends Screen {
 
 	private final boolean showDirtBackground;
 
+	private static final int COLOUR_CARD_BACKGROUND = 0XC000010;
+	private static final int COLOUR_CARD_TOP_BACKGROUND = 0xB0000000;
+	private static final int COLOUR_DIVIDER = 0xFF373737;
+	private static final int COLOUR_XP_BG = 0xFF1B1B1B;
+	private static final int COLOUR_XP_FILL = 0xFF80FF20;
 	private static final int COLOUR_TEXT = 0xFFFFFFFF;
 	private static final int COLOUR_SUBTEXT = 0xFFAAAAAA;
-	private static final int COLOUR_XP_BG = 0xFF333333;
-	private static final int COLOUR_XP_FILL = 0xFF55FF55;
-	private static final int COLOUR_XP_BORDER = 0xFF888888;
+	private static final int COLOUR_TERTIARY = 0xFF808080;
+	private static final int COLOUR_TITLE = 0xFFFFFF55;
 
-	private int panelLeft;
 	private int panelTop;
 	private int optionsPanelLeft;
 
@@ -64,7 +67,6 @@ public class PathMenuScreen extends Screen {
 		super.init();
 		int layoutLeft = 20;
 
-		this.panelLeft = layoutLeft;
 		this.optionsPanelLeft = layoutLeft + PANEL_WIDTH + PANEL_GAP;
 		this.panelTop = (this.height - PANEL_HEIGHT) / 2;
 
@@ -164,7 +166,7 @@ public class PathMenuScreen extends Screen {
 				y,
 				x + w,
 				y + h,
-				0xC0100010
+				COLOUR_CARD_BACKGROUND
 		);
 
 		int headerH = 140;
@@ -173,7 +175,7 @@ public class PathMenuScreen extends Screen {
 				y + 1,
 				x + w - 1,
 				y + headerH,
-				0xB0000000
+				COLOUR_CARD_TOP_BACKGROUND
 		);
 
 		guiGraphics.fill(
@@ -181,7 +183,7 @@ public class PathMenuScreen extends Screen {
 				y + headerH,
 				x + w - 1,
 				y + headerH + 1,
-				0xFF373737
+				COLOUR_DIVIDER
 		);
 
 		ProgressionRenderer.renderBorder(guiGraphics, x, y, w, h);
@@ -247,14 +249,14 @@ public class PathMenuScreen extends Screen {
 
 	private void renderLevel(GuiGraphics guiGraphics, int centreX, int y) {
 		String levelLabel = Component.translatable("pathed.gui.path_menu.level", "").getString().trim();
-		guiGraphics.drawCenteredString(font, Component.literal(levelLabel), centreX, y, 0xFF808080);
+		guiGraphics.drawCenteredString(font, Component.literal(levelLabel), centreX, y, COLOUR_TERTIARY);
 		y += font.lineHeight + 1;
 
 		String levelStr = String.valueOf(this.level);
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().translate(centreX, y, 0);
 		guiGraphics.pose().scale(1.5f, 1.5f, 1f);
-		guiGraphics.drawString(font, levelStr, -font.width(levelStr) / 2, 0, 0xFFFFFF55, false);
+		guiGraphics.drawString(font, levelStr, -font.width(levelStr) / 2, 0, COLOUR_TITLE, false);
 		guiGraphics.pose().popPose();
 		y += (int) (font.lineHeight * 1.5f) + 4;
 
