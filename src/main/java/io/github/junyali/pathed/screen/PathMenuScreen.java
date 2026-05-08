@@ -5,6 +5,7 @@ import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.data.path.PathIcon;
 import io.github.junyali.pathed.screen.attribute.AttributeScreen;
+import io.github.junyali.pathed.screen.progression.ProgressionRenderer;
 import io.github.junyali.pathed.screen.progression.ProgressionScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,6 +21,9 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import org.jetbrains.annotations.NotNull;
 
 public class PathMenuScreen extends Screen {
+	private static final int CARD_WIDTH = 150;
+	private static final int CARD_HEIGHT = 220;
+
 	private static final int PANEL_WIDTH = 160;
 	private static final int PANEL_HEIGHT = 220;
 	private static final int OPTIONS_PANEL_WIDTH = 120;
@@ -40,6 +44,9 @@ public class PathMenuScreen extends Screen {
 	private int panelLeft;
 	private int panelTop;
 	private int optionsPanelLeft;
+
+	private int layoutLeft;
+	private int layoutTop;
 
 	private Path path;
 	private int level;
@@ -143,20 +150,44 @@ public class PathMenuScreen extends Screen {
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 		super.render(guiGraphics, mouseX, mouseY, delta);
 		this.refreshData();
-		this.renderLeftPanel(guiGraphics, mouseX, mouseY);
+		this.renderCard(guiGraphics, mouseX, mouseY);
 	}
 
-	private void renderLeftPanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+	private void renderCard(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		int x = layoutLeft;
+		int y = layoutTop;
+		int w = CARD_WIDTH;
+		int h = CARD_HEIGHT;
+
 		guiGraphics.fill(
-				panelLeft,
-				panelTop,
-				panelLeft + PANEL_WIDTH,
-				panelTop + PANEL_HEIGHT,
-				0xAA000000
+				x,
+				y,
+				x + w,
+				y + h,
+				0xC0100010
 		);
 
-		int centreX = panelLeft + PANEL_WIDTH / 2;
-		int y = panelTop + 12;
+		int headerH = 140;
+		guiGraphics.fill(
+				x + 1,
+				y + 1,
+				x + w - 1,
+				y + headerH,
+				0xB0000000
+		);
+
+		guiGraphics.fill(
+				x + 1,
+				y + headerH,
+				x + w - 1,
+				y + headerH + 1,
+				0xFF373737
+		);
+
+		ProgressionRenderer.renderBorder(guiGraphics, x, y, w, h);
+
+		int centreX = x + w / 2;
+		int cY = y + 10;
 
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player != null) {
@@ -164,43 +195,39 @@ public class PathMenuScreen extends Screen {
 					this.font,
 					mc.player.getDisplayName(),
 					centreX,
-					y,
+					cY,
 					COLOUR_SUBTEXT
 			);
 		}
-		y+= 20;
+		cY += 12;
 
 		if (mc.player != null) {
-			int modelCentreX = centreX;
-			int modelFeetY = y + PLAYER_MODEL_SIZE + 50;
-
-			renderPlayerModel(guiGraphics, mc.player, modelCentreX, modelFeetY, mouseX, mouseY);
-			y = modelFeetY + 10;
+			int modelFeetY = y + headerH - 10;
+			renderPlayerModel(guiGraphics, mc.player, centreX, modelFeetY, mouseX, mouseY);
 		}
 
+		cY = y + headerH + 10;
+
 		if (this.path != null) {
-			int textWidth = this.font.width(this.path.getName());
-			int totalWidth = 16 + 4 + textWidth;
-			int startX = centreX - totalWidth / 2;
-			renderPathIcon(guiGraphics, this.path.getIcon(), startX, y);
-			guiGraphics.drawString(this.font, this.path.getName(), startX + 20, y + 4, COLOUR_TEXT);
-			y += 20;
+			int iconSize = 16;
+			int nameWidth = font.width(this.path.getName());
+			int rowWidth = iconSize + 4 + nameWidth;
+			int rowX = centreX - rowWidth / 2;
+
+			renderPathIcon(guiGraphics, this.path.getIcon(), rowX, cY);
+			guiGraphics.drawString(this.font, this.path.getName(), rowX + iconSize, cY + 4, COLOUR_TEXT);
 		} else {
 			guiGraphics.drawCenteredString(
 					this.font,
 					Component.translatable("pathed.gui.path_menu.no_path"),
 					centreX,
-					y,
+					cY + 4,
 					COLOUR_SUBTEXT
 			);
-			y += 14;
+			cY += 22;
 		}
 
-		Component levelText = Component.translatable("pathed.gui.path_menu.level", this.level);
-		guiGraphics.drawCenteredString(this.font, levelText, centreX, y, COLOUR_TEXT);
-		y += 14;
-
-		renderXpBar(guiGraphics, centreX, y);
+		renderLevel(guiGraphics, centreX, cY);
 	}
 
 	private void renderPlayerModel(GuiGraphics guiGraphics, LivingEntity entity, int x, int y, int mouseX, int mouseY) {
@@ -218,19 +245,31 @@ public class PathMenuScreen extends Screen {
 		);
 	}
 
-	private void renderXpBar(GuiGraphics guiGraphics, int centreX, int y) {
+	private void renderLevel(GuiGraphics guiGraphics, int centreX, int y) {
+		String levelLabel = Component.translatable("pathed.gui.path_menu.level", "").getString().trim();
+		guiGraphics.drawCenteredString(font, Component.literal(levelLabel), centreX, y, 0xFF808080);
+		y += font.lineHeight + 1;
+
+		String levelStr = String.valueOf(this.level);
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(centreX, y, 0);
+		guiGraphics.pose().scale(1.5f, 1.5f, 1f);
+		guiGraphics.drawString(font, levelStr, -font.width(levelStr) / 2, 0, 0xFFFFFF55, false);
+		guiGraphics.pose().popPose();
+		y += (int) (font.lineHeight * 1.5f) + 4;
+
 		int barLeft = centreX - XP_BAR_WIDTH / 2;
 
-		guiGraphics.fill(barLeft - 1, y - 1, barLeft + XP_BAR_WIDTH + 1, y + XP_BAR_HEIGHT + 1, COLOUR_XP_BORDER);
 		guiGraphics.fill(barLeft, y, barLeft + XP_BAR_WIDTH, y + XP_BAR_HEIGHT, COLOUR_XP_BG);
 
 		if (this.expForNextLevel > 0) {
-			float progress = this.levelProgress;
-			int fillWidth = (int) (XP_BAR_WIDTH * Math.min(progress, 1.0f));
+			int fillWidth = (int) (XP_BAR_WIDTH * Math.min(levelProgress, 1.0f));
 			if (fillWidth > 0) {
 				guiGraphics.fill(barLeft, y, barLeft + fillWidth, y + XP_BAR_HEIGHT, COLOUR_XP_FILL);
 			}
 		}
+
+		y += XP_BAR_HEIGHT + 4;
 
 		Component expLabel = Component.literal(this.currentExp + " / " + this.expForNextLevel);
 		guiGraphics.drawCenteredString(this.font, expLabel, centreX, y + XP_BAR_HEIGHT + 4, COLOUR_SUBTEXT);
