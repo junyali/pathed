@@ -65,7 +65,12 @@ public class PathMenuScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		int layoutLeft = 20;
+
+		int totalWidth = CARD_WIDTH;
+		int totalHeight = CARD_HEIGHT;
+
+		this.layoutLeft = (this.width - totalWidth) / 2;
+		this.layoutTop = (this.height - totalHeight) / 2;
 
 		this.optionsPanelLeft = layoutLeft + PANEL_WIDTH + PANEL_GAP;
 		this.panelTop = (this.height - PANEL_HEIGHT) / 2;
