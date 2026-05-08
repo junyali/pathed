@@ -29,7 +29,7 @@ public class PathMenuScreen extends Screen {
 
 	private static final int CLUSTER_GAP = 24;
 
-	private static final int PLAYER_MODEL_SIZE = 60;
+	private static final int PLAYER_MODEL_SIZE = 48;
 
 	private static final int XP_BAR_WIDTH = 100;
 	private static final int XP_BAR_HEIGHT = 6;
@@ -204,7 +204,7 @@ public class PathMenuScreen extends Screen {
 				COLOUR_CARD_BACKGROUND
 		);
 
-		int headerH = 140;
+		int headerH = 120;
 
 		ProgressionRenderer.renderBorder(guiGraphics, x, y, w, h);
 
@@ -243,7 +243,7 @@ public class PathMenuScreen extends Screen {
 					this.font,
 					Component.translatable("pathed.gui.path_menu.no_path"),
 					centreX,
-					cY + 4,
+					cY,
 					COLOUR_SUBTEXT
 			);
 		}
