@@ -14,11 +14,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -203,6 +205,20 @@ public class PathMenuScreen extends Screen {
 	@Override
 	public boolean isPauseScreen() {
 		return false;
+	}
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (button == 0) {
+			for (DiamondButton btn : buttons) {
+				if (btn.isHovered((int) mouseX, (int) mouseY)) {
+					Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F));
+					btn.action.run();
+					return true;
+				}
+			}
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
 	}
 
 	// TODO: register pathcolour as one of the proporties of path rather than keeping it client-sided
