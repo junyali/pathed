@@ -5,6 +5,7 @@ import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.data.skill.ClientSkillData;
 import io.github.junyali.pathed.data.skill.SkillCategory;
 import io.github.junyali.pathed.registry.PathedAttachments;
+import io.github.junyali.pathed.screen.common.ScrollBar;
 import io.github.junyali.pathed.screen.progression.components.CategoryButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -28,21 +29,13 @@ public class CategoryPanel {
 
 	private static final int COLOUR_CATEGORY_BG = 0XFF555555;
 
-	private static final ResourceLocation SCROLL_BAR = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/scroll_bar");
-	private static final ResourceLocation SCROLL_BAR_PRESSED = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/scroll_bar/pressed");
-	private static final ResourceLocation SCROLL_BAR_SLOT = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/scroll_bar/slot");
-
 	private final ProgressionScreen screen;
 	private final int left;
 	private final int top;
 	private final int panelHeight;
 	private final List<CategoryButton> buttons = new ArrayList<>();
 
-	private int scrollPos = 0;
-	private int maxScroll = 0;
-	private boolean dragScrolling = false;
-	private double mouseDragStart = 0;
-	private int scrollDragStart = 0;
+	private final ScrollBar scrollBar = new ScrollBar();
 
 	public CategoryPanel(ProgressionScreen screen, int left, int top, int panelHeight) {
 		this.screen = screen;
@@ -74,12 +67,14 @@ public class CategoryPanel {
 
 		int totalContentHeight = filteredCategories.size() * BUTTON_HEIGHT;
 		int innerHeight = this.panelHeight - ProgressionScreen.FRAME_BORDER * 2;
-		this.maxScroll = Math.max(0, totalContentHeight - innerHeight);
+		this.scrollBar.setMaxScroll(Math.max(0, totalContentHeight - innerHeight));
+		this.scrollBar.setBounds(
+				this.left + PANEL_WIDTH - ProgressionScreen.FRAME_BORDER - this.scrollBar.getWidth(),
+				this.top + ProgressionScreen.FRAME_BORDER,
+				innerHeight
+		);
 
-		int buttonWidth = PANEL_WIDTH - ProgressionScreen.FRAME_BORDER * 2;
-		if (this.maxScroll > 0) {
-			buttonWidth -= 8;
-		}
+		int buttonWidth = PANEL_WIDTH - ProgressionScreen.FRAME_BORDER * 2 - (this.scrollBar.isVisible() ? this.scrollBar.getWidth() : 0);
 
 		int buttonLeft = this.left + ProgressionScreen.FRAME_BORDER;
 		int y = this.top + ProgressionScreen.FRAME_BORDER;
@@ -138,21 +133,7 @@ public class CategoryPanel {
 	}
 
 	public void renderScrollbar(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		if (this.maxScroll <= 0) return;
-
-		int slotX = this.left + PANEL_WIDTH - ProgressionScreen.FRAME_BORDER - 8;
-		int slotY = this.top + ProgressionScreen.FRAME_BORDER;
-		int slotHeight = this.panelHeight - ProgressionScreen.FRAME_BORDER * 2;
-
-		guiGraphics.blitSprite(SCROLL_BAR_SLOT, slotX, slotY, 8, slotHeight);
-
-		int thumbHeight = 27;
-		int scrollRange = slotHeight - thumbHeight;
-		int thumbY = slotY + (int) (scrollRange * (this.scrollPos / (float) this.maxScroll));
-
-		boolean hovered = mouseX >= slotX && mouseX < slotX + 8 && mouseY >= thumbY && mouseY < thumbY + thumbHeight;
-		ResourceLocation texture = (this.dragScrolling || hovered) ? SCROLL_BAR_PRESSED : SCROLL_BAR;
-		guiGraphics.blitSprite(texture, slotX + 1, thumbY, 6, thumbHeight);
+		this.scrollBar.render(guiGraphics, mouseX, mouseY);
 	}
 
 	public void enableScissor(GuiGraphics guiGraphics) {
@@ -165,53 +146,27 @@ public class CategoryPanel {
 	}
 
 	public boolean handleScrollbarClick(double mouseX, double mouseY) {
-		if (this.maxScroll <= 0) return false;
-
-		int slotX = this.left + PANEL_WIDTH - ProgressionScreen.FRAME_BORDER - 10;
-		int slotY = this.top + ProgressionScreen.FRAME_BORDER;
-		int slotHeight = this.panelHeight - ProgressionScreen.FRAME_BORDER * 2;
-		int thumbHeight = 27;
-		int scrollRange = slotHeight - thumbHeight;
-		int thumbY = slotY + (int) (scrollRange * (this.scrollPos / (float) this.maxScroll));
-
-		if (mouseX >= slotX && mouseX < slotX + 8 && mouseY >= thumbY && mouseY < thumbY + thumbHeight) {
-			this.dragScrolling = true;
-			this.scrollDragStart = thumbY;
-			this.mouseDragStart = mouseY;
-			return true;
-		}
-		return false;
+		return this.scrollBar.mouseClicked(mouseX, mouseY);
 	}
 
 	public boolean handleDrag(double mouseY, double _ignored) {
-		if (!this.dragScrolling) return false;
-
-		int slotY = this.top + ProgressionScreen.FRAME_BORDER;
-		int slotHeight = this.panelHeight - ProgressionScreen.FRAME_BORDER * 2;
-		int thumbHeight = 27;
-		int scrollRange = slotHeight - thumbHeight;
-		int delta = (int) (mouseY - this.mouseDragStart);
-		int newThumbY = Mth.clamp(this.scrollDragStart + delta, slotY, slotY + scrollRange);
-		float part = (newThumbY - slotY) / (float) scrollRange;
-		this.scrollPos = (int) (part * this.maxScroll);
-		return true;
+		return this.scrollBar.mouseDragged(mouseY);
 	}
 
 	public void stopDragScrolling() {
-		this.dragScrolling = false;
+		this.scrollBar.release();
 	}
 
 	public boolean handleScroll(double mouseX, double mouseY, double vertical) {
-		if (!isInPanel(mouseX, mouseY) || this.maxScroll <= 0) return false;
-		this.scrollPos = Mth.clamp(this.scrollPos - (int) vertical * 4, 0, this.maxScroll);
-		return true;
+		if (!isInPanel(mouseX, mouseY)) return false;
+		return this.scrollBar.mouseScrolled(vertical, 4);
 	}
 
 	public void repositionButtons() {
 		int baseY = this.top + ProgressionScreen.FRAME_BORDER;
+		int scroll = this.scrollBar.getScroll();
 		for (int i = 0; i < this.buttons.size(); i++) {
-			int y = baseY + i * (BUTTON_HEIGHT + BUTTON_SPACING) - this.scrollPos;
-			this.buttons.get(i).setY(y);
+			this.buttons.get(i).setY(baseY + i * (BUTTON_HEIGHT + BUTTON_SPACING) - scroll);
 		}
 	}
 
