@@ -37,14 +37,22 @@ public class PathMenuScreen extends Screen {
 	private static final int BUTTON_SIZE = 36;
 	private static final int BUTTON_RADIUS = 40;
 
+	private static final int CENTRE_NODE_SIZE = 10;
+
 	private static final int COLOUR_CARD_BACKGROUND = 0XC0101010;
 	private static final int COLOUR_BUTTON_BACKGROUND = 0xC0202020;
 	private static final int COLOUR_BUTTON_BACKGROUND_HOVER = 0xD0404040;
+	private static final int COLOUR_BORDER = 0xFF555555;
+	private static final int COLOUR_BORDER_HOVER = 0xFFFFFFFF;
+	private static final int COLOUR_CONNECTOR = 0xFF555555;
+	private static final int COLOUR_CENTRE_GLOW = 0x40FFFF55;
+	private static final int COLOUR_CENTRE_BACKGROUND = 0xFF373737;
+	private static final int COLOUR_CENTRE_DOT = 0xFFFFFF55;
 	private static final int COLOUR_XP_BG = 0xFF1B1B1B;
 	private static final int COLOUR_XP_FILL = 0xFF80FF20;
 	private static final int COLOUR_TEXT = 0xFFFFFFFF;
 	private static final int COLOUR_SUBTEXT = 0xFFAAAAAA;
-	private static final int COLOUR_TERTIARY = 0xFF808080;
+	private static final int COLOUR_TERTIARY = 0xFF000000;
 	private static final int COLOUR_TITLE = 0xFFFFFF55;
 
 	private final boolean showDirtBackground;
@@ -195,21 +203,22 @@ public class PathMenuScreen extends Screen {
 		int y = layoutTop;
 		int w = CARD_WIDTH;
 		int h = CARD_HEIGHT;
+		int b = ProgressionScreen.FRAME_BORDER;
 
 		guiGraphics.fill(
-				x,
-				y,
-				x + w,
-				y + h,
+				x + b,
+				y + b,
+				x + w - b,
+				y + h - b,
 				COLOUR_CARD_BACKGROUND
 		);
 
-		int headerH = 120;
+		int headerH = 132;
 
 		ProgressionRenderer.renderBorder(guiGraphics, x, y, w, h);
 
 		int centreX = x + w / 2;
-		int cY = y + 8;
+		int nameY = y + b + 6;
 
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player != null) {
@@ -217,18 +226,21 @@ public class PathMenuScreen extends Screen {
 					this.font,
 					mc.player.getDisplayName(),
 					centreX,
-					cY,
+					nameY,
 					COLOUR_SUBTEXT
 			);
 		}
-		cY += 12;
 
 		if (mc.player != null) {
-			int modelFeetY = y + headerH - 10;
-			renderPlayerModel(guiGraphics, mc.player, centreX, modelFeetY, mouseX, mouseY);
+			int nameBottom = nameY + font.lineHeight;
+			int modelTop = nameBottom + 10;
+			int modelFeetY = y + headerH;
+			int allowedHeight = modelFeetY - modelTop;
+			int modelScale = Math.min(PLAYER_MODEL_SIZE, allowedHeight / 2);
+			renderPlayerModel(guiGraphics, mc.player, centreX, modelFeetY, modelScale, mouseX, mouseY);
 		}
 
-		cY = y + headerH + 10;
+		int cY = y + headerH + 8;
 
 		if (this.path != null) {
 			int iconSize = 16;
@@ -243,7 +255,7 @@ public class PathMenuScreen extends Screen {
 					this.font,
 					Component.translatable("pathed.gui.path_menu.no_path"),
 					centreX,
-					cY,
+					cY + 4,
 					COLOUR_SUBTEXT
 			);
 		}
@@ -252,14 +264,14 @@ public class PathMenuScreen extends Screen {
 		renderLevel(guiGraphics, centreX, cY);
 	}
 
-	private void renderPlayerModel(GuiGraphics guiGraphics, LivingEntity entity, int x, int y, int mouseX, int mouseY) {
+	private void renderPlayerModel(GuiGraphics guiGraphics, LivingEntity entity, int x, int y, int scale, int mouseX, int mouseY) {
 		InventoryScreen.renderEntityInInventoryFollowsMouse(
 				guiGraphics,
-				x - PLAYER_MODEL_SIZE,
-				y - PLAYER_MODEL_SIZE * 2,
-				x + PLAYER_MODEL_SIZE,
+				x - scale,
+				y - scale * 2,
+				x + scale,
 				y,
-				PLAYER_MODEL_SIZE,
+				scale,
 				0.0625F,
 				mouseX,
 				mouseY,
@@ -268,17 +280,9 @@ public class PathMenuScreen extends Screen {
 	}
 
 	private void renderLevel(GuiGraphics guiGraphics, int centreX, int y) {
-		String levelLabel = Component.translatable("pathed.gui.path_menu.level", "").getString().trim();
-		guiGraphics.drawCenteredString(font, Component.literal(levelLabel), centreX, y, COLOUR_TERTIARY);
-		y += font.lineHeight + 1;
-
-		String levelStr = String.valueOf(this.level);
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(centreX, y, 0);
-		guiGraphics.pose().scale(1.5f, 1.5f, 1f);
-		guiGraphics.drawString(font, levelStr, -font.width(levelStr) / 2, 0, COLOUR_TITLE, false);
-		guiGraphics.pose().popPose();
-		y += (int) (font.lineHeight * 1.5f) + 4;
+		Component levelLabel = Component.translatable("pathed.gui.path_menu.level", this.level);
+		guiGraphics.drawCenteredString(font, levelLabel, centreX, y, COLOUR_TITLE);
+		y += font.lineHeight + 6;
 
 		int barLeft = centreX - XP_BAR_WIDTH / 2;
 
@@ -291,6 +295,7 @@ public class PathMenuScreen extends Screen {
 			}
 		}
 
+		drawBorder(guiGraphics, barLeft - 1, y - 1, XP_BAR_WIDTH + 2, XP_BAR_HEIGHT + 2, COLOUR_BORDER);
 		Component expLabel = Component.literal(this.currentExp + " / " + this.expForNextLevel);
 		guiGraphics.drawCenteredString(this.font, expLabel, centreX, y + XP_BAR_HEIGHT + 4, COLOUR_SUBTEXT);
 	}
@@ -310,7 +315,89 @@ public class PathMenuScreen extends Screen {
 		}
 	}
 
+	private void drawConnectorLine(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2) {
+		int dX = Math.abs(x2 - x1);
+		int dY = Math.abs(y2 - y1);
+		int sX = x1 < x2 ? 1 : -1;
+		int sY = y1 < y2 ? 1 : -1;
+		int err = dX - dY;
+		int cX = x1;
+		int cY = y1;
+
+		// ahhhh scawwy maths D:
+
+		while (true) {
+			guiGraphics.fill(cX, cY, cX + 1, cY + 1, COLOUR_CONNECTOR);
+			if (cX == x2 && cY == y2) break;
+			int e2 = 2 * err;
+			if (e2 > -dY) {
+				err -= dY;
+				cX += sX;
+			}
+			if (e2 < dX) {
+				err += dX;
+				cY += sY;
+			}
+		}
+	}
+
+	private static void drawBorder(GuiGraphics guiGraphics, int x, int y, int w, int h, int colour) {
+		guiGraphics.fill(x, y, x + w, y + 1, colour);
+		guiGraphics.fill(x, y + h - 1, x + w, y + h, colour);
+		guiGraphics.fill(x, y, x + 1, y + h, colour);
+		guiGraphics.fill(x + w - 1, y, x + w, y + h, colour);
+	}
+
 	private void renderCluster(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		int margin = 4;
+		for (DiamondButton button : buttons) {
+			int cX = button.x + BUTTON_SIZE / 2;
+			int cY = button.y + BUTTON_SIZE / 2;
+			double dX = cX - clusterCX;
+			double dY = cY - clusterCY;
+			double len = Math.hypot(dX, dY);
+			int endX = (int) (cX - dX / len * margin);
+			int endY = (int) (cY - dY / len * margin);
+			drawConnectorLine(guiGraphics, clusterCX, clusterCY, endX, endY);
+		}
+
+		int nodeHalf = CENTRE_NODE_SIZE / 2;
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(clusterCX, clusterCY, 0);
+		guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(45));
+		guiGraphics.fill(
+				-nodeHalf - 2,
+				-nodeHalf - 2,
+				nodeHalf + 2,
+				nodeHalf + 2,
+				COLOUR_CENTRE_GLOW
+		);
+		guiGraphics.fill(
+				-nodeHalf,
+				-nodeHalf,
+				nodeHalf,
+				nodeHalf,
+				COLOUR_CENTRE_BACKGROUND
+		);
+		drawBorder(
+				guiGraphics,
+				-nodeHalf,
+				-nodeHalf,
+				CENTRE_NODE_SIZE,
+				CENTRE_NODE_SIZE,
+				COLOUR_TERTIARY
+		);
+
+		int dotHalf = 2;
+		guiGraphics.fill(
+				-dotHalf,
+				-dotHalf,
+				dotHalf,
+				dotHalf,
+				COLOUR_CENTRE_DOT
+		);
+		guiGraphics.pose().popPose();
+
 		for (DiamondButton button : buttons) {
 			renderButton(guiGraphics, button, mouseX, mouseY);
 		}
@@ -319,16 +406,20 @@ public class PathMenuScreen extends Screen {
 	private void renderButton(GuiGraphics guiGraphics, DiamondButton button, int mouseX, int mouseY) {
 		boolean hovered = button.isHovered(mouseX, mouseY);
 		int background = hovered ? COLOUR_BUTTON_BACKGROUND_HOVER : COLOUR_BUTTON_BACKGROUND;
+		int border = hovered ? COLOUR_BORDER_HOVER : COLOUR_BORDER;
 
 		int centreX = button.x + button.size / 2;
 		int centreY = button.y + button.size / 2;
+		int halfSize = button.size / 2;
 
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().translate(centreX, centreY, 0);
 		guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(45));
 
-		int halfSize = button.size / 2;
 		guiGraphics.fill(-halfSize, -halfSize, halfSize, halfSize, background);
+
+		drawBorder(guiGraphics, -halfSize, -halfSize, button.size, button.size, COLOUR_TERTIARY);
+		drawBorder(guiGraphics, -halfSize + 1, -halfSize + 1, button.size - 2, button.size - 2, border);
 
 		guiGraphics.pose().popPose();
 
