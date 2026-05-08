@@ -4,6 +4,7 @@ import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.skill.ClientSkillData;
 import io.github.junyali.pathed.data.skill.SkillCategory;
 import io.github.junyali.pathed.data.skill.SkillNode;
+import io.github.junyali.pathed.screen.common.PanelRenderer;
 import io.github.junyali.pathed.screen.progression.components.ConnectionRenderer;
 import io.github.junyali.pathed.screen.progression.components.NodeRenderer;
 import io.github.junyali.pathed.screen.progression.components.NodeTooltipRenderer;
@@ -63,7 +64,7 @@ public class SkillTreePanel {
 		guiGraphics.disableScissor();
 		guiGraphics.pose().popPose();
 
-		ProgressionRenderer.renderBorder(guiGraphics, this.left, this.top, this.width, this.height);
+		PanelRenderer.renderBorder(guiGraphics, this.left, this.top, this.width, this.height);
 	}
 
 	private void renderBackground(GuiGraphics guiGraphics) {

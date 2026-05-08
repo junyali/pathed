@@ -7,7 +7,7 @@ import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.path.Path;
 import io.github.junyali.pathed.data.path.PathIcon;
 import io.github.junyali.pathed.screen.attribute.AttributeScreen;
-import io.github.junyali.pathed.screen.progression.ProgressionRenderer;
+import io.github.junyali.pathed.screen.common.PanelRenderer;
 import io.github.junyali.pathed.screen.progression.ProgressionScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -258,7 +258,7 @@ public class PathMenuScreen extends Screen {
 
 		int headerH = 132;
 
-		ProgressionRenderer.renderBorder(guiGraphics, x, y, w, h);
+		PanelRenderer.renderBorder(guiGraphics, x, y, w, h);
 
 		int centreX = x + w / 2;
 		int nameY = y + b + 6;

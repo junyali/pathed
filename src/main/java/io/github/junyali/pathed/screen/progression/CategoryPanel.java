@@ -1,16 +1,15 @@
 package io.github.junyali.pathed.screen.progression;
 
-import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.data.skill.ClientSkillData;
 import io.github.junyali.pathed.data.skill.SkillCategory;
 import io.github.junyali.pathed.registry.PathedAttachments;
+import io.github.junyali.pathed.screen.common.PanelRenderer;
 import io.github.junyali.pathed.screen.common.ScrollBar;
 import io.github.junyali.pathed.screen.progression.components.CategoryButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -114,7 +113,7 @@ public class CategoryPanel {
 		int innerWidth = PANEL_WIDTH - b * 2;
 		int innerHeight = panelHeight - b * 2;
 		guiGraphics.fill(innerLeft, innerTop, innerLeft + innerWidth, innerTop + innerHeight, COLOUR_CATEGORY_BG);
-		ProgressionRenderer.renderBorder(guiGraphics, this.left, this.top, PANEL_WIDTH, this.panelHeight);
+		PanelRenderer.renderBorder(guiGraphics, this.left, this.top, PANEL_WIDTH, this.panelHeight);
 	}
 
 	public void renderTitlebar(GuiGraphics guiGraphics) {

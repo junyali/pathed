@@ -5,11 +5,10 @@ import io.github.junyali.pathed.data.attribute.AttributeRegistry;
 import io.github.junyali.pathed.screen.attribute.components.AttributeChip;
 import io.github.junyali.pathed.screen.attribute.components.AttributeTab;
 import io.github.junyali.pathed.screen.common.ScrollBar;
-import io.github.junyali.pathed.screen.progression.ProgressionRenderer;
+import io.github.junyali.pathed.screen.common.PanelRenderer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +67,7 @@ public class AttributeListPanel {
 	}
 
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		ProgressionRenderer.renderBorder(guiGraphics, left, top, width, height);
+		PanelRenderer.renderBorder(guiGraphics, left, top, width, height);
 
 		int innerL = left + AttributeScreen.FRAME_BORDER;
 		int innerT = top + AttributeScreen.FRAME_BORDER;
