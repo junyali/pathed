@@ -316,6 +316,23 @@ public class PathMenuScreen extends Screen {
 	}
 
 	private void drawConnectorLine(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2) {
+		if (x1 == x2) {
+			int top = Math.min(y1, y2);
+			int bottom = Math.max(y1, y2);
+
+			guiGraphics.fill(x1 - 1, top, x1 + 2, bottom + 1, COLOUR_TERTIARY);
+			guiGraphics.fill(x1, top, x1 + 1, bottom + 1, COLOUR_CONNECTOR);
+			return;
+		}
+		if (y1 == y2) {
+			int left = Math.min(x1, x2);
+			int right = Math.max(x1, x2);
+
+			guiGraphics.fill(left, y1 - 1, right + 1, y1 + 2, COLOUR_TERTIARY);
+			guiGraphics.fill(left, y1, right + 1, y1 + 1, COLOUR_CONNECTOR);
+			return;
+		}
+
 		int dX = Math.abs(x2 - x1);
 		int dY = Math.abs(y2 - y1);
 		int sX = x1 < x2 ? 1 : -1;
