@@ -20,23 +20,29 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ResolvableProfile;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PathMenuScreen extends Screen {
 	private static final int CARD_WIDTH = 150;
 	private static final int CARD_HEIGHT = 220;
 
-	private static final int PANEL_WIDTH = 160;
-	private static final int PANEL_HEIGHT = 220;
-	private static final int OPTIONS_PANEL_WIDTH = 120;
-	private static final int PANEL_GAP = 6;
+	private static final int CLUSTER_GAP = 24;
 
 	private static final int PLAYER_MODEL_SIZE = 60;
+
 	private static final int XP_BAR_WIDTH = 100;
 	private static final int XP_BAR_HEIGHT = 6;
 
-	private final boolean showDirtBackground;
+	private static final int BUTTON_SIZE = 36;
+	private static final int BUTTON_RADIUS = 40;
 
 	private static final int COLOUR_CARD_BACKGROUND = 0XC000010;
 	private static final int COLOUR_CARD_TOP_BACKGROUND = 0xB0000000;
+	private static final int COLOUR_BUTTON_BACKGROUND = 0xC0202020;
+	private static final int COLOUR_BUTTON_BACKGROUND_HOVER = 0xD0404040;
+	private static final int COLOUR_BORDER = 0xFF555555;
+	private static final int COLOUR_BORDER_HOVER = 0xFFFFFFFF;
 	private static final int COLOUR_DIVIDER = 0xFF373737;
 	private static final int COLOUR_XP_BG = 0xFF1B1B1B;
 	private static final int COLOUR_XP_FILL = 0xFF80FF20;
@@ -45,17 +51,21 @@ public class PathMenuScreen extends Screen {
 	private static final int COLOUR_TERTIARY = 0xFF808080;
 	private static final int COLOUR_TITLE = 0xFFFFFF55;
 
-	private int panelTop;
-	private int optionsPanelLeft;
-
-	private int layoutLeft;
-	private int layoutTop;
+	private final boolean showDirtBackground;
 
 	private Path path;
 	private int level;
 	private long currentExp;
 	private long expForNextLevel;
 	private float levelProgress;
+
+	private int layoutLeft;
+	private int layoutTop;
+
+	private int clusterCX;
+	private int clusterCY;
+
+	private final List<DiamondButton> buttons = new ArrayList<>();
 
 	public PathMenuScreen(boolean showDirtBackground) {
 		super(Component.translatable("pathed.gui.path_menu.title"));
@@ -66,16 +76,17 @@ public class PathMenuScreen extends Screen {
 	protected void init() {
 		super.init();
 
-		int totalWidth = CARD_WIDTH;
+		int clusterDiameter = (BUTTON_RADIUS + BUTTON_SIZE) * 2;
+		int totalWidth = CARD_WIDTH + CLUSTER_GAP + clusterDiameter;
 		int totalHeight = CARD_HEIGHT;
 
 		this.layoutLeft = (this.width - totalWidth) / 2;
 		this.layoutTop = (this.height - totalHeight) / 2;
 
-		this.optionsPanelLeft = layoutLeft + PANEL_WIDTH + PANEL_GAP;
-		this.panelTop = (this.height - PANEL_HEIGHT) / 2;
+		this.clusterCX = this.layoutLeft + CARD_WIDTH + CLUSTER_GAP + clusterDiameter / 2;
+		this.clusterCY = this.layoutTop + CARD_HEIGHT / 2;
 
-		this.addOptionsPanelButtons();
+		this.buildButtons();
 		this.refreshData();
 	}
 
@@ -93,50 +104,60 @@ public class PathMenuScreen extends Screen {
 		this.levelProgress = progressionAttachment.getLevelProgress();
 	}
 
-	private void addOptionsPanelButtons() {
-		int x = this.optionsPanelLeft;
-		int y = this.panelTop + 10;
-		int buttonWidth = OPTIONS_PANEL_WIDTH;
-		int buttonHeight = 20;
-		int buttonSpacing = 26;
+	private void buildButtons() {
+		buttons.clear();
 
-		this.addRenderableWidget(Button.builder(
+		double[] angles = {
+				Math.toRadians(270),
+				Math.toRadians(0),
+				Math.toRadians(90),
+				Math.toRadians(180)
+		};
+
+		ItemStack[] icons = {
+				new ItemStack(Items.BOOK),
+				new ItemStack(Items.NETHER_STAR),
+				new ItemStack(Items.CHEST),
+				new ItemStack(Items.COMPASS)
+		};
+
+		Component[] tooltips = {
 				Component.translatable("pathed.gui.path_menu.button.skill_tree"),
-				btn -> {
-					if (this.minecraft != null) {
-						this.minecraft.setScreen(new ProgressionScreen(this.showDirtBackground));
-					}
-				}
-		).bounds(x, y, buttonWidth, buttonHeight).build());
-		y += buttonSpacing;
-
-		this.addRenderableWidget(Button.builder(
-				Component.translatable("pathed.gui.path_menu.button.stats"),
-				btn -> {
-
-				}
-		).bounds(x, y, buttonWidth, buttonHeight).build());
-		y += buttonSpacing;
-
-		this.addRenderableWidget(Button.builder(
-				Component.translatable("pathed.gui.path_menu.button.reward_stash"),
-				btn -> {
-					// for collecting rewards
-					if (this.minecraft != null) {
-						this.minecraft.setScreen(new RewardStashScreen(this.showDirtBackground));
-					}
-				}
-		).bounds(x, y, buttonWidth, buttonHeight).build());
-		y += buttonSpacing;
-
-		this.addRenderableWidget(Button.builder(
 				Component.translatable("pathed.gui.path_menu.button.attributes"),
-				btn -> {
-					if (this.minecraft != null) {
-						this.minecraft.setScreen(new AttributeScreen(this.showDirtBackground));
+				Component.translatable("pathed.gui.path_menu.button.reward_stash"),
+				Component.translatable("pathed.gui.path_menu.button.stats")
+		};
+
+		Runnable[] actions = {
+				() -> {
+					if (minecraft != null) {
+						minecraft.setScreen(new ProgressionScreen(showDirtBackground));
+					}
+				},
+				() -> {
+					if (minecraft != null) {
+						minecraft.setScreen(new AttributeScreen(showDirtBackground));
+					}
+				},
+				() -> {
+					if (minecraft != null) {
+						minecraft.setScreen(new RewardStashScreen(showDirtBackground));
+					}
+				},
+				() -> {
+					if (minecraft != null) {
+						// set stats screen;
 					}
 				}
-		).bounds(x, y, buttonWidth, buttonHeight).build());
+		};
+
+		for (int i = 0; i < angles.length; i++) {
+			int cX = clusterCX + (int) Math.round(Math.cos(angles[i]) * BUTTON_RADIUS);
+			int cY = clusterCY + (int) Math.round(Math.sin(angles[i]) * BUTTON_RADIUS);
+			int bX = cX - BUTTON_SIZE / 2;
+			int bY = cY - BUTTON_SIZE / 2;
+			buttons.add(new DiamondButton(bX, bY, BUTTON_SIZE, icons[i], tooltips[i], actions[i]));
+		}
 	}
 
 	@Override
@@ -158,6 +179,19 @@ public class PathMenuScreen extends Screen {
 		super.render(guiGraphics, mouseX, mouseY, delta);
 		this.refreshData();
 		this.renderCard(guiGraphics, mouseX, mouseY);
+		this.renderCluster(guiGraphics, mouseX, mouseY);
+
+		for (DiamondButton button : buttons) {
+			if (button.isHovered(mouseX, mouseY)) {
+				guiGraphics.renderTooltip(font, button.tooltip, mouseX, mouseY);
+				break;
+			}
+		}
+	}
+
+	@Override
+	public boolean isPauseScreen() {
+		return false;
 	}
 
 	private void renderCard(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -297,8 +331,41 @@ public class PathMenuScreen extends Screen {
 		}
 	}
 
-	@Override
-	public boolean isPauseScreen() {
-		return false;
+	private void renderCluster(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		for (DiamondButton button : buttons) {
+			renderButton(guiGraphics, button, mouseX, mouseY);
+		}
+	}
+
+	private void renderButton(GuiGraphics guiGraphics, DiamondButton button, int mouseX, int mouseY) {
+		boolean hovered = button.isHovered(mouseX, mouseY);
+		int background = hovered ? COLOUR_BUTTON_BACKGROUND_HOVER : COLOUR_BUTTON_BACKGROUND;
+
+		guiGraphics.fill(button.x, button.y, button.x + button.size, button.y + button.size, background);
+
+		int iconOffset = (button.size - 16) / 2;
+		guiGraphics.renderItem(button.icon, button.x + iconOffset, button.y + iconOffset);
+	}
+
+	private static class DiamondButton {
+		final int x;
+		final int y;
+		final int size;
+		final ItemStack icon;
+		final Component tooltip;
+		final Runnable action;
+
+		DiamondButton(int x, int y, int size, ItemStack icon, Component tooltip, Runnable action) {
+			this.x = x;
+			this.y = y;
+			this.size = size;
+			this.icon = icon;
+			this.tooltip = tooltip;
+			this.action = action;
+		}
+
+		boolean isHovered(int mouseX, int mouseY) {
+			return mouseX >= x && mouseX < x + size && mouseY >= y && mouseY < y + size;
+		}
 	}
 }
