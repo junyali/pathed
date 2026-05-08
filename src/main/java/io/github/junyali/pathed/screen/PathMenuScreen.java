@@ -28,11 +28,13 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class PathMenuScreen extends Screen {
+	private static final ResourceLocation BUTTON_LOCKED_TEXTURE = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "progression/button_locked");
+	private static final ResourceLocation BUTTON_LOCKED_ICON = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "textures/gui/button_locked_icon.png");
+
 	private static final int CARD_WIDTH = 150;
 	private static final int CARD_HEIGHT = 220;
 
@@ -196,7 +198,9 @@ public class PathMenuScreen extends Screen {
 
 		for (DiamondButton button : buttons) {
 			if (button.isHovered(mouseX, mouseY)) {
-				guiGraphics.renderTooltip(font, button.tooltip, mouseX, mouseY);
+				boolean isLocked = this.path == null || this.path.getId().equals(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "human"));
+				Component tooltip = isLocked ? Component.translatable("pathed.gui.path_menu.tooltip.locked") : button.tooltip;
+				guiGraphics.renderTooltip(font, tooltip, mouseX, mouseY);
 				break;
 			}
 		}
@@ -209,7 +213,8 @@ public class PathMenuScreen extends Screen {
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (button == 0) {
+		boolean isLocked = this.path == null || this.path.getId().equals(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "human"));
+		if (button == 0 && !isLocked) {
 			for (DiamondButton btn : buttons) {
 				if (btn.isHovered((int) mouseX, (int) mouseY)) {
 					Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F));
@@ -232,7 +237,7 @@ public class PathMenuScreen extends Screen {
 	);
 
 	private static ChatFormatting getPathColour(Path path) {
-		if (path == null) return ChatFormatting.GRAY;
+		if (path == null) ;
 		return PATH_COLOURS.getOrDefault(path.getId(), ChatFormatting.GRAY);
 	}
 
@@ -304,7 +309,18 @@ public class PathMenuScreen extends Screen {
 		}
 		cY += 22;
 
-		renderLevel(guiGraphics, centreX, cY);
+		boolean isLocked = this.path == null || this.path.getId().equals(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "human"));
+
+		if (isLocked) {
+			ChatFormatting colour = ChatFormatting.GRAY;
+			if (colour.getColor() != null) {
+				Component greyLabel = Component.translatable("pathed.gui.path_menu.default").withStyle(getPathColour(this.path));
+				guiGraphics.drawCenteredString(font, greyLabel, centreX, cY, -1);
+			}
+
+		} else {
+			renderLevel(guiGraphics, centreX, cY);
+		}
 	}
 
 	private void renderPlayerModel(GuiGraphics guiGraphics, LivingEntity entity, int x, int y, int scale, int mouseX, int mouseY) {
@@ -465,8 +481,7 @@ public class PathMenuScreen extends Screen {
 
 	private void renderButton(GuiGraphics guiGraphics, DiamondButton button, int mouseX, int mouseY) {
 		boolean hovered = button.isHovered(mouseX, mouseY);
-		int background = hovered ? COLOUR_BUTTON_BACKGROUND_HOVER : COLOUR_BUTTON_BACKGROUND;
-		int border = hovered ? COLOUR_BORDER_HOVER : COLOUR_BORDER;
+		boolean isLocked = this.path == null || this.path.getId().equals(ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "human"));
 
 		int centreX = button.x + button.size / 2;
 		int centreY = button.y + button.size / 2;
@@ -476,15 +491,30 @@ public class PathMenuScreen extends Screen {
 		guiGraphics.pose().translate(centreX, centreY, 0);
 		guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(45));
 
-		guiGraphics.fill(-halfSize, -halfSize, halfSize, halfSize, background);
+		if (isLocked) {
+			guiGraphics.blitSprite(BUTTON_LOCKED_TEXTURE, -halfSize, -halfSize, button.size, button.size);
+		} else {
+			int background = hovered ? COLOUR_BUTTON_BACKGROUND_HOVER : COLOUR_BUTTON_BACKGROUND;
+			int border = hovered ? COLOUR_BORDER_HOVER : COLOUR_BORDER;
 
-		drawBorder(guiGraphics, -halfSize, -halfSize, button.size, button.size, COLOUR_TERTIARY);
-		drawBorder(guiGraphics, -halfSize + 1, -halfSize + 1, button.size - 2, button.size - 2, border);
+			guiGraphics.fill(-halfSize, -halfSize, halfSize, halfSize, background);
+			drawBorder(guiGraphics, -halfSize, -halfSize, button.size, button.size, COLOUR_TERTIARY);
+			drawBorder(guiGraphics, -halfSize + 1, -halfSize + 1, button.size - 2, button.size - 2, border);
+		}
 
 		guiGraphics.pose().popPose();
 
-		int iconOffset = (button.size - 16) / 2;
-		guiGraphics.renderItem(button.icon, button.x + iconOffset, button.y + iconOffset);
+
+		if (isLocked) {
+			guiGraphics.pose().pushPose();
+			guiGraphics.pose().translate(0, 0, 101);
+			int iconOffset = (button.size - 20) / 2;
+			guiGraphics.blit(BUTTON_LOCKED_ICON, button.x + iconOffset, button.y + iconOffset, 0, 0, 20, 20, 20, 20);
+			guiGraphics.pose().popPose();
+		} else {
+			int iconOffset = (button.size - 16) / 2;
+			guiGraphics.renderItem(button.icon, button.x + iconOffset, button.y + iconOffset);
+		}
 	}
 
 	private static class DiamondButton {
