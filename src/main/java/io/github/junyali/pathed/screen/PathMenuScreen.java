@@ -1,6 +1,7 @@
 package io.github.junyali.pathed.screen;
 
 import com.mojang.math.Axis;
+import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.path.Path;
@@ -8,12 +9,16 @@ import io.github.junyali.pathed.data.path.PathIcon;
 import io.github.junyali.pathed.screen.attribute.AttributeScreen;
 import io.github.junyali.pathed.screen.progression.ProgressionRenderer;
 import io.github.junyali.pathed.screen.progression.ProgressionScreen;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -21,7 +26,9 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PathMenuScreen extends Screen {
 	private static final int CARD_WIDTH = 150;
@@ -198,6 +205,21 @@ public class PathMenuScreen extends Screen {
 		return false;
 	}
 
+	// TODO: register pathcolour as one of the proporties of path rather than keeping it client-sided
+	private static final Map<ResourceLocation, ChatFormatting> PATH_COLOURS = Map.of(
+			ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "human"), ChatFormatting.GRAY,
+			ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "blademaster"), ChatFormatting.RED,
+			ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "spelunker"), ChatFormatting.GOLD,
+			ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "lumberjack"), ChatFormatting.DARK_GREEN,
+			ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "excavator"), ChatFormatting.AQUA,
+			ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "cultivator"), ChatFormatting.GREEN
+	);
+
+	private static ChatFormatting getPathColour(Path path) {
+		if (path == null) return ChatFormatting.GRAY;
+		return PATH_COLOURS.getOrDefault(path.getId(), ChatFormatting.GRAY);
+	}
+
 	private void renderCard(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 		int x = layoutLeft;
 		int y = layoutTop;
@@ -222,9 +244,14 @@ public class PathMenuScreen extends Screen {
 
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player != null) {
+			ChatFormatting nameColour = getPathColour(this.path);
+			MutableComponent styledName = mc.player.getDisplayName().copy()
+							.withStyle(Style.EMPTY
+									.withBold(true)
+									.withColor(nameColour));
 			guiGraphics.drawCenteredString(
 					this.font,
-					mc.player.getDisplayName(),
+					styledName,
 					centreX,
 					nameY,
 					COLOUR_SUBTEXT
