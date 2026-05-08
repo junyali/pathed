@@ -4,6 +4,7 @@ import io.github.junyali.pathed.data.attribute.Attribute;
 import io.github.junyali.pathed.data.attribute.AttributeRegistry;
 import io.github.junyali.pathed.screen.attribute.components.AttributeChip;
 import io.github.junyali.pathed.screen.attribute.components.AttributeTab;
+import io.github.junyali.pathed.screen.common.ScrollBar;
 import io.github.junyali.pathed.screen.progression.ProgressionRenderer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,7 +18,6 @@ public class AttributeListPanel {
 	private static final int TAB_BAR_H = 18;
 	private static final int CHIP_H = 22;
 	private static final int CHIP_GAP = 2;
-	private static final int SCROLLBAR_W = 5;
 
 	private final AttributeScreen screen;
 	private final List<Attribute> visible = new ArrayList<>();
@@ -27,11 +27,7 @@ public class AttributeListPanel {
 	private final int width;
 	private final int height;
 
-	private int scrollPos = 0;
-	private int maxScroll = 0;
-	private boolean draggingScroll = false;
-	private double dragStartMouseY;
-	private int dragStartScroll;
+	private final ScrollBar scrollBar = new ScrollBar();
 
 	public AttributeListPanel(AttributeScreen screen, int left, int top, int width, int height) {
 		this.screen = screen;
@@ -59,8 +55,12 @@ public class AttributeListPanel {
 	private void recalcScroll() {
 		int contentH = visible.size() * (CHIP_H + CHIP_GAP);
 		int innerH = innerHeight();
-		maxScroll = Math.max(0, contentH - innerH);
-		scrollPos = Math.min(scrollPos, maxScroll);
+		int innerL = left + AttributeScreen.FRAME_BORDER;
+		int innerW = width - 2 * AttributeScreen.FRAME_BORDER;
+		int bodyTop = top + AttributeScreen.FRAME_BORDER + TAB_BAR_H;
+
+		scrollBar.setMaxScroll(Math.max(0, contentH - innerH));
+		scrollBar.setBounds(innerL + innerW - scrollBar.getWidth(), bodyTop, innerH);
 	}
 
 	private int innerHeight() {
@@ -74,6 +74,7 @@ public class AttributeListPanel {
 		int innerT = top + AttributeScreen.FRAME_BORDER;
 		int innerW = width - 2 * AttributeScreen.FRAME_BORDER;
 		int innerH = innerHeight();
+		int sbInset = scrollBar.isVisible() ? scrollBar.getWidth() : 0;
 
 		guiGraphics.fill(
 				innerL,
@@ -97,17 +98,16 @@ public class AttributeListPanel {
 				AttributeScreen.COLOUR_BORDER
 		);
 
-		int contentRight = innerL + innerW - (maxScroll > 0 ? SCROLLBAR_W : 0);
 		guiGraphics.enableScissor(
 				innerL,
 				bodyTop + 1,
-				contentRight,
+				innerL + innerW - sbInset,
 				bodyBottom
 		);
 
 		int chipX = innerL + 3;
-		int chipY = bodyTop + 4 - scrollPos;
-		int chipW = innerW - 6 - (maxScroll > 0 ? SCROLLBAR_W : 0);
+		int chipY = bodyTop + 4 - scrollBar.getScroll();
+		int chipW = innerW - 6 - sbInset;
 
 		for (Attribute a : visible) {
 			AttributeChip.render(guiGraphics, screen, a, chipX, chipY, chipW, CHIP_H, mouseX, mouseY);
@@ -127,23 +127,16 @@ public class AttributeListPanel {
 		}
 		guiGraphics.disableScissor();
 
-		if (maxScroll > 0) {
-			int sbX = innerL + innerW - SCROLLBAR_W;
-			int sbH = innerH;
-			int thumbH = Math.max(16, sbH * innerH / (innerH + maxScroll));
-			int thumbY = bodyTop + (sbH - thumbH) * scrollPos / maxScroll;
-			guiGraphics.fill(sbX, bodyTop, sbX + SCROLLBAR_W, bodyTop + sbH, AttributeScreen.COLOUR_SLOT_BG);
-			guiGraphics.fill(sbX, thumbY, sbX + SCROLLBAR_W, thumbY + thumbH, AttributeScreen.COLOUR_TEXT_DIM);
-		}
+		scrollBar.render(guiGraphics, mouseX, mouseY);
 	}
 
 	public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 		int innerL = left + AttributeScreen.FRAME_BORDER;
 		int innerW = width - 2 * AttributeScreen.FRAME_BORDER;
 		int chipX = innerL + 3;
-		int chipW = innerW - 6 - (maxScroll > 0 ? SCROLLBAR_W : 0);
+		int chipW = innerW - 6 - (scrollBar.isVisible() ? scrollBar.getWidth() : 0);
 		int bodyTop = top + AttributeScreen.FRAME_BORDER + TAB_BAR_H;
-		int chipY = bodyTop + 4 - scrollPos;
+		int chipY = bodyTop + 4 - scrollBar.getScroll();
 
 		for (Attribute a : visible) {
 			boolean inBody = mouseY >= bodyTop && mouseY < bodyTop + innerHeight();
@@ -179,24 +172,12 @@ public class AttributeListPanel {
 			return true;
 		}
 
-		if (maxScroll > 0) {
-			int sbX = innerL + innerW - SCROLLBAR_W;
-			int sbY = innerT + TAB_BAR_H;
-			int sbH = innerHeight();
-			int thumbH = Math.max(16, sbH * sbH / (sbH + maxScroll));
-			int thumbY = sbY + (sbH - thumbH) * scrollPos / maxScroll;
-			if (within(mouseX, mouseY, sbX, thumbY, SCROLLBAR_W, thumbH)) {
-				draggingScroll = true;
-				dragStartMouseY = mouseY;
-				dragStartScroll = scrollPos;
-				return true;
-			}
-		}
+		if (scrollBar.mouseClicked(mouseX, mouseY)) return true;
 
 		int bodyTop = innerT + TAB_BAR_H;
 		int chipX = innerL + 3;
-		int chipY = bodyTop + 4 - scrollPos;
-		int chipW = innerW - 6 - (maxScroll > 0 ? SCROLLBAR_W : 0);
+		int chipY = bodyTop + 4 - scrollBar.getScroll();
+		int chipW = innerW - 6 - (scrollBar.isVisible() ? scrollBar.getWidth() : 0);
 		if (within(mouseX, mouseY, innerL, bodyTop, innerW, innerHeight())) {
 			for (Attribute a : visible) {
 				if (within(mouseX, mouseY, chipX, chipY, chipW, CHIP_H)) {
@@ -218,24 +199,14 @@ public class AttributeListPanel {
 		int innerW = width - 2 * AttributeScreen.FRAME_BORDER;
 		int bodyTop = top + AttributeScreen.FRAME_BORDER + TAB_BAR_H;
 		if (!within(mouseX, mouseY, innerL, bodyTop, innerW, innerHeight())) return false;
-		if (maxScroll <= 0) return false;
-		scrollPos = Mth.clamp((int) (scrollPos - scrollY * 8), 0, maxScroll);
-		return true;
+		return scrollBar.mouseScrolled(scrollY, 8);
 	}
 
 	public boolean mouseDragged(double mouseX, double mouseY) {
-		if (!draggingScroll) return false;
-		int sbH = innerHeight();
-		int thumbH = Math.max(16, sbH * sbH / (sbH + maxScroll));
-		int movable = sbH - thumbH;
-		if (movable > 0) {
-			int delta = (int) ((mouseY - dragStartMouseY) * maxScroll / movable);
-			scrollPos = Mth.clamp(dragStartScroll + delta, 0, maxScroll);
-		}
-		return true;
+		return scrollBar.mouseDragged(mouseY);
 	}
 
 	public void mouseReleased() {
-		draggingScroll = false;
+		scrollBar.release();
 	}
 }
