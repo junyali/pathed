@@ -1,5 +1,6 @@
 package io.github.junyali.pathed.screen;
 
+import com.mojang.math.Axis;
 import io.github.junyali.pathed.attachment.PathAttachment;
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
 import io.github.junyali.pathed.data.path.Path;
@@ -9,7 +10,6 @@ import io.github.junyali.pathed.screen.progression.ProgressionRenderer;
 import io.github.junyali.pathed.screen.progression.ProgressionScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.component.DataComponents;
@@ -37,13 +37,9 @@ public class PathMenuScreen extends Screen {
 	private static final int BUTTON_SIZE = 36;
 	private static final int BUTTON_RADIUS = 40;
 
-	private static final int COLOUR_CARD_BACKGROUND = 0XC000010;
-	private static final int COLOUR_CARD_TOP_BACKGROUND = 0xB0000000;
+	private static final int COLOUR_CARD_BACKGROUND = 0XC0101010;
 	private static final int COLOUR_BUTTON_BACKGROUND = 0xC0202020;
 	private static final int COLOUR_BUTTON_BACKGROUND_HOVER = 0xD0404040;
-	private static final int COLOUR_BORDER = 0xFF555555;
-	private static final int COLOUR_BORDER_HOVER = 0xFFFFFFFF;
-	private static final int COLOUR_DIVIDER = 0xFF373737;
 	private static final int COLOUR_XP_BG = 0xFF1B1B1B;
 	private static final int COLOUR_XP_FILL = 0xFF80FF20;
 	private static final int COLOUR_TEXT = 0xFFFFFFFF;
@@ -209,26 +205,11 @@ public class PathMenuScreen extends Screen {
 		);
 
 		int headerH = 140;
-		guiGraphics.fill(
-				x + 1,
-				y + 1,
-				x + w - 1,
-				y + headerH,
-				COLOUR_CARD_TOP_BACKGROUND
-		);
-
-		guiGraphics.fill(
-				x + 1,
-				y + headerH,
-				x + w - 1,
-				y + headerH + 1,
-				COLOUR_DIVIDER
-		);
 
 		ProgressionRenderer.renderBorder(guiGraphics, x, y, w, h);
 
 		int centreX = x + w / 2;
-		int cY = y + 10;
+		int cY = y + 8;
 
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player != null) {
@@ -256,7 +237,7 @@ public class PathMenuScreen extends Screen {
 			int rowX = centreX - rowWidth / 2;
 
 			renderPathIcon(guiGraphics, this.path.getIcon(), rowX, cY);
-			guiGraphics.drawString(this.font, this.path.getName(), rowX + iconSize, cY + 4, COLOUR_TEXT);
+			guiGraphics.drawString(this.font, this.path.getName(), rowX + iconSize + 4, cY + 4, COLOUR_TEXT);
 		} else {
 			guiGraphics.drawCenteredString(
 					this.font,
@@ -265,8 +246,8 @@ public class PathMenuScreen extends Screen {
 					cY + 4,
 					COLOUR_SUBTEXT
 			);
-			cY += 22;
 		}
+		cY += 22;
 
 		renderLevel(guiGraphics, centreX, cY);
 	}
@@ -310,8 +291,6 @@ public class PathMenuScreen extends Screen {
 			}
 		}
 
-		y += XP_BAR_HEIGHT + 4;
-
 		Component expLabel = Component.literal(this.currentExp + " / " + this.expForNextLevel);
 		guiGraphics.drawCenteredString(this.font, expLabel, centreX, y + XP_BAR_HEIGHT + 4, COLOUR_SUBTEXT);
 	}
@@ -341,7 +320,17 @@ public class PathMenuScreen extends Screen {
 		boolean hovered = button.isHovered(mouseX, mouseY);
 		int background = hovered ? COLOUR_BUTTON_BACKGROUND_HOVER : COLOUR_BUTTON_BACKGROUND;
 
-		guiGraphics.fill(button.x, button.y, button.x + button.size, button.y + button.size, background);
+		int centreX = button.x + button.size / 2;
+		int centreY = button.y + button.size / 2;
+
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(centreX, centreY, 0);
+		guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(45));
+
+		int halfSize = button.size / 2;
+		guiGraphics.fill(-halfSize, -halfSize, halfSize, halfSize, background);
+
+		guiGraphics.pose().popPose();
 
 		int iconOffset = (button.size - 16) / 2;
 		guiGraphics.renderItem(button.icon, button.x + iconOffset, button.y + iconOffset);
@@ -365,7 +354,10 @@ public class PathMenuScreen extends Screen {
 		}
 
 		boolean isHovered(int mouseX, int mouseY) {
-			return mouseX >= x && mouseX < x + size && mouseY >= y && mouseY < y + size;
+			int cX = x + size / 2;
+			int cY = y + size / 2;
+
+			return Math.abs(mouseX - cX) + Math.abs(mouseY - cY) <= size / 2;
 		}
 	}
 }
