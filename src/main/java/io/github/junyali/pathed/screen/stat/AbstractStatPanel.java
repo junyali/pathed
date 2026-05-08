@@ -3,6 +3,7 @@ package io.github.junyali.pathed.screen.stat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 public abstract class AbstractStatPanel {
 	protected int panelX;
@@ -20,9 +21,9 @@ public abstract class AbstractStatPanel {
 		this.font = Minecraft.getInstance().font;
 	}
 
-	public void init(Minecraft mc) {
+	public abstract Component getTitle();
 
-	}
+	public void init() {}
 
 	public void resize(int x, int y, int width, int height) {
 		this.panelX = x;
@@ -37,16 +38,24 @@ public abstract class AbstractStatPanel {
 		return false;
 	}
 
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		return false;
+	}
+
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		return false;
+	}
+
+	public boolean mouseScrolled(double mouseX, double mouseY, double vertical) {
+		return false;
+	}
+
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		return false;
 	}
 
 	public boolean charTyped(char c, int modifiers) {
 		return false;
-	}
-
-	public int getContentHeight() {
-		return panelHeight;
 	}
 
 	protected static boolean isHovered(int mouseX, int mouseY, int x, int y, int w, int h) {
