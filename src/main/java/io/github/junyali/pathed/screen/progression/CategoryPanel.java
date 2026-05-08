@@ -126,7 +126,7 @@ public class CategoryPanel {
 		int plateX = this.left + (PANEL_WIDTH - NAME_PLATE_WIDTH) / 2;
 		int plateY = this.top - NAME_PLATE_HEIGHT / 2 + ProgressionScreen.FRAME_BORDER / 2;
 		guiGraphics.blit(ProgressionScreen.NAME_PLATE, plateX, plateY, 0, 0, NAME_PLATE_WIDTH, NAME_PLATE_HEIGHT, NAME_PLATE_WIDTH, NAME_PLATE_HEIGHT);
-		guiGraphics.renderItem(new ItemStack(Items.NETHER_STAR), plateX + 4, plateY + 5);
+		guiGraphics.renderItem(new ItemStack(Items.KNOWLEDGE_BOOK), plateX + 4, plateY + 5);
 		Component title = Component.translatable("pathed.gui.progression.categories");
 		guiGraphics.drawString(
 				this.screen.getMinecraft().font,

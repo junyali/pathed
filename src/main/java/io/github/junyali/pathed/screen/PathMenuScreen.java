@@ -119,7 +119,7 @@ public class PathMenuScreen extends Screen {
 		};
 
 		ItemStack[] icons = {
-				new ItemStack(Items.BOOK),
+				new ItemStack(Items.KNOWLEDGE_BOOK),
 				new ItemStack(Items.NETHER_STAR),
 				new ItemStack(Items.CHEST),
 				new ItemStack(Items.COMPASS)
