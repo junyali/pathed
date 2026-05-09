@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.Collections;
 import java.util.Map;
@@ -16,11 +17,6 @@ import java.util.Map;
 public class BlocksBrokenPanel extends IconCountStatPanel<ResourceLocation> {
 	public BlocksBrokenPanel(int x, int y, int w, int h) {
 		super(x, y, w, h);
-	}
-
-	@Override
-	public Component getTitle() {
-		return Component.translatable("pathed.gui.stats.blocks_broken.title");
 	}
 
 	@Override
@@ -40,6 +36,9 @@ public class BlocksBrokenPanel extends IconCountStatPanel<ResourceLocation> {
 	@Override
 	protected Component nameFor(ResourceLocation id) {
 		Block block = BuiltInRegistries.BLOCK.get(id);
+		if (block == Blocks.AIR) {
+			return Component.literal(id.toString());
+		}
 		return block.getName();
 	}
 }
