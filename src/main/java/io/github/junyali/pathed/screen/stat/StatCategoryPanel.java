@@ -134,4 +134,10 @@ public class StatCategoryPanel {
 			buttons.get(i).setY(baseY + i * BUTTON_HEIGHT - scroll);
 		}
 	}
+
+	public void renderButtons(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+		for (CategoryButton button : buttons) {
+			button.render(guiGraphics, mouseX, mouseY, delta);
+		}
+	}
 }

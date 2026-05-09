@@ -47,7 +47,7 @@ public class StatsScreen extends Screen implements CategoryHost {
 		int panelHeight = this.height - 20;
 		this.categoryPanel = new StatCategoryPanel(this, 10, 10, panelHeight);
 		for (CategoryButton button : this.categoryPanel.init(this.categories)) {
-			this.addRenderableWidget(button);
+			this.addWidget(button);
 		}
 
 		this.activeLeft = 10 + StatCategoryPanel.PANEL_WIDTH + 10;
@@ -102,9 +102,10 @@ public class StatsScreen extends Screen implements CategoryHost {
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 		this.categoryPanel.repositionButtons();
 		if (activePanel != null) activePanel.render(guiGraphics, mouseX, mouseY, delta);
+		super.render(guiGraphics, mouseX, mouseY, delta);
 		this.categoryPanel.render(guiGraphics, mouseX, mouseY);
 		this.categoryPanel.enableScissor(guiGraphics);
-		super.render(guiGraphics, mouseX, mouseY, delta);
+		this.categoryPanel.renderButtons(guiGraphics, mouseX, mouseY, delta);
 		guiGraphics.disableScissor();
 		this.categoryPanel.renderScrollbar(guiGraphics, mouseX, mouseY);
 		this.categoryPanel.renderTitlebar(guiGraphics);
