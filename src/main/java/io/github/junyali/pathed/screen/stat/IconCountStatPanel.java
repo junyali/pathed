@@ -1,5 +1,6 @@
 package io.github.junyali.pathed.screen.stat;
 
+import io.github.junyali.pathed.screen.common.PanelRenderer;
 import io.github.junyali.pathed.screen.common.ScrollBar;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,9 +16,14 @@ import java.util.function.Consumer;
 public class IconCountStatPanel<K> extends AbstractStatPanel {
 	public enum SortMode { COUNT_DESC, ALPHA_ASC }
 
+	private static final int COLOUR_PANEL_BACKGROUND = 0xFF8B8B8B;
+	private static final int COLOUR_CELL_BACKGROUND = 0xFF373737;
+	private static final int COLOUR_CELL_HOVER = 0xFF505050;
+	private static final int COLOUR_CELL_BORDER_HIGH = 0xFFFFFFFF;
+	private static final int COLOUR_CELL_BORDER_LOW = 0xFF555555;
+	private static final int COLOUR_TEXT = 0xFFFFFFFF;
+
 	private static final int SEARCH_H = 16;
-	private static final int SEARCH_PAD = 6;
-	private static final int HEADER_H = 28;
 	private static final int CELL_SIZE = 48;
 	private static final int CELL_GAP = 4;
 	private static final int PADDING = 6;
@@ -59,13 +65,14 @@ public class IconCountStatPanel<K> extends AbstractStatPanel {
 	}
 
 	public void initWidgets(Consumer<AbstractWidget> register) {
-		searchBox = new EditBox(font, panelX + PADDING, panelY + PADDING, panelWidth - PADDING * 2, SEARCH_H, Component.translatable("pathed.gui.stats.search"));
+		int b = PanelRenderer.FRAME_BORDER;
+		searchBox = new EditBox(font, panelX + b + PADDING, panelY + b + PADDING, panelWidth - (b + PADDING) * 2, SEARCH_H, Component.translatable("pathed.gui.stats.search"));
 		searchBox.setHint(Component.translatable("pathed.gui.stats.search").withStyle(ChatFormatting.DARK_GRAY));
 		searchBox.setResponder(s -> { filter = s.toLowerCase(Locale.ROOT); rebuild(); });
 
-		int buttonY = panelY + PADDING + SEARCH_H + 2;
-		sortCountButton = Button.builder(Component.translatable("pathed.gui.stats.sort.count"), btn -> { sortMode = SortMode.COUNT_DESC; rebuild(); }).bounds(panelX + PADDING, buttonY, 70, 14).build();
-		sortAlphaButton = Button.builder(Component.translatable("pathed.gui.stats.sort.alpha"), btn -> { sortMode = SortMode.ALPHA_ASC; rebuild(); }).bounds(panelX + PADDING + 72, buttonY, 70, 14).build();
+		int buttonY = panelY + b + PADDING + SEARCH_H + 2;
+		sortCountButton = Button.builder(Component.translatable("pathed.gui.stats.sort.count"), btn -> { sortMode = SortMode.COUNT_DESC; rebuild(); }).bounds(panelX + b + PADDING, buttonY, 70, 14).build();
+		sortAlphaButton = Button.builder(Component.translatable("pathed.gui.stats.sort.alpha"), btn -> { sortMode = SortMode.ALPHA_ASC; rebuild(); }).bounds(panelX + b + PADDING + 72, buttonY, 70, 14).build();
 
 		register.accept(searchBox);
 		register.accept(sortCountButton);
@@ -96,7 +103,8 @@ public class IconCountStatPanel<K> extends AbstractStatPanel {
 	}
 
 	private int gridTop() {
-		return panelY + PADDING + SEARCH_H + 2 + 14 + 4;
+		int b = PanelRenderer.FRAME_BORDER;
+		return panelY + b + PADDING + SEARCH_H + 2 + 14 + 4;
 	}
 
 	@Override
@@ -120,11 +128,10 @@ public class IconCountStatPanel<K> extends AbstractStatPanel {
 			int cY = gridTop + row * (CELL_SIZE + CELL_GAP) - scroll;
 			if (cY + CELL_SIZE < gridTop || cY > gridTop + gridH) continue;
 			Entry<K> e = visible.get(i);
-			renderCell(guiGraphics, e, cX, cY);
-			if (isHovered(mouseX, mouseY, cX, cY, CELL_SIZE, CELL_SIZE)) {
+			boolean isHov = isHovered(mouseX, mouseY, cX, cY, CELL_SIZE, CELL_SIZE) && mouseY >= gridTop && mouseY < gridTop + gridH;
+			renderCell(guiGraphics, e, cX, cY, isHov);
+			if (isHov) {
 				hovered = e;
-				hX = cX;
-				hY = cY;
 			}
 		}
 		guiGraphics.disableScissor();
@@ -134,34 +141,44 @@ public class IconCountStatPanel<K> extends AbstractStatPanel {
 		if (hovered != null) {
 			List<Component> lines = new ArrayList<>();
 			lines.add(hovered.name());
-			lines.add(Component.literal("* " + hovered.count()).withStyle(ChatFormatting.GRAY));
+			lines.add(Component.translatable("pathed.gui.stats.tooltip.count", formatNumber(hovered.count())).withStyle(ChatFormatting.GRAY));
 			lines.addAll(extraTooltip(hovered.key(), hovered.count()));
 			guiGraphics.renderComponentTooltip(font, lines, mouseX, mouseY);
 		}
 	}
 
-	private void renderCell(GuiGraphics guiGraphics, Entry<K> e, int x, int y) {
-		guiGraphics.fill(x, y, x + CELL_SIZE, y + CELL_SIZE, 0xFF2A2A3C);
+	private void renderCell(GuiGraphics guiGraphics, Entry<K> e, int x, int y, boolean hovered) {
+		guiGraphics.fill(x, y, x + CELL_SIZE, y + CELL_SIZE, hovered ? COLOUR_CELL_HOVER : COLOUR_CELL_BACKGROUND);
+		guiGraphics.fill(x, y, x + CELL_SIZE, y + 1, COLOUR_CELL_BORDER_LOW);
+		guiGraphics.fill(x, y, x + 1, y + CELL_SIZE, COLOUR_CELL_BORDER_LOW);
+		guiGraphics.fill(x, y + CELL_SIZE - 1, x + CELL_SIZE, y + CELL_SIZE, COLOUR_CELL_BORDER_HIGH);
+		guiGraphics.fill(x + CELL_SIZE - 1, y, x + CELL_SIZE, y + CELL_SIZE, COLOUR_CELL_BORDER_HIGH);
 
 		int iconX = x + (CELL_SIZE - 16) / 2;
 		int iconY = y + 2;
 		guiGraphics.renderItem(e.icon(), iconX, iconY);
 		String countStr = compact(e.count());
+		int textY = y + CELL_SIZE - font.lineHeight - 3;
 		guiGraphics.drawString(
 				font,
 				countStr,
-				x + CELL_SIZE - font.width(countStr) / 2,
-				y + CELL_SIZE - font.lineHeight - 2,
-				0xFFFFFFFF,
-				false
+				x + CELL_SIZE - font.width(countStr) - 3,
+				textY,
+				COLOUR_TEXT,
+				true
 		);
 	}
 
 	private static String compact(int n) {
 		// TODO: find a better way to do this, or at the very least, expand it
-		if (n >= 1_000_000) return (n / 1000_000) + "M";
-		if (n >= 10_000) return (n / 100) + "k";
+		if (n >= 1_000_000) return String.format(Locale.ROOT, "%.1fM", n / 1_000_000.0);
+		if (n >= 10_000) return String.format(Locale.ROOT, "%.1fk", n / 1_000.0);
+		if (n >= 1_000) return String.format(Locale.ROOT, "%,d", n);
 		return Integer.toString(n);
+	}
+
+	private static String formatNumber(int n) {
+		return String.format(Locale.ROOT, "%,d", n);
 	}
 
 	@Override
