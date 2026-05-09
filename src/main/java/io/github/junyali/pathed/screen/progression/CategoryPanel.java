@@ -6,8 +6,9 @@ import io.github.junyali.pathed.data.skill.SkillCategory;
 import io.github.junyali.pathed.registry.PathedAttachments;
 import io.github.junyali.pathed.screen.common.PanelRenderer;
 import io.github.junyali.pathed.screen.common.ScrollBar;
-import io.github.junyali.pathed.screen.progression.components.CategoryButton;
+import io.github.junyali.pathed.screen.common.CategoryButton;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +22,6 @@ public class CategoryPanel {
 	static final int PANEL_WIDTH = 100;
 	private static final int BUTTON_HEIGHT = 20;
 	private static final int BUTTON_SPACING = 0;
-	private static final int PANEL_PADDING = 8;
 	private static final int NAME_PLATE_WIDTH = 100;
 	private static final int NAME_PLATE_HEIGHT = 26;
 	private static final int NAME_PLATE_ICON_SIZE = 26;
@@ -86,7 +86,7 @@ public class CategoryPanel {
 			String idStr = catId.toString();
 
 			if (isFirst) {
-				this.screen.selectedCategory = idStr;
+				this.screen.selectCategory(idStr);
 				isFirst = false;
 			}
 
@@ -97,7 +97,7 @@ public class CategoryPanel {
 					BUTTON_HEIGHT,
 					Component.translatable(cat.getNameKey()),
 					idStr,
-					cat.getIconItem(),
+					BuiltInRegistries.ITEM.get(ResourceLocation.parse(cat.getIconItem())).getDefaultInstance(),
 					this.screen
 			);
 			this.buttons.add(button);

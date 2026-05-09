@@ -1,17 +1,16 @@
 package io.github.junyali.pathed.screen.progression;
 
 import io.github.junyali.pathed.Pathed;
-import io.github.junyali.pathed.screen.progression.components.CategoryButton;
+import io.github.junyali.pathed.screen.common.CategoryButton;
+import io.github.junyali.pathed.screen.common.CategoryHost;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-public class ProgressionScreen extends Screen {
+public class ProgressionScreen extends Screen implements CategoryHost {
 	public static final int FRAME_BORDER = 9;
-	public static final int FRAME_TEX_WIDTH = 176;
-	public static final int FRAME_TEX_HEIGHT = 182;
 	public static final int COLOUR_TEXT = 0xFFFFFFFF;
 
 	public static final ResourceLocation FRAME_TEXTURE = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "textures/gui/border.png");
@@ -22,7 +21,18 @@ public class ProgressionScreen extends Screen {
 	private CategoryPanel categoryPanel;
 	private SkillTreePanel skillTreePanel;
 
-	public String selectedCategory = "";
+	private String selectedCategory = "";
+
+	@Override
+	public String getSelectedCategory() {
+		return selectedCategory;
+	}
+
+	@Override
+	public void selectCategory(String id) {
+		this.selectedCategory = id;
+		this.skillTreePanel.resetScroll();
+	}
 
 	public ProgressionScreen(boolean showDirtBackground) {
 		super(Component.translatable("pathed.gui.progression.title"));
@@ -118,10 +128,5 @@ public class ProgressionScreen extends Screen {
 	@Override
 	public boolean isPauseScreen() {
 		return false;
-	}
-
-	public void selectCategory(String categoryId) {
-		this.selectedCategory = categoryId;
-		this.skillTreePanel.resetScroll();
 	}
 }

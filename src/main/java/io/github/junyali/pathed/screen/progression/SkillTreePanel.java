@@ -90,11 +90,11 @@ public class SkillTreePanel {
 	}
 
 	private ResourceLocation getCurrentCategoryBackground() {
-		if (this.screen.selectedCategory.isEmpty()) {
+		if (this.screen.getSelectedCategory().isEmpty()) {
 			return ResourceLocation.withDefaultNamespace("textures/block/dirt.png");
 		}
 
-		SkillCategory category = ClientSkillData.getCategories().get(ResourceLocation.parse(this.screen.selectedCategory));
+		SkillCategory category = ClientSkillData.getCategories().get(ResourceLocation.parse(this.screen.getSelectedCategory()));
 		if (category != null && category.getBackground() != null) {
 			return category.getBackground();
 		}
@@ -103,9 +103,9 @@ public class SkillTreePanel {
 	}
 
 	private void renderNodes(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		if (this.screen.selectedCategory.isEmpty()) return;
+		if (this.screen.getSelectedCategory().isEmpty()) return;
 
-		SkillCategory category = ClientSkillData.getCategories().get(ResourceLocation.parse(this.screen.selectedCategory));
+		SkillCategory category = ClientSkillData.getCategories().get(ResourceLocation.parse(this.screen.getSelectedCategory()));
 		if (category == null) return;
 
 		int centreX = this.contentWidth / 2;
