@@ -109,6 +109,10 @@ public class IconCountStatPanel<K> extends AbstractStatPanel {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+		int b = PanelRenderer.FRAME_BORDER;
+		guiGraphics.fill(panelX + b, panelY + b, panelX + panelWidth - b, panelY + panelHeight - b, COLOUR_PANEL_BACKGROUND);
+		PanelRenderer.renderBorder(guiGraphics, panelX, panelY, panelWidth, panelHeight);
+
 		int gridTop = gridTop();
 		int gridH = panelY + panelHeight - gridTop - PADDING;
 		int gridLeft = panelX + PADDING;
