@@ -61,4 +61,8 @@ public abstract class AbstractStatPanel {
 	protected static boolean isHovered(int mouseX, int mouseY, int x, int y, int w, int h) {
 		return mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + h;
 	}
+
+	protected static boolean isHovered(double mouseX, double mouseY, int x, int y, int w, int h) {
+		return mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + h;
+	}
 }

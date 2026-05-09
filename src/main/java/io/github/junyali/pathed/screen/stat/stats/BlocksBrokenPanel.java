@@ -20,6 +20,11 @@ public class BlocksBrokenPanel extends IconCountStatPanel<ResourceLocation> {
 	}
 
 	@Override
+	public Component getTitle() {
+		return Component.translatable("pathed.gui.stats.blocks_broken.title");
+	}
+
+	@Override
 	protected Map<ResourceLocation, Integer> data() {
 		Player player = Minecraft.getInstance().player;
 		if (player == null) return Collections.emptyMap();
