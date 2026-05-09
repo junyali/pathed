@@ -3,6 +3,7 @@ package io.github.junyali.pathed.screen.stat;
 import io.github.junyali.pathed.screen.common.ScrollBar;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
@@ -57,7 +58,7 @@ public class IconCountStatPanel<K> extends AbstractStatPanel {
 		return List.of();
 	}
 
-	public void initWidgets(Consumer<Object> register) {
+	public void initWidgets(Consumer<AbstractWidget> register) {
 		searchBox = new EditBox(font, panelX + PADDING, panelY + PADDING, panelWidth - PADDING * 2, SEARCH_H, Component.translatable("pathed.gui.stats.search"));
 		searchBox.setHint(Component.translatable("pathed.gui.stats.search").withStyle(ChatFormatting.DARK_GRAY));
 		searchBox.setResponder(s -> { filter = s.toLowerCase(Locale.ROOT); rebuild(); });

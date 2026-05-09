@@ -1,5 +1,6 @@
 package io.github.junyali.pathed.screen.stat;
 
+import io.github.junyali.pathed.screen.stat.stats.BlocksBrokenPanel;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -19,6 +20,15 @@ public class StatsScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
+
+		int x = MARGIN;
+		int y = MARGIN;
+		int w = this.width - MARGIN * 2;
+		int h = this.height - MARGIN * 2;
+
+		BlocksBrokenPanel panel = new BlocksBrokenPanel(x, y, w, h);
+		panel.initWidgets(this::addRenderableWidget);
+		this.activePanel = panel;
 	}
 
 	@Override
