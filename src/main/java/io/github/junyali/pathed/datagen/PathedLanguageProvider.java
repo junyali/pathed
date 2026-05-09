@@ -71,6 +71,12 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.gui.attributes.detail.pip.locked", "Not yet obtained");
 		add("pathed.gui.attributes.detail.always_active", "Always Active");
 
+		add("pathed.gui.stats.title", "Stats");
+		add("pathed.gui.stats.search", "Search...");
+		add("pathed.gui.stats.sort.count", "Most broken");
+		add("pathed.gui.stats.sort.alpha", "A -> Z");
+		add("pathed.gui.stats.blocks_broken.title", "Blocks Broken");
+
 		// NODE TOOLTIPS
 		add("pathed.skill.tooltip.prerequisites", "Prerequisites:");
 		add("pathed.skill.tooltip.requirements", "Requirements:");
