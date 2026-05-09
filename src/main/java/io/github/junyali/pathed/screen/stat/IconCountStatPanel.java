@@ -24,7 +24,7 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	private static final int COLOUR_TEXT = 0xFFFFFFFF;
 
 	private static final int SEARCH_H = 16;
-	private static final int BUTTON_H = 14;
+	private static final int BUTTON_H = 18;
 	private static final int TITLE_H = 12;
 	private static final int CELL_SIZE = 48;
 	private static final int CELL_GAP = 4;
@@ -69,8 +69,8 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		searchBox.setResponder(s -> { filter = s.toLowerCase(Locale.ROOT); rebuild(); });
 
 		int buttonY = panelY + b + PADDING + TITLE_H + SEARCH_H + 2;
-		sortCountButton = Button.builder(Component.translatable("pathed.gui.stats.sort.count"), btn -> { sortMode = SortMode.COUNT_DESC; rebuild(); }).bounds(panelX + b + PADDING, buttonY, 70, 14).build();
-		sortAlphaButton = Button.builder(Component.translatable("pathed.gui.stats.sort.alpha"), btn -> { sortMode = SortMode.ALPHA_ASC; rebuild(); }).bounds(panelX + b + PADDING + 72, buttonY, 70, 14).build();
+		sortCountButton = Button.builder(Component.translatable("pathed.gui.stats.sort.count"), btn -> { sortMode = SortMode.COUNT_DESC; rebuild(); }).bounds(panelX + b + PADDING, buttonY, 70, BUTTON_H).build();
+		sortAlphaButton = Button.builder(Component.translatable("pathed.gui.stats.sort.alpha"), btn -> { sortMode = SortMode.ALPHA_ASC; rebuild(); }).bounds(panelX + b + PADDING + 72, buttonY, 70, BUTTON_H).build();
 
 		Consumer<AbstractWidget> tracking = w -> { ownedWidgets.add(w); register.accept(w); };
 		tracking.accept(searchBox);
