@@ -26,7 +26,7 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	private static final int SEARCH_H = 16;
 	private static final int BUTTON_H = 18;
 	private static final int TITLE_H = 12;
-	private static final int CELL_SIZE = 48;
+	private static final int CELL_SIZE = 32;
 	private static final int CELL_GAP = 4;
 	private static final int PADDING = 6;
 
