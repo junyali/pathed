@@ -218,6 +218,6 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double vertical) {
 		if (!isHovered(mouseX, mouseY, panelX, panelY, panelWidth, panelHeight)) return false;
-		return scrollBar.mouseScrolled(vertical, CELL_SIZE / 2);
+		return scrollBar.mouseScrolled(vertical, CELL_SIZE / 8);
 	}
 }

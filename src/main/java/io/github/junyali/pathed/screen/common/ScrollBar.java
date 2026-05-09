@@ -90,6 +90,7 @@ public class ScrollBar {
 
 	private int thumbY() {
 		int range = height - THUMB_HEIGHT;
-		return y + (int) (range * (scrollPos / (float) maxScroll));
+		if (maxScroll <= 0) return y;
+		return y + Math.round(range * (scrollPos / (float) maxScroll));
 	}
 }
