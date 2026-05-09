@@ -101,7 +101,7 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 
 		int b = PanelRenderer.FRAME_BORDER;
 		int gridTop = gridTop();
-		int gridH = panelY + panelHeight - gridTop - PADDING;
+		int gridH = panelY + panelHeight - gridTop - PADDING - b;
 		int usableW = panelWidth - (b + PADDING) * 2 - scrollBar.getWidth() - 2;
 		int cols = Math.max(1, (usableW + CELL_GAP) / (CELL_SIZE + CELL_GAP));
 		int rows = (int) Math.ceil(visible.size() / (double) cols);
@@ -131,7 +131,7 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		);
 
 		int gridTop = gridTop();
-		int gridH = panelY + panelHeight - gridTop - PADDING;
+		int gridH = panelY + panelHeight - gridTop - PADDING - b;
 		int gridLeft = panelX + PADDING + b;
 		int gridRight = panelX + panelWidth - PADDING - b - (scrollBar.isVisible() ? scrollBar.getWidth() + 2 : 0);
 
