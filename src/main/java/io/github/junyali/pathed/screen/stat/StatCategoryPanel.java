@@ -58,10 +58,10 @@ public class StatCategoryPanel {
 
 		boolean first = true;
 		for (StatCategory cat : categories) {
-			if (first) {
+			if (first && screen.getSelectedCategory().isEmpty()) {
 				screen.selectCategory(cat.id());
-				first = false;
 			}
+			first = false;
 
 			CategoryButton button = new CategoryButton(
 					buttonLeft,
