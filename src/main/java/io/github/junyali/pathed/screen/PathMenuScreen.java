@@ -9,6 +9,7 @@ import io.github.junyali.pathed.data.path.PathIcon;
 import io.github.junyali.pathed.screen.attribute.AttributeScreen;
 import io.github.junyali.pathed.screen.common.PanelRenderer;
 import io.github.junyali.pathed.screen.progression.ProgressionScreen;
+import io.github.junyali.pathed.screen.stat.StatsScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -161,7 +162,7 @@ public class PathMenuScreen extends Screen {
 				},
 				() -> {
 					if (minecraft != null) {
-						// set stats screen;
+						minecraft.setScreen(new StatsScreen(showDirtBackground));
 					}
 				}
 		};
