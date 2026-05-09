@@ -25,6 +25,7 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 
 	private static final int SEARCH_H = 16;
 	private static final int BUTTON_H = 14;
+	private static final int TITLE_H = 12;
 	private static final int CELL_SIZE = 48;
 	private static final int CELL_GAP = 4;
 	private static final int PADDING = 6;
@@ -63,11 +64,11 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		ownedWidgets.clear();
 		int b = PanelRenderer.FRAME_BORDER;
 
-		searchBox = new EditBox(font, panelX + b + PADDING, panelY + b + PADDING, panelWidth - (b + PADDING) * 2, SEARCH_H, Component.translatable("pathed.gui.stats.search"));
+		searchBox = new EditBox(font, panelX + b + PADDING, panelY + b + PADDING + TITLE_H, panelWidth - (b + PADDING) * 2, SEARCH_H, Component.translatable("pathed.gui.stats.search"));
 		searchBox.setHint(Component.translatable("pathed.gui.stats.search").withStyle(ChatFormatting.DARK_GRAY));
 		searchBox.setResponder(s -> { filter = s.toLowerCase(Locale.ROOT); rebuild(); });
 
-		int buttonY = panelY + b + PADDING + SEARCH_H + 2;
+		int buttonY = panelY + b + PADDING + TITLE_H + SEARCH_H + 2;
 		sortCountButton = Button.builder(Component.translatable("pathed.gui.stats.sort.count"), btn -> { sortMode = SortMode.COUNT_DESC; rebuild(); }).bounds(panelX + b + PADDING, buttonY, 70, 14).build();
 		sortAlphaButton = Button.builder(Component.translatable("pathed.gui.stats.sort.alpha"), btn -> { sortMode = SortMode.ALPHA_ASC; rebuild(); }).bounds(panelX + b + PADDING + 72, buttonY, 70, 14).build();
 
@@ -111,7 +112,7 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 
 	private int gridTop() {
 		int b = PanelRenderer.FRAME_BORDER;
-		return panelY + b + PADDING + SEARCH_H + 2 + BUTTON_H + 4;
+		return panelY + b + PADDING + TITLE_H + SEARCH_H + 2 + BUTTON_H + 4;
 	}
 
 	@Override
@@ -119,6 +120,15 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		int b = PanelRenderer.FRAME_BORDER;
 		guiGraphics.fill(panelX + b, panelY + b, panelX + panelWidth - b, panelY + panelHeight - b, COLOUR_PANEL_BACKGROUND);
 		PanelRenderer.renderBorder(guiGraphics, panelX, panelY, panelWidth, panelHeight);
+
+		guiGraphics.drawString(
+				font,
+				getTitle(),
+				panelX + b + PADDING,
+				panelY + b + PADDING,
+				COLOUR_TEXT,
+				false
+		);
 
 		int gridTop = gridTop();
 		int gridH = panelY + panelHeight - gridTop - PADDING;
