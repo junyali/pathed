@@ -72,17 +72,17 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		sortAlphaButton = Button.builder(Component.translatable("pathed.gui.stats.sort.alpha"), btn -> { sortMode = SortMode.ALPHA_ASC; rebuild(); }).bounds(panelX + b + PADDING + 72, buttonY, 70, 14).build();
 
 		Consumer<AbstractWidget> tracking = w -> { ownedWidgets.add(w); register.accept(w); };
-		register.accept(searchBox);
-		register.accept(sortCountButton);
-		register.accept(sortAlphaButton);
+		tracking.accept(searchBox);
+		tracking.accept(sortCountButton);
+		tracking.accept(sortAlphaButton);
 		rebuild();
 	}
 
 	public void removeFrom(Consumer<AbstractWidget> remover) {
 		for (AbstractWidget w : ownedWidgets) {
 			remover.accept(w);
-			ownedWidgets.clear();
 		}
+		ownedWidgets.clear();
 	}
 
 	protected void rebuild() {
