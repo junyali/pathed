@@ -24,7 +24,9 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	private static final int COLOUR_TEXT = 0xFFFFFFFF;
 
 	private static final int SEARCH_H = 16;
-	private static final int BUTTON_H = 18;
+	private static final int BUTTON_H = 16;
+	private static final int BUTTON_W = 70;
+	private static final int BUTTON_GAP = 2;
 	private static final int TITLE_H = 12;
 	private static final int CELL_SIZE = 32;
 	private static final int CELL_GAP = 4;
@@ -64,13 +66,17 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		ownedWidgets.clear();
 		int b = PanelRenderer.FRAME_BORDER;
 
-		searchBox = new EditBox(font, panelX + b + PADDING, panelY + b + PADDING + TITLE_H, panelWidth - (b + PADDING) * 2, SEARCH_H, Component.translatable("pathed.gui.stats.search"));
+		int searchAndButtonY = panelY + b + PADDING + TITLE_H;
+		int totalButtonWidth = BUTTON_W * 2 + BUTTON_GAP;
+		int searchWidth = panelWidth - (b + PADDING) * 2 - totalButtonWidth - (BUTTON_GAP * 2);
+
+		searchBox = new EditBox(font, panelX + b + PADDING, searchAndButtonY, searchWidth, SEARCH_H, Component.translatable("pathed.gui.stats.search"));
 		searchBox.setHint(Component.translatable("pathed.gui.stats.search").withStyle(ChatFormatting.DARK_GRAY));
 		searchBox.setResponder(s -> { filter = s.toLowerCase(Locale.ROOT); rebuild(); });
 
-		int buttonY = panelY + b + PADDING + TITLE_H + SEARCH_H + 2;
-		sortCountButton = Button.builder(Component.translatable("pathed.gui.stats.sort.count"), btn -> { sortMode = SortMode.COUNT_DESC; rebuild(); }).bounds(panelX + b + PADDING, buttonY, 70, BUTTON_H).build();
-		sortAlphaButton = Button.builder(Component.translatable("pathed.gui.stats.sort.alpha"), btn -> { sortMode = SortMode.ALPHA_ASC; rebuild(); }).bounds(panelX + b + PADDING + 72, buttonY, 70, BUTTON_H).build();
+		int firstButtonX = panelX + b + PADDING + searchWidth + (BUTTON_GAP * 2);
+		sortCountButton = Button.builder(Component.translatable("pathed.gui.stats.sort.count"), btn -> { sortMode = SortMode.COUNT_DESC; rebuild(); }).bounds(firstButtonX, searchAndButtonY, BUTTON_W, BUTTON_H).build();
+		sortAlphaButton = Button.builder(Component.translatable("pathed.gui.stats.sort.alpha"), btn -> { sortMode = SortMode.ALPHA_ASC; rebuild(); }).bounds(firstButtonX + BUTTON_W + BUTTON_GAP, searchAndButtonY, BUTTON_W, BUTTON_H).build();
 
 		Consumer<AbstractWidget> tracking = w -> { ownedWidgets.add(w); register.accept(w); };
 		tracking.accept(searchBox);
