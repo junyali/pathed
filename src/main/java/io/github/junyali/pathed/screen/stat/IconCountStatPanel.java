@@ -182,10 +182,7 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		guiGraphics.fill(x, y, x + 1, y + cellSizeY, COLOUR_CELL_BORDER_LOW);
 		guiGraphics.fill(x, y + cellSizeY - 1, x + cellSizeX, y + cellSizeY, COLOUR_CELL_BORDER_HIGH);
 		guiGraphics.fill(x + cellSizeX - 1, y, x + cellSizeX, y + cellSizeY, COLOUR_CELL_BORDER_HIGH);
-
-		int iconX = x + (cellSizeX - 16) / 2;
-		int iconY = y + 2;
-		guiGraphics.renderItem(e.icon(), iconX, iconY);
+		renderIcon(guiGraphics, e, x, y);
 		String countStr = compact(e.count());
 		int textY = y + cellSizeY - font.lineHeight - 3;
 		guiGraphics.drawString(
@@ -196,6 +193,12 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 				COLOUR_TEXT,
 				true
 		);
+	}
+
+	protected void renderIcon(GuiGraphics guiGraphics, Entry<K> e, int cellX, int cellY) {
+		int iconX = cellX + (cellSizeX - 16) / 2;
+		int iconY = cellY + 2;
+		guiGraphics.renderItem(e.icon(), iconX, iconY);
 	}
 
 	private static String compact(int n) {
