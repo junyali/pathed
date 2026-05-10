@@ -61,6 +61,7 @@
   "pathed.gui.stats.sort.alpha": "A -> Z",
   "pathed.gui.stats.sort.count": "Most broken",
   "pathed.gui.stats.title": "Stats",
+  "pathed.gui.stats.tooltip.count": "* %s",
   "pathed.skill.tiers.diamond.desc": "Mineeeee diamonds (take on me)",
   "pathed.skill.tiers.diamond.name": "Diamond Tier",
   "pathed.skill.tiers.gold.desc": "GOLD!!!",

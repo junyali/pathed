@@ -76,6 +76,7 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.gui.stats.sort.count", "Most broken");
 		add("pathed.gui.stats.sort.alpha", "A -> Z");
 		add("pathed.gui.stats.blocks_broken.title", "Blocks Broken");
+		add("pathed.gui.stats.tooltip.count", "* %s");
 
 		// NODE TOOLTIPS
 		add("pathed.skill.tooltip.prerequisites", "Prerequisites:");
