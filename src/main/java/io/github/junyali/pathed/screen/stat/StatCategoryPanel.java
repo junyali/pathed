@@ -4,7 +4,6 @@ import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.screen.common.PanelRenderer;
 import io.github.junyali.pathed.screen.common.ScrollBar;
 import io.github.junyali.pathed.screen.common.CategoryButton;
-import io.github.junyali.pathed.screen.progression.ProgressionScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -96,7 +95,7 @@ public class StatCategoryPanel {
 		int plateY = top - NAME_PLATE_HEIGHT / 2 + PanelRenderer.FRAME_BORDER / 2;
 		guiGraphics.blit(NAME_PLATE, plateX, plateY, 0, 0, NAME_PLATE_WIDTH, NAME_PLATE_HEIGHT, NAME_PLATE_WIDTH, NAME_PLATE_HEIGHT);
 		guiGraphics.renderItem(new ItemStack(Items.COMPASS), plateX + 4, plateY + 5);
-		Component title = Component.translatable("pathed.gui.stats.categories");
+		Component title = Component.translatable("pathed.gui.stats.title");
 		guiGraphics.drawString(screen.getMinecraft().font, title, plateX + NAME_PLATE_ICON_SIZE + 4, plateY + 5 + (16 - screen.getMinecraft().font.lineHeight) / 2, COLOUR_TEXT);
 	}
 

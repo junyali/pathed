@@ -38,7 +38,7 @@ public class StatsScreen extends Screen implements CategoryHost {
 		this.categories = List.of(
 				new StatCategory(
 						"blocks_broken",
-						"pathed.gui.stats.blocks_broken",
+						"pathed.gui.stats.blocks_broken.title",
 						new ItemStack(Items.IRON_PICKAXE),
 						BlocksBrokenPanel::new
 				)
