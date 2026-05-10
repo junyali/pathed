@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class BlocksBrokenPanel extends IconCountStatPanel<ResourceLocation> {
 	public BlocksBrokenPanel(int x, int y, int w, int h) {
-		super(x, y, w, h);
+		super(x, y, w, h, 32, 32);
 	}
 
 	@Override

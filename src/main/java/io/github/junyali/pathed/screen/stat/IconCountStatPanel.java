@@ -28,9 +28,11 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	private static final int BUTTON_W = 70;
 	private static final int BUTTON_GAP = 2;
 	private static final int TITLE_H = 12;
-	private static final int CELL_SIZE = 32;
 	private static final int CELL_GAP = 4;
 	private static final int PADDING = 6;
+
+	private final int cellSizeX;
+	private final int cellSizeY;
 
 	private final ScrollBar scrollBar = new ScrollBar();
 	private final List<AbstractWidget> ownedWidgets = new ArrayList<>();
@@ -45,8 +47,10 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 
 	protected record Entry<K>(K key, int count, ItemStack icon, Component name) {}
 
-	protected IconCountStatPanel(int x, int y, int w, int h) {
+	protected IconCountStatPanel(int x, int y, int w, int h, int cellSizeX, int cellSizeY) {
 		super(x, y, w, h);
+		this.cellSizeX = cellSizeX;
+		this.cellSizeY = cellSizeY;
 	}
 
 	@Override
@@ -109,9 +113,9 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		int gridTop = gridTop();
 		int gridH = panelY + panelHeight - gridTop - PADDING - b;
 		int usableW = panelWidth - (b + PADDING) * 2 - scrollBar.getWidth() - 2;
-		int cols = Math.max(1, (usableW + CELL_GAP) / (CELL_SIZE + CELL_GAP));
+		int cols = Math.max(1, (usableW + CELL_GAP) / (cellSizeX + CELL_GAP));
 		int rows = (int) Math.ceil(visible.size() / (double) cols);
-		int contentH = Math.max(0, rows * (CELL_SIZE + CELL_GAP) - CELL_GAP);
+		int contentH = Math.max(0, rows * (cellSizeY + CELL_GAP) - CELL_GAP);
 		scrollBar.setMaxScroll(Math.max(0, contentH - gridH));
 		scrollBar.setBounds(panelX + panelWidth - PADDING - b - scrollBar.getWidth(), gridTop, gridH);
 	}
@@ -142,18 +146,18 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		int gridRight = panelX + panelWidth - PADDING - b - (scrollBar.isVisible() ? scrollBar.getWidth() + 2 : 0);
 
 		guiGraphics.enableScissor(gridLeft, gridTop, gridRight, gridTop + gridH);
-		int cols = Math.max(1, (gridRight - gridLeft + CELL_GAP) / (CELL_SIZE + CELL_GAP));
+		int cols = Math.max(1, (gridRight - gridLeft + CELL_GAP) / (cellSizeX + CELL_GAP));
 		int scroll = scrollBar.getScroll();
 
 		Entry<K> hovered = null;
 		for (int i = 0; i < visible.size(); i++) {
 			int row = i / cols;
 			int col = i % cols;
-			int cX = gridLeft + col * (CELL_SIZE + CELL_GAP);
-			int cY = gridTop + row * (CELL_SIZE + CELL_GAP) - scroll;
-			if (cY + CELL_SIZE < gridTop || cY > gridTop + gridH) continue;
+			int cX = gridLeft + col * (cellSizeX + CELL_GAP);
+			int cY = gridTop + row * (cellSizeY + CELL_GAP) - scroll;
+			if (cY + cellSizeY < gridTop || cY > gridTop + gridH) continue;
 			Entry<K> e = visible.get(i);
-			boolean isHov = isHovered(mouseX, mouseY, cX, cY, CELL_SIZE, CELL_SIZE) && mouseY >= gridTop && mouseY < gridTop + gridH;
+			boolean isHov = isHovered(mouseX, mouseY, cX, cY, cellSizeX, cellSizeY) && mouseY >= gridTop && mouseY < gridTop + gridH;
 			renderCell(guiGraphics, e, cX, cY, isHov);
 			if (isHov) {
 				hovered = e;
@@ -173,21 +177,21 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	}
 
 	private void renderCell(GuiGraphics guiGraphics, Entry<K> e, int x, int y, boolean hovered) {
-		guiGraphics.fill(x, y, x + CELL_SIZE, y + CELL_SIZE, hovered ? COLOUR_CELL_HOVER : COLOUR_CELL_BACKGROUND);
-		guiGraphics.fill(x, y, x + CELL_SIZE, y + 1, COLOUR_CELL_BORDER_LOW);
-		guiGraphics.fill(x, y, x + 1, y + CELL_SIZE, COLOUR_CELL_BORDER_LOW);
-		guiGraphics.fill(x, y + CELL_SIZE - 1, x + CELL_SIZE, y + CELL_SIZE, COLOUR_CELL_BORDER_HIGH);
-		guiGraphics.fill(x + CELL_SIZE - 1, y, x + CELL_SIZE, y + CELL_SIZE, COLOUR_CELL_BORDER_HIGH);
+		guiGraphics.fill(x, y, x + cellSizeX, y + cellSizeY, hovered ? COLOUR_CELL_HOVER : COLOUR_CELL_BACKGROUND);
+		guiGraphics.fill(x, y, x + cellSizeX, y + 1, COLOUR_CELL_BORDER_LOW);
+		guiGraphics.fill(x, y, x + 1, y + cellSizeY, COLOUR_CELL_BORDER_LOW);
+		guiGraphics.fill(x, y + cellSizeY - 1, x + cellSizeX, y + cellSizeY, COLOUR_CELL_BORDER_HIGH);
+		guiGraphics.fill(x + cellSizeX - 1, y, x + cellSizeX, y + cellSizeY, COLOUR_CELL_BORDER_HIGH);
 
-		int iconX = x + (CELL_SIZE - 16) / 2;
+		int iconX = x + (cellSizeX - 16) / 2;
 		int iconY = y + 2;
 		guiGraphics.renderItem(e.icon(), iconX, iconY);
 		String countStr = compact(e.count());
-		int textY = y + CELL_SIZE - font.lineHeight - 3;
+		int textY = y + cellSizeY - font.lineHeight - 3;
 		guiGraphics.drawString(
 				font,
 				countStr,
-				x + CELL_SIZE - font.width(countStr) - 3,
+				x + cellSizeX - font.width(countStr) - 3,
 				textY,
 				COLOUR_TEXT,
 				true
@@ -224,6 +228,6 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double vertical) {
 		if (!isHovered(mouseX, mouseY, panelX, panelY, panelWidth, panelHeight)) return false;
-		return scrollBar.mouseScrolled(vertical, CELL_SIZE / 8);
+		return scrollBar.mouseScrolled(vertical, cellSizeY / 8);
 	}
 }
