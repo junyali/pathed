@@ -45,13 +45,13 @@ public class ProgressionScreen extends Screen implements CategoryHost {
 
 		int panelHeight = this.height - 20;
 
+		int skillTreeLeft = 10 + CategoryPanel.PANEL_WIDTH + 10;
+		this.skillTreePanel = new SkillTreePanel(this, skillTreeLeft, 10, this.width - skillTreeLeft - 10, this.height - 20);
+
 		this.categoryPanel = new CategoryPanel(this, 10, 10, panelHeight);
 		for (CategoryButton button : this.categoryPanel.init()) {
 			this.addRenderableWidget(button);
 		}
-
-		int skillTreeLeft = 10 + CategoryPanel.PANEL_WIDTH + 10;
-		this.skillTreePanel = new SkillTreePanel(this, skillTreeLeft, 10, this.width - skillTreeLeft - 10, this.height - 20);
 	}
 
 	@Override
