@@ -3,6 +3,7 @@ package io.github.junyali.pathed.screen.stat;
 import io.github.junyali.pathed.screen.common.CategoryButton;
 import io.github.junyali.pathed.screen.common.CategoryHost;
 import io.github.junyali.pathed.screen.stat.stats.BlocksBrokenPanel;
+import io.github.junyali.pathed.screen.stat.stats.EntitiesKilledPanel;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -41,6 +42,12 @@ public class StatsScreen extends Screen implements CategoryHost {
 						"pathed.gui.stats.blocks_broken.title",
 						new ItemStack(Items.IRON_PICKAXE),
 						BlocksBrokenPanel::new
+				),
+				new StatCategory(
+						"entities_killed",
+						"pathed.gui.stats.entities_killed.title",
+						new ItemStack(Items.IRON_SWORD),
+						EntitiesKilledPanel::new
 				)
 		);
 
