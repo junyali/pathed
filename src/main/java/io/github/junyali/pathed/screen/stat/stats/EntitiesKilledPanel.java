@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EntitiesKilledPanel extends IconCountStatPanel<ResourceLocation> {
-	private static final int cellSizeX = 32;
-	private static final int cellSizeY = 64;
+	private static final int cellSizeX = 64;
+	private static final int cellSizeY = 88;
 
 	private final Map<ResourceLocation, LivingEntity> entityCache = new HashMap<>();
 
@@ -61,10 +61,17 @@ public class EntitiesKilledPanel extends IconCountStatPanel<ResourceLocation> {
 		int boxY1 = cellY + padding;
 		int boxX2 = cellX + cellSizeX - padding;
 		int boxY2 = cellY + cellSizeX - (font.lineHeight + padding);
-		int boxH = boxY2 - boxY1;
-		int scale = Math.max(1, (int) (boxH / Math.max(1.0f, entity.getBbHeight() * 1.2f)));
-		float anchorX = (boxX1 + boxX2) / 2.0f;
-		float anchorY = (boxY1 + boxY2) / 2.0f;
+		int centreX = (boxX1 + boxX2) / 2;
+		int centreY = boxY1 + (int) ((boxY2 - boxY1) * 0.65f);
+
+		float entityHeight = entity.getBbHeight();
+		int availableHeight = boxY2 - boxY1;
+		int availableWidth = boxX2 - boxX1;
+		int baseScale = (int) (availableHeight / Math.max(0.5f, entityHeight));
+		int scale = Math.max(20, Math.min(baseScale, 45));
+
+		float mouseX = centreX + 70;
+		float mouseY = centreY - 70;
 
 		InventoryScreen.renderEntityInInventoryFollowsMouse(
 				guiGraphics,
@@ -74,8 +81,8 @@ public class EntitiesKilledPanel extends IconCountStatPanel<ResourceLocation> {
 				boxY2,
 				scale,
 				0.0625f,
-				anchorX,
-				anchorY,
+				mouseX,
+				mouseY,
 				entity
 		);
 	}
