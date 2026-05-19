@@ -16,12 +16,10 @@ import java.util.function.Consumer;
 public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	public enum SortMode { COUNT_DESC, ALPHA_ASC }
 
-	private static final int COLOUR_PANEL_BACKGROUND = 0xFF8B8B8B;
 	private static final int COLOUR_CELL_BACKGROUND = 0xFF373737;
 	private static final int COLOUR_CELL_HOVER = 0xFF505050;
 	private static final int COLOUR_CELL_BORDER_HIGH = 0xFFFFFFFF;
 	private static final int COLOUR_CELL_BORDER_LOW = 0xFF555555;
-	private static final int COLOUR_TEXT = 0xFFFFFFFF;
 
 	private static final int SEARCH_H = 16;
 	private static final int BUTTON_H = 16;

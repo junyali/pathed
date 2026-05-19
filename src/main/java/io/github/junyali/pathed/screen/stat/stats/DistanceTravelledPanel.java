@@ -9,8 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
 public class DistanceTravelledPanel extends AbstractStatPanel {
-	public static final int COLOUR_PANEL_BACKGROUND = 0xFF8B8B8B;
-
 	public DistanceTravelledPanel(int x, int y, int width, int height) {
 		super(x, y, width, height);
 	}
