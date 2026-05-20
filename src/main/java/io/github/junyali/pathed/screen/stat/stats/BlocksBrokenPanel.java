@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
@@ -22,6 +23,11 @@ public class BlocksBrokenPanel extends IconCountStatPanel<ResourceLocation> {
 	@Override
 	public Component getTitle() {
 		return Component.translatable("pathed.gui.stats.blocks_broken.title");
+	}
+
+	@Override
+	protected ItemStack headerIcon() {
+		return new ItemStack(Items.IRON_PICKAXE);
 	}
 
 	@Override

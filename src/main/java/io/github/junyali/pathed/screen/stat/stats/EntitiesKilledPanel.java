@@ -13,6 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,6 +35,11 @@ public class EntitiesKilledPanel extends IconCountStatPanel<ResourceLocation> {
 	}
 
 	@Override
+	protected ItemStack headerIcon() {
+		return new ItemStack(Items.IRON_SWORD);
+	}
+
+	@Override
 	protected Map<ResourceLocation, Integer> data() {
 		Player player = Minecraft.getInstance().player;
 		if (player == null) return Collections.emptyMap();
@@ -52,15 +58,15 @@ public class EntitiesKilledPanel extends IconCountStatPanel<ResourceLocation> {
 	}
 
 	@Override
-	protected void renderIcon(GuiGraphics guiGraphics, Entry<ResourceLocation> e, int cellX, int cellY) {
+	protected void renderIcon(GuiGraphics guiGraphics, Entry<ResourceLocation> e, int cellX, int cellY, int cellW) {
 		LivingEntity entity = entityFor(e.key());
 		if (entity == null) return;
 
 		int padding = 4;
 		int boxX1 = cellX + padding;
 		int boxY1 = cellY + padding;
-		int boxX2 = cellX + cellSizeX - padding;
-		int boxY2 = cellY + cellSizeX - (font.lineHeight + padding);
+		int boxX2 = cellX + cellW - padding;
+		int boxY2 = cellY + cellSizeY - (font.lineHeight + padding);
 		int centreX = (boxX1 + boxX2) / 2;
 		int centreY = boxY1 + (int) ((boxY2 - boxY1) * 0.65f);
 

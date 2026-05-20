@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -20,24 +21,21 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	private static final int COLOUR_CELL_HOVER = 0xFF505050;
 	private static final int COLOUR_CELL_BORDER_HIGH = 0xFFFFFFFF;
 	private static final int COLOUR_CELL_BORDER_LOW = 0xFF555555;
+	private static final int COLOUR_TOOLBAR_BACKGROUND = 0xFF252525;
 
+	private static final int TOOLBAR_H = 20;
 	private static final int SEARCH_H = 16;
-	private static final int BUTTON_H = 16;
-	private static final int BUTTON_W = 70;
-	private static final int BUTTON_GAP = 2;
-	private static final int TITLE_H = 12;
+	private static final int SORT_BUTTON = 16;
 	private static final int CELL_GAP = 4;
-	private static final int PADDING = 6;
 
-	private final int cellSizeX;
+	private final int targetCellW;
 	private final int cellSizeY;
 
 	private final ScrollBar scrollBar = new ScrollBar();
 	private final List<AbstractWidget> ownedWidgets = new ArrayList<>();
 
 	private EditBox searchBox;
-	private Button sortCountButton;
-	private Button sortAlphaButton;
+	private Button sortButton;
 
 	private SortMode sortMode = SortMode.COUNT_DESC;
 	private String filter = "";
@@ -45,9 +43,9 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 
 	protected record Entry<K>(K key, int count, ItemStack icon, Component name) {}
 
-	protected IconCountStatPanel(int x, int y, int w, int h, int cellSizeX, int cellSizeY) {
+	protected IconCountStatPanel(int x, int y, int w, int h, int targetCellW, int cellSizeY) {
 		super(x, y, w, h);
-		this.cellSizeX = cellSizeX;
+		this.targetCellW = targetCellW;
 		this.cellSizeY = cellSizeY;
 	}
 
@@ -67,23 +65,41 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	public void initWidgets(Consumer<AbstractWidget> register) {
 		ownedWidgets.clear();
 		int b = PanelRenderer.FRAME_BORDER;
+		int toolbarY = panelY + b + HEADER_HEIGHT + 1 + (TOOLBAR_H - SEARCH_H) / 2;
 
-		int searchAndButtonY = panelY + b + PADDING + TITLE_H;
-		int totalButtonWidth = BUTTON_W * 2 + BUTTON_GAP;
-		int searchWidth = panelWidth - (b + PADDING) * 2 - totalButtonWidth - (BUTTON_GAP * 2);
+		int sortX = panelX + panelWidth - b - PADDING - SORT_BUTTON;
+		int searchX = panelX + b + PADDING;
+		int searchW = sortX - 4 - searchX;
 
-		searchBox = new EditBox(font, panelX + b + PADDING, searchAndButtonY, searchWidth, SEARCH_H, Component.translatable("pathed.gui.stats.search"));
+		searchBox = new EditBox(font, searchX, toolbarY, searchW, SEARCH_H, Component.translatable("pathed.gui.stats.search"));
 		searchBox.setHint(Component.translatable("pathed.gui.stats.search").withStyle(ChatFormatting.DARK_GRAY));
 		searchBox.setResponder(s -> { filter = s.toLowerCase(Locale.ROOT); rebuild(); });
 
-		int firstButtonX = panelX + b + PADDING + searchWidth + (BUTTON_GAP * 2);
-		sortCountButton = Button.builder(Component.translatable("pathed.gui.stats.sort.count"), btn -> { sortMode = SortMode.COUNT_DESC; rebuild(); }).bounds(firstButtonX, searchAndButtonY, BUTTON_W, BUTTON_H).build();
-		sortAlphaButton = Button.builder(Component.translatable("pathed.gui.stats.sort.alpha"), btn -> { sortMode = SortMode.ALPHA_ASC; rebuild(); }).bounds(firstButtonX + BUTTON_W + BUTTON_GAP, searchAndButtonY, BUTTON_W, BUTTON_H).build();
+		sortButton = Button.builder(currentSortGlyph(), button -> toggleSort())
+				.bounds(sortX, toolbarY, SORT_BUTTON, SORT_BUTTON)
+				.tooltip(Tooltip.create(currentSortLabel()))
+				.build();
 
 		Consumer<AbstractWidget> tracking = w -> { ownedWidgets.add(w); register.accept(w); };
 		tracking.accept(searchBox);
-		tracking.accept(sortCountButton);
-		tracking.accept(sortAlphaButton);
+		tracking.accept(sortButton);
+		rebuild();
+	}
+
+	private Component currentSortGlyph() {
+		return Component.literal(sortMode == SortMode.COUNT_DESC ? "#" : "A");
+	}
+
+	private Component currentSortLabel() {
+		return Component.translatable(sortMode == SortMode.COUNT_DESC
+				? "pathed.gui.stats.sort.count"
+				: "pathed.gui.stats.sort.alpha");
+	}
+
+	private void toggleSort() {
+		sortMode = (sortMode == SortMode.COUNT_DESC) ? SortMode.ALPHA_ASC : SortMode.COUNT_DESC;
+		sortButton.setMessage(currentSortGlyph());
+		sortButton.setTooltip(Tooltip.create(currentSortLabel()));
 		rebuild();
 	}
 
@@ -92,6 +108,22 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 			remover.accept(w);
 		}
 		ownedWidgets.clear();
+	}
+
+	private int gridTop() {
+		return panelY + PanelRenderer.FRAME_BORDER + HEADER_HEIGHT + 1 + TOOLBAR_H;
+	}
+
+	private int gridLeft() {
+		return panelX + PanelRenderer.FRAME_BORDER;
+	}
+
+	private int gridRightEdge() {
+		return panelX + panelWidth - PanelRenderer.FRAME_BORDER;
+	}
+
+	private int gridBottom() {
+		return panelY + panelHeight - PanelRenderer.FRAME_BORDER;
 	}
 
 	protected void rebuild() {
@@ -107,56 +139,58 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		};
 		visible.sort(comparator);
 
-		int b = PanelRenderer.FRAME_BORDER;
-		int gridTop = gridTop();
-		int gridH = panelY + panelHeight - gridTop - PADDING - b;
-		int usableW = panelWidth - (b + PADDING) * 2 - scrollBar.getWidth() - 2;
-		int cols = Math.max(1, (usableW + CELL_GAP) / (cellSizeX + CELL_GAP));
+		int gridH = gridBottom() - gridTop();
+		int usableW = gridRightEdge() - gridLeft() - scrollBar.getWidth();
+		int cols = Math.max(1, (usableW + CELL_GAP) / (targetCellW + CELL_GAP));
 		int rows = (int) Math.ceil(visible.size() / (double) cols);
-		int contentH = Math.max(0, rows * (cellSizeY + CELL_GAP) - CELL_GAP);
-		scrollBar.setMaxScroll(Math.max(0, contentH - gridH));
-		scrollBar.setBounds(panelX + panelWidth - PADDING - b - scrollBar.getWidth(), gridTop, gridH);
-	}
+		int rowH = cellSizeY + CELL_GAP;
+		int contentH = Math.max(0, rows * rowH - CELL_GAP);
 
-	private int gridTop() {
-		int b = PanelRenderer.FRAME_BORDER;
-		return panelY + b + PADDING + TITLE_H + SEARCH_H + 2 + BUTTON_H + 4;
+		scrollBar.setMaxScroll(Math.max(0, contentH - gridH));
+		scrollBar.setBounds(gridRightEdge() - scrollBar.getWidth(), gridTop(), gridH);
 	}
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+		renderBase(guiGraphics);
+
 		int b = PanelRenderer.FRAME_BORDER;
-		guiGraphics.fill(panelX + b, panelY + b, panelX + panelWidth - b, panelY + panelHeight - b, COLOUR_PANEL_BACKGROUND);
-		PanelRenderer.renderBorder(guiGraphics, panelX, panelY, panelWidth, panelHeight);
+		int tX1 = panelX + b;
+		int tY1 = panelY + b + HEADER_HEIGHT + 1;
+		int tX2 = panelX + panelWidth - b;
+		int tY2 = tY1 + TOOLBAR_H;
+		guiGraphics.fill(tX1, tY1, tX2, tY2, COLOUR_TOOLBAR_BACKGROUND);
+		guiGraphics.fill(tX1, tY2 - 1, tX2, tY2, 0xFF000000);
 
-		guiGraphics.drawString(
-				font,
-				getTitle(),
-				panelX + b + PADDING,
-				panelY + b + PADDING,
-				COLOUR_TEXT,
-				false
-		);
-
+		int gridLeft = gridLeft();
 		int gridTop = gridTop();
-		int gridH = panelY + panelHeight - gridTop - PADDING - b;
-		int gridLeft = panelX + PADDING + b;
-		int gridRight = panelX + panelWidth - PADDING - b - (scrollBar.isVisible() ? scrollBar.getWidth() + 2 : 0);
+		int gridRight = gridRightEdge() - scrollBar.getWidth();
+		int gridH = gridBottom() - gridTop;
+		int usableW = gridRight - gridLeft;
 
-		guiGraphics.enableScissor(gridLeft, gridTop, gridRight, gridTop + gridH);
-		int cols = Math.max(1, (gridRight - gridLeft + CELL_GAP) / (cellSizeX + CELL_GAP));
+		int cols = Math.max(1, (usableW + CELL_GAP) / (targetCellW + CELL_GAP));
+		int totalGaps = (cols - 1) * CELL_GAP;
+		int baseCellW = (usableW - totalGaps) / cols;
+		int leftover = (usableW - totalGaps) - baseCellW * cols;
+
 		int scroll = scrollBar.getScroll();
+		guiGraphics.enableScissor(gridLeft, gridTop, gridRight, gridTop + gridH);
 
 		Entry<K> hovered = null;
 		for (int i = 0; i < visible.size(); i++) {
 			int row = i / cols;
 			int col = i % cols;
-			int cX = gridLeft + col * (cellSizeX + CELL_GAP);
+			int cW = baseCellW + (col < leftover ? 1 : 0);
+			int cX = gridLeft;
+			for (int c = 0; c < col; c++) {
+				cX += (baseCellW + (c < leftover ? 1 : 0)) + CELL_GAP;
+			}
 			int cY = gridTop + row * (cellSizeY + CELL_GAP) - scroll;
 			if (cY + cellSizeY < gridTop || cY > gridTop + gridH) continue;
+
 			Entry<K> e = visible.get(i);
-			boolean isHov = isHovered(mouseX, mouseY, cX, cY, cellSizeX, cellSizeY) && mouseY >= gridTop && mouseY < gridTop + gridH;
-			renderCell(guiGraphics, e, cX, cY, isHov);
+			boolean isHov = isHovered(mouseX, mouseY, cX, cY, cW, cellSizeY) && mouseY >= gridTop && mouseY < gridTop + gridH;
+			renderCell(guiGraphics, e, cX, cY, cW, isHov);
 			if (isHov) {
 				hovered = e;
 			}
@@ -174,27 +208,28 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		}
 	}
 
-	private void renderCell(GuiGraphics guiGraphics, Entry<K> e, int x, int y, boolean hovered) {
-		guiGraphics.fill(x, y, x + cellSizeX, y + cellSizeY, hovered ? COLOUR_CELL_HOVER : COLOUR_CELL_BACKGROUND);
-		guiGraphics.fill(x, y, x + cellSizeX, y + 1, COLOUR_CELL_BORDER_LOW);
+	private void renderCell(GuiGraphics guiGraphics, Entry<K> e, int x, int y, int w, boolean hovered) {
+		guiGraphics.fill(x, y, x + w, y + cellSizeY, hovered ? COLOUR_CELL_HOVER : COLOUR_CELL_BACKGROUND);
+		guiGraphics.fill(x, y, x + w, y + 1, COLOUR_CELL_BORDER_LOW);
 		guiGraphics.fill(x, y, x + 1, y + cellSizeY, COLOUR_CELL_BORDER_LOW);
-		guiGraphics.fill(x, y + cellSizeY - 1, x + cellSizeX, y + cellSizeY, COLOUR_CELL_BORDER_HIGH);
-		guiGraphics.fill(x + cellSizeX - 1, y, x + cellSizeX, y + cellSizeY, COLOUR_CELL_BORDER_HIGH);
-		renderIcon(guiGraphics, e, x, y);
+		guiGraphics.fill(x, y + cellSizeY - 1, x + w, y + cellSizeY, COLOUR_CELL_BORDER_HIGH);
+		guiGraphics.fill(x + w - 1, y, x + w, y + cellSizeY, COLOUR_CELL_BORDER_HIGH);
+
+		renderIcon(guiGraphics, e, x, y, w);
 		String countStr = compact(e.count());
 		int textY = y + cellSizeY - font.lineHeight - 3;
 		guiGraphics.drawString(
 				font,
 				countStr,
-				x + cellSizeX - font.width(countStr) - 3,
+				x + w - font.width(countStr) - 3,
 				textY,
 				COLOUR_TEXT,
 				true
 		);
 	}
 
-	protected void renderIcon(GuiGraphics guiGraphics, Entry<K> e, int cellX, int cellY) {
-		int iconX = cellX + (cellSizeX - 16) / 2;
+	protected void renderIcon(GuiGraphics guiGraphics, Entry<K> e, int cellX, int cellY, int cellW) {
+		int iconX = cellX + (cellW - 16) / 2;
 		int iconY = cellY + 2;
 		guiGraphics.renderItem(e.icon(), iconX, iconY);
 	}

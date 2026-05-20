@@ -7,6 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class DistanceTravelledPanel extends AbstractStatPanel {
 	public DistanceTravelledPanel(int x, int y, int width, int height) {
@@ -16,6 +18,11 @@ public class DistanceTravelledPanel extends AbstractStatPanel {
 	@Override
 	public Component getTitle() {
 		return Component.translatable("pathed.gui.stats.distance_travelled.title");
+	}
+
+	@Override
+	protected ItemStack headerIcon() {
+		return new ItemStack(Items.COMPASS);
 	}
 
 	@Override
