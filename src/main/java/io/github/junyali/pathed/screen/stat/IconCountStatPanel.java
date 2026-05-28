@@ -41,6 +41,10 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	private String filter = "";
 	private List<Entry<K>> visible = new ArrayList<>();
 
+	private int layoutCols = 1;
+	private int layoutBaseW = 1;
+	private int layoutExtra = 0;
+
 	protected record Entry<K>(K key, int count, ItemStack icon, Component name) {}
 
 	protected IconCountStatPanel(int x, int y, int w, int h, int targetCellW, int cellSizeY) {
@@ -65,7 +69,7 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	public void initWidgets(Consumer<AbstractWidget> register) {
 		ownedWidgets.clear();
 		int b = PanelRenderer.FRAME_BORDER;
-		int toolbarY = panelY + b + HEADER_HEIGHT + 1 + (TOOLBAR_H - SEARCH_H) / 2;
+		int toolbarY = panelY + b + StatHeader.TOTAL_HEIGHT + (TOOLBAR_H - SEARCH_H) / 2;
 
 		int sortX = panelX + panelWidth - b - PADDING - SORT_BUTTON;
 		int searchX = panelX + b + PADDING;
@@ -111,7 +115,7 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	}
 
 	private int gridTop() {
-		return panelY + PanelRenderer.FRAME_BORDER + HEADER_HEIGHT + 1 + TOOLBAR_H;
+		return panelY + PanelRenderer.FRAME_BORDER + StatHeader.TOTAL_HEIGHT + TOOLBAR_H;
 	}
 
 	private int gridLeft() {
@@ -140,11 +144,25 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		visible.sort(comparator);
 
 		int gridH = gridBottom() - gridTop();
-		int usableW = gridRightEdge() - gridLeft() - scrollBar.getWidth();
+		int rowH = cellSizeY + CELL_GAP;
+		int usableW = gridRightEdge() - gridLeft();
 		int cols = Math.max(1, (usableW + CELL_GAP) / (targetCellW + CELL_GAP));
 		int rows = (int) Math.ceil(visible.size() / (double) cols);
-		int rowH = cellSizeY + CELL_GAP;
 		int contentH = Math.max(0, rows * rowH - CELL_GAP);
+
+		boolean needScroll = contentH > gridH;
+
+		if (needScroll) {
+			usableW = gridRightEdge() - gridLeft() - scrollBar.getWidth();
+			cols = Math.max(1, (usableW + CELL_GAP) / (targetCellW + CELL_GAP));
+			rows = (int) Math.ceil(visible.size() / (double) cols);
+			contentH = Math.max(0, rows * rowH - CELL_GAP);
+		}
+
+		int totalGaps = (cols - 1) * CELL_GAP;
+		this.layoutCols = cols;
+		this.layoutBaseW = (usableW - totalGaps) / cols;
+		this.layoutExtra = (usableW - totalGaps) - layoutBaseW * cols;
 
 		scrollBar.setMaxScroll(Math.max(0, contentH - gridH));
 		scrollBar.setBounds(gridRightEdge() - scrollBar.getWidth(), gridTop(), gridH);
@@ -152,11 +170,11 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-		renderBase(guiGraphics);
+		renderFrame(guiGraphics);
 
 		int b = PanelRenderer.FRAME_BORDER;
 		int tX1 = panelX + b;
-		int tY1 = panelY + b + HEADER_HEIGHT + 1;
+		int tY1 = panelY + b + StatHeader.TOTAL_HEIGHT;
 		int tX2 = panelX + panelWidth - b;
 		int tY2 = tY1 + TOOLBAR_H;
 		guiGraphics.fill(tX1, tY1, tX2, tY2, COLOUR_TOOLBAR_BACKGROUND);
@@ -164,26 +182,23 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 
 		int gridLeft = gridLeft();
 		int gridTop = gridTop();
-		int gridRight = gridRightEdge() - scrollBar.getWidth();
+		int gridRight = gridRightEdge() - (scrollBar.isVisible() ? scrollBar.getWidth() : 0);
 		int gridH = gridBottom() - gridTop;
-		int usableW = gridRight - gridLeft;
-
-		int cols = Math.max(1, (usableW + CELL_GAP) / (targetCellW + CELL_GAP));
-		int totalGaps = (cols - 1) * CELL_GAP;
-		int baseCellW = (usableW - totalGaps) / cols;
-		int leftover = (usableW - totalGaps) - baseCellW * cols;
 
 		int scroll = scrollBar.getScroll();
 		guiGraphics.enableScissor(gridLeft, gridTop, gridRight, gridTop + gridH);
 
 		Entry<K> hovered = null;
+		int cols = layoutCols;
+		int baseW = layoutBaseW;
+		int extra = layoutExtra;
 		for (int i = 0; i < visible.size(); i++) {
 			int row = i / cols;
 			int col = i % cols;
-			int cW = baseCellW + (col < leftover ? 1 : 0);
+			int cW = baseW + (col < extra ? 1 : 0);
 			int cX = gridLeft;
 			for (int c = 0; c < col; c++) {
-				cX += (baseCellW + (c < leftover ? 1 : 0)) + CELL_GAP;
+				cX += (baseW + (c < extra ? 1 : 0)) + CELL_GAP;
 			}
 			int cY = gridTop + row * (cellSizeY + CELL_GAP) - scroll;
 			if (cY + cellSizeY < gridTop || cY > gridTop + gridH) continue;

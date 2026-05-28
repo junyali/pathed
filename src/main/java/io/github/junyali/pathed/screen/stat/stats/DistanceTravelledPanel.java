@@ -18,8 +18,6 @@ public class DistanceTravelledPanel extends AbstractStatPanel {
 	private static final int CARD_BORDER_HIGH = 0xFFFFFFFF;
 	private static final int CARD_BORDER_LOW = 0xFF555555;
 	private static final int CHIP_BACKGROUND = 0xFF2A2A2A;
-	private static final int BAR_TRACK = 0xFF1F1F1F;
-	private static final int BAR_FILL = COLOUR_ACCENT;
 
 	public DistanceTravelledPanel(int x, int y, int width, int height) {
 		super(x, y, width, height);
@@ -37,19 +35,17 @@ public class DistanceTravelledPanel extends AbstractStatPanel {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-		renderBase(guiGraphics);
+		renderFrame(guiGraphics);
 
 		Player player = Minecraft.getInstance().player;
 		if (player == null) return;
 
 		int fixed = ProgressionAttachment.get(player).getDistanceTravelled();
 		double blocks = fixed / 100.0;
-
-		int b = PanelRenderer.FRAME_BORDER;
-		int left = panelX + b + PADDING;
-		int right = panelX + panelWidth - b - PADDING;
+		int left = panelX + PADDING + 3;
+		int right = panelX + panelWidth - PADDING - 3;
 		int top = contentTop() + PADDING;
-		int bottom = panelY + panelHeight - b - PADDING;
+		int bottom = panelY + panelHeight - PADDING - 3;
 		int width = right - left;
 		int height = bottom - top;
 
@@ -67,7 +63,7 @@ public class DistanceTravelledPanel extends AbstractStatPanel {
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().translate(bigX, bigY, 0);
 		guiGraphics.pose().scale(bigScale, bigScale, 1);
-		guiGraphics.drawString(font, big, 0, 0, COLOUR_ACCENT, true);
+		guiGraphics.drawString(font, big, 0, 0, COLOUR_TEXT, true);
 		guiGraphics.pose().popPose();
 
 		int unitX = left + (width - font.width(unit)) / 2;
