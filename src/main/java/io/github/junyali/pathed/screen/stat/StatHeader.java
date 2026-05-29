@@ -28,7 +28,7 @@ public class StatHeader {
 		int b = PanelRenderer.FRAME_BORDER;
 		int hX = panelX + b + MARGIN;
 		int hY = panelY + b + MARGIN;
-		int hW = panelWidth - 2 * (b + MARGIN);
+		int hW = panelWidth - 2 * (b + MARGIN) - 1;
 		int hH = STRIP_HEIGHT;
 
 		guiGraphics.fillGradient(hX, hY, hX + hW, hY + hH, BACKGROUND_TOP, BACKGROUND_BOTTOM);

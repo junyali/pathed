@@ -71,7 +71,7 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		int b = PanelRenderer.FRAME_BORDER;
 		int toolbarY = panelY + b + StatHeader.TOTAL_HEIGHT + (TOOLBAR_H - SEARCH_H) / 2;
 
-		int sortX = panelX + panelWidth - b - PADDING - SORT_BUTTON;
+		int sortX = panelX + panelWidth - b - PADDING - SORT_BUTTON - 1;
 		int searchX = panelX + b + PADDING;
 		int searchW = sortX - 4 - searchX;
 
@@ -123,11 +123,11 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 	}
 
 	private int gridRightEdge() {
-		return panelX + panelWidth - PanelRenderer.FRAME_BORDER;
+		return panelX + panelWidth - PanelRenderer.FRAME_BORDER - 1;
 	}
 
 	private int gridBottom() {
-		return panelY + panelHeight - PanelRenderer.FRAME_BORDER;
+		return panelY + panelHeight - PanelRenderer.FRAME_BORDER - 1;
 	}
 
 	protected void rebuild() {
@@ -175,7 +175,7 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 		int b = PanelRenderer.FRAME_BORDER;
 		int tX1 = panelX + b;
 		int tY1 = panelY + b + StatHeader.TOTAL_HEIGHT;
-		int tX2 = panelX + panelWidth - b;
+		int tX2 = panelX + panelWidth - b - 1;
 		int tY2 = tY1 + TOOLBAR_H;
 		guiGraphics.fill(tX1, tY1, tX2, tY2, COLOUR_TOOLBAR_BACKGROUND);
 		guiGraphics.fill(tX1, tY2 - 1, tX2, tY2, 0xFF000000);
