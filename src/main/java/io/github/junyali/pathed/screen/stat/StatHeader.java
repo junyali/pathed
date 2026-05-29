@@ -15,7 +15,6 @@ public class StatHeader {
 	private static final int BACKGROUND_BOTTOM = 0xFF1C1C1C;
 	private static final int BEVEL_HIGH = 0xFF6E6E6E;
 	private static final int BEVEL_LOW = 0xFF000000;
-	private static final int ACCENT = 0xFFFFD267;
 	private static final int TEXT = 0xFFFFFFFF;
 
 	private final Font font;
@@ -34,7 +33,7 @@ public class StatHeader {
 		guiGraphics.fillGradient(hX, hY, hX + hW, hY + hH, BACKGROUND_TOP, BACKGROUND_BOTTOM);
 		guiGraphics.fill(hX, hY, hX + hW, hY + 1, BEVEL_HIGH);
 		guiGraphics.fill(hX, hY + hH - 1, hX + hW, hY + hH, BEVEL_LOW);
-		guiGraphics.fill(hX, hY, hX + 2, hY + hH, ACCENT);
+		guiGraphics.fill(hX, hY, hX + 2, hY + hH, AbstractStatPanel.COLOUR_ACCENT);
 
 		int textX = hX + 6;
 		if (icon != null && !icon.isEmpty()) {

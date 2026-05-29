@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 public abstract class AbstractStatPanel {
 	public static final int PADDING = 6;
 	public static final int COLOUR_PANEL_BACKGROUND = 0xFF8B8B8B;
-	public static final int COLOUR_ACCENT = 0xFFFFD267;
+	public static final int COLOUR_ACCENT = 0xFF55FFFF;
 	public static final int COLOUR_TEXT = 0xFFFFFFFF;
 	public static final int COLOUR_TEXT_DIM = 0xFFB0B0B0;
 
