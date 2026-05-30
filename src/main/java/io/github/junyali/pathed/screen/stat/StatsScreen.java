@@ -4,6 +4,7 @@ import io.github.junyali.pathed.screen.common.CategoryButton;
 import io.github.junyali.pathed.screen.common.CategoryHost;
 import io.github.junyali.pathed.screen.stat.stats.BlocksBrokenPanel;
 import io.github.junyali.pathed.screen.stat.stats.DistanceTravelledPanel;
+import io.github.junyali.pathed.screen.stat.stats.EntitiesDamagedPanel;
 import io.github.junyali.pathed.screen.stat.stats.EntitiesKilledPanel;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -49,6 +50,11 @@ public class StatsScreen extends Screen implements CategoryHost {
 						"pathed.gui.stats.entities_killed.title",
 						new ItemStack(Items.IRON_SWORD),
 						EntitiesKilledPanel::new
+				),
+				new StatCategory("entities_damaged",
+						"pathed.gui.stats.entities_damaged.title",
+						new ItemStack(Items.IRON_SWORD),
+						EntitiesDamagedPanel::new
 				),
 				new StatCategory(
 						"distance_travelled",
