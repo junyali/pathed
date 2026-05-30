@@ -76,6 +76,9 @@ public class StatsScreen extends Screen implements CategoryHost {
 		if (this.activePanel instanceof IconCountStatPanel<?> old) {
 			old.removeFrom(this::removeWidget);
 		}
+		if (this.activePanel instanceof DamageListPanel old) {
+			old.removeFrom(this::removeWidget);
+		}
 
 		// meow?
 		StatCategory cat = currentCategory();
@@ -86,6 +89,9 @@ public class StatsScreen extends Screen implements CategoryHost {
 
 		this.activePanel = cat.factory().create(activeLeft, activeTop, activeWidth, activeHeight);
 		if (this.activePanel instanceof IconCountStatPanel<?> panel) {
+			panel.initWidgets(this::addRenderableWidget);
+		}
+		if (this.activePanel instanceof DamageListPanel panel) {
 			panel.initWidgets(this::addRenderableWidget);
 		}
 	}
