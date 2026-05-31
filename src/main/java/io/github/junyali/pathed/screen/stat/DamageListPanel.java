@@ -117,7 +117,7 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 	}
 
 	private int listTop() { return panelY + PanelRenderer.FRAME_BORDER + StatHeader.TOTAL_HEIGHT + TOOLBAR_H; }
-	private int listLeft() { return panelX + PanelRenderer.FRAME_BORDER + PADDING; }
+	private int listLeft() { return panelX + PanelRenderer.FRAME_BORDER; }
 	private int listRight() { return panelX + panelWidth - PanelRenderer.FRAME_BORDER - 1; }
 	private int listBottom() { return panelY + panelHeight - PanelRenderer.FRAME_BORDER - 1; }
 
