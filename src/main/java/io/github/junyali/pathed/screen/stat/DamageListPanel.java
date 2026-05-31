@@ -196,25 +196,25 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 		guiGraphics.fill(x, y + ROW_H - 1, x + w, y + ROW_H, COLOUR_ROW_BORDER_H);
 		guiGraphics.fill(x + w - 1, y, x + w, y + ROW_H, COLOUR_ROW_BORDER_H);
 
-		int pX = x + 1;
-		int pY = y + 1;
-		int portraitSize = ROW_H - 2;
-		guiGraphics.enableScissor(pX, pY, pX + portraitSize, pY + portraitSize);
-		renderEntity(guiGraphics, e.key, pX, pY, portraitSize);
-		guiGraphics.disableScissor();
-
 		int hpAreaWidth = 70;
 		int hpAreaRight = x + w - 8;
 		int hpAreaLeft = hpAreaRight - hpAreaWidth;
+		int heartsWidth = HEARTS * (HEART_PX + 1) - 1;
+		int heartsX = hpAreaLeft - 6 - heartsWidth;
+		int heartsY = y + (ROW_H - HEART_PX) / 2;
+
+		int pX = x + 1;
+		int pY = y + 1;
+		int portraitH = ROW_H - 2;
+		int portraitW = (heartsX - 4) - pX;
+		guiGraphics.enableScissor(pX, pY, pX + portraitW, pY + portraitH);
+		renderEntity(guiGraphics, e.key, pX, pY, portraitW, portraitH);
+		guiGraphics.disableScissor();
 
 		String hpStr = formatHp(e.hp());
 		int hpX = hpAreaRight - font.width(hpStr);
 		int hpY = y + (ROW_H - font.lineHeight) / 2;
 		guiGraphics.drawString(font, hpStr, hpX, hpY, COLOUR_TEXT, true);
-
-		int heartsWidth = HEARTS * (HEART_PX + 1) - 1;
-		int heartsX = hpAreaLeft - 6 - heartsWidth;
-		int heartsY = y + (ROW_H - HEART_PX) / 2;
 
 		float pct = totalDmaage > 0 ? Math.min(1f, e.hp() / totalDmaage) : 0f;
 		int halfHearts = Math.round(pct * HEARTS * 2f);
@@ -233,14 +233,14 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 		}
 	}
 
-	private void renderEntity(GuiGraphics guiGraphics, ResourceLocation key, int x, int y, int size) {
+	private void renderEntity(GuiGraphics guiGraphics, ResourceLocation key, int x, int y, int w, int h) {
 		LivingEntity entity = entityFor(key);
 		if (entity != null) {
 			int boxX1 = x;
 			int boxY1 = y - 4;
-			int boxX2 = x + size;
-			int boxY2 = y + size * 2;
-			int scale = (int) (size / Math.max(0.6f, entity.getBbHeight()) * 1.4f);
+			int boxX2 = x + w;
+			int boxY2 = y + h * 2;
+			int scale = (int) (h / Math.max(0.6f, entity.getBbHeight()) * 1.4f);
 			scale = Math.max(18, Math.min(scale, 48));
 			InventoryScreen.renderEntityInInventoryFollowsMouse(
 					guiGraphics,
@@ -258,7 +258,7 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 		}
 
 		ItemStack icon = fallbackIconFor(key);
-		guiGraphics.renderItem(icon, x + (size - 16) / 2, y + (size - 16) / 2);
+		guiGraphics.renderItem(icon, x + (w - 16) / 2, y + (h - 16) / 2);
 	}
 
 	private LivingEntity entityFor(ResourceLocation id) {
