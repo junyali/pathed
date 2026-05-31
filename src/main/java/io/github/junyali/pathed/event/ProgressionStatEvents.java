@@ -62,13 +62,18 @@ public class ProgressionStatEvents {
 
 	@SubscribeEvent
 	public static void onLivingDamage(LivingDamageEvent.Post event) {
-		float amount = event.getNewDamage();
-		int fixedPoint = Math.round(amount * 10);
+		float raw = event.getNewDamage();
+		if (!Float.isFinite(raw) || raw <= 0f) return;
+
+		float cap = event.getEntity().getMaxHealth();
+		float amount = (Float.isFinite(cap) && cap > 0f) ? Math.min(raw, cap) : raw;
+
+		int fixedPoint = (int) Math.min(Integer.MAX_VALUE - 1L, Math.round(amount * 10.0));
 
 		if (event.getSource().getEntity() instanceof ServerPlayer attacker) {
 			ResourceLocation targetId = BuiltInRegistries.ENTITY_TYPE.getKey(event.getEntity().getType());
 			ProgressionAttachment progressionAttachment = ProgressionAttachment.get(attacker);
-			progressionAttachment.getDamageDealt().merge(targetId, fixedPoint, Integer::sum);
+			progressionAttachment.getDamageDealt().merge(targetId, fixedPoint, ProgressionStatEvents::saturatedSum);
 			evaluateAndSync(attacker, progressionAttachment);
 		}
 
@@ -77,9 +82,16 @@ public class ProgressionStatEvents {
 					? BuiltInRegistries.ENTITY_TYPE.getKey(event.getSource().getEntity().getType())
 					: ENVIRONMENT_SOURCE;
 			ProgressionAttachment progressionAttachment = ProgressionAttachment.get(victim);
-			progressionAttachment.getDamageTaken().merge(sourceId, fixedPoint, Integer::sum);
+			progressionAttachment.getDamageTaken().merge(sourceId, fixedPoint, ProgressionStatEvents::saturatedSum);
 			evaluateAndSync(victim, progressionAttachment);
 		}
+	}
+
+	private static int saturatedSum(int a, int b) {
+		long sum = (long) a + (long) b;
+		if (sum > Integer.MAX_VALUE) return Integer.MAX_VALUE;
+		if (sum < 0) return Integer.MAX_VALUE;
+		return (int) sum;
 	}
 
 	@SubscribeEvent
