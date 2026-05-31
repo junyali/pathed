@@ -282,8 +282,8 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 	}
 
 	private static String formatHp(float hp) {
-		if (hp >= 1_000_000f) return String.format(Locale.ROOT, "%.1fM HP", hp / 1_000_000f);
-		if (hp >= 10_000f) return String.format(Locale.ROOT, "%.1fk HP", hp / 1_000f);
+		if (Math.abs(hp) >= 1_000_000f) return String.format(Locale.ROOT, "%.1fM HP", hp / 1_000_000f);
+		if (Math.abs(hp) >= 10_000f) return String.format(Locale.ROOT, "%.1fk HP", hp / 1_000f);
 		return String.format(Locale.ROOT, "%.1f HP", hp);
 	}
 

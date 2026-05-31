@@ -251,8 +251,8 @@ public abstract class IconCountStatPanel<K> extends AbstractStatPanel {
 
 	private static String compact(int n) {
 		// TODO: find a better way to do this, or at the very least, expand it
-		if (n >= 1_000_000) return String.format(Locale.ROOT, "%.1fM", n / 1_000_000.0);
-		if (n >= 10_000) return String.format(Locale.ROOT, "%.1fk", n / 1_000.0);
+		if (Math.abs(n) >= 1_000_000) return String.format(Locale.ROOT, "%.1fM", n / 1_000_000.0);
+		if (Math.abs(n) >= 10_000) return String.format(Locale.ROOT, "%.1fk", n / 1_000.0);
 		return String.format(Locale.ROOT, "%,d", n);
 	}
 
