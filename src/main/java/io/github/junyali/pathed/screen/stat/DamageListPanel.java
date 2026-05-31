@@ -223,7 +223,7 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 		boolean hasHalf = (halfHearts % 2) == 1;
 
 		for (int i = 0; i < HEARTS; i++) {
-			int hX = heartsX + i * (HEART_PX + 1);
+			int hX = heartsX + i * (HEART_PX - 1);
 			guiGraphics.blitSprite(HEART_CONTAINER, hX, heartsY, HEART_PX, HEART_PX);
 			if (i < fullHearts) {
 				guiGraphics.blitSprite(HEART_FULL, hX, heartsY, HEART_PX, HEART_PX);
