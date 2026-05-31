@@ -40,7 +40,6 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 	private static final int COLOUR_ROW_HOVER = 0xFF505050;
 	private static final int COLOUR_ROW_BORDER_H = 0xFFFFFFFF;
 	private static final int COLOUR_ROW_BORDER_L = 0xFF555555;
-	private static final int COLOUR_PORTRAIT_BACKGROUND = 0xFF1F1F1F;
 	private static final int COLOUR_TOOLBAR_BACKGROUND = 0xFF252525;
 
 	private static final ResourceLocation HEART_FULL = ResourceLocation.withDefaultNamespace("hud/heart/full");
@@ -196,13 +195,12 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 		guiGraphics.fill(x, y, x + 1, y + ROW_H, COLOUR_ROW_BORDER_L);
 		guiGraphics.fill(x, y + ROW_H - 1, x + w, y + ROW_H, COLOUR_ROW_BORDER_H);
 		guiGraphics.fill(x + w - 1, y, x + w, y + ROW_H, COLOUR_ROW_BORDER_H);
-		guiGraphics.fill(x, y, x + 2, y + ROW_H, COLOUR_ACCENT);
 
-		int pX = x + 2;
-		int pY = y;
-		guiGraphics.fill(pX, pY, pX + PORTRAIT, pY + ROW_H, COLOUR_PORTRAIT_BACKGROUND);
-		guiGraphics.enableScissor(pX, pY, pX + PORTRAIT, pY + ROW_H);
-		renderEntity(guiGraphics, e.key, pX, pY, PORTRAIT);
+		int pX = x + 1;
+		int pY = y + 1;
+		int portraitSize = ROW_H - 2;
+		guiGraphics.enableScissor(pX, pY, pX + portraitSize, pY + portraitSize);
+		renderEntity(guiGraphics, e.key, pX, pY, portraitSize);
 		guiGraphics.disableScissor();
 
 		String hpStr = String.format(Locale.ROOT, "%.1f HP", e.hp());
