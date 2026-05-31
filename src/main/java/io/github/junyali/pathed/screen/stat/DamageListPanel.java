@@ -207,7 +207,7 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 		int hpAreaRight = x + w - 8;
 		int hpAreaLeft = hpAreaRight - hpAreaWidth;
 
-		String hpStr = String.format(Locale.ROOT, "%.1f HP", e.hp());
+		String hpStr = formatHp(e.hp());
 		int hpX = hpAreaRight - font.width(hpStr);
 		int hpY = y + (ROW_H - font.lineHeight) / 2;
 		guiGraphics.drawString(font, hpStr, hpX, hpY, COLOUR_TEXT, true);
@@ -279,6 +279,12 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 		SpawnEggItem egg = SpawnEggItem.byId(type);
 		if (egg != null) return new ItemStack(egg);
 		return new ItemStack(Items.BARRIER);
+	}
+
+	private static String formatHp(float hp) {
+		if (hp >= 1_000_000f) return String.format(Locale.ROOT, "%.1fM HP", hp / 1_000_000f);
+		if (hp >= 10_000f) return String.format(Locale.ROOT, "%.1fk HP", hp / 1_000f);
+		return String.format(Locale.ROOT, "%.1f HP", hp);
 	}
 
 	private Component nameFor(ResourceLocation id) {
