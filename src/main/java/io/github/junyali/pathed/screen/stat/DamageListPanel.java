@@ -203,16 +203,17 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 		renderEntity(guiGraphics, e.key, pX, pY, portraitSize);
 		guiGraphics.disableScissor();
 
+		int hpAreaWidth = 70;
+		int hpAreaRight = x + w - 8;
+		int hpAreaLeft = hpAreaRight - hpAreaWidth;
+
 		String hpStr = String.format(Locale.ROOT, "%.1f HP", e.hp());
-		int hpW = font.width(hpStr);
-		int hpX = x + w - hpW - 8;
+		int hpX = hpAreaRight - font.width(hpStr);
 		int hpY = y + (ROW_H - font.lineHeight) / 2;
 		guiGraphics.drawString(font, hpStr, hpX, hpY, COLOUR_TEXT, true);
 
-		int heartsLeft = pX + PORTRAIT + 8;
-		int heartsRight = hpX - 8;
 		int heartsWidth = HEARTS * (HEART_PX + 1) - 1;
-		int heartsX = heartsLeft + Math.max(0, ((heartsRight - heartsLeft) - heartsWidth) / 2);
+		int heartsX = hpAreaLeft - 6 - heartsWidth;
 		int heartsY = y + (ROW_H - HEART_PX) / 2;
 
 		float pct = totalDmaage > 0 ? Math.min(1f, e.hp() / totalDmaage) : 0f;
