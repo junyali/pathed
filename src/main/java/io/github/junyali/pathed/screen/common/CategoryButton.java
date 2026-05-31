@@ -36,10 +36,7 @@ public class CategoryButton extends Button {
 		int borderColour = isSelected ? COLOUR_BORDER_SELECTED : COLOUR_BORDER;
 		guiGraphics.fill(this.getX(), this.getY() + this.height - 1, this.getX() + this.width, this.getY() + this.height, borderColour);
 
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, -150);
 		guiGraphics.renderItem(this.iconStack, this.getX() + 2, this.getY() + 2);
-		guiGraphics.pose().popPose();
 
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().scale(0.8f, 0.8f, 1.0f);
