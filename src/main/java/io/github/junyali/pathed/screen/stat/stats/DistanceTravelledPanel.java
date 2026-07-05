@@ -85,6 +85,7 @@ public class DistanceTravelledPanel extends AbstractStatPanel {
 	private void drawCard(GuiGraphics guiGraphics, int x, int y, int w, int h) {
 		guiGraphics.fill(x, y, x + w, y + h, CARD_BACKGROUND);
 		guiGraphics.fill(x, y, x + w, y + 1, CARD_BORDER_LOW);
+		guiGraphics.fill(x, y, x + 1, y + h, CARD_BORDER_LOW);
 		guiGraphics.fill(x, y + h - 1, x + w, y + h, CARD_BORDER_HIGH);
 		guiGraphics.fill(x + w - 1, y, x + w, y + h, CARD_BORDER_HIGH);
 	}
@@ -92,6 +93,7 @@ public class DistanceTravelledPanel extends AbstractStatPanel {
 	private void drawChip(GuiGraphics guiGraphics, int x, int y, int w, int h, String label, String value) {
 		guiGraphics.fill(x, y, x + w, y + h, CHIP_BACKGROUND);
 		guiGraphics.fill(x, y, x + w, y + 1, CARD_BORDER_LOW);
+		guiGraphics.fill(x, y, x + 1, y + h, CARD_BORDER_LOW);
 		guiGraphics.fill(x, y + h - 1, x + w, y + h, CARD_BORDER_HIGH);
 		guiGraphics.drawString(font, label, x + 4, y + 3, COLOUR_TEXT_DIM, false);
 		guiGraphics.drawString(font, value, x + w - font.width(value) - 4, y + h - font.lineHeight - 3, COLOUR_TEXT, true);
