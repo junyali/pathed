@@ -72,7 +72,7 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 	public void initWidgets(Consumer<AbstractWidget> register) {
 		ownedWidgets.clear();
 		int b = PanelRenderer.FRAME_BORDER;
-		int toolbarY = panelY + b + StatHeader.TOTAL_HEIGHT + (TOOLBAR_H - SEARCH_H) / 2;
+		int toolbarY = panelY + b + (TOOLBAR_H - SEARCH_H) / 2;
 		int sortX = panelX + panelWidth - b - PADDING - SORT_BUTTON - 1;
 		int searchX = panelX + b + PADDING;
 		int searchW = sortX - 4 - searchX;
@@ -116,7 +116,7 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 		ownedWidgets.clear();
 	}
 
-	private int listTop() { return panelY + PanelRenderer.FRAME_BORDER + StatHeader.TOTAL_HEIGHT + TOOLBAR_H; }
+	private int listTop() { return panelY + PanelRenderer.FRAME_BORDER + TOOLBAR_H; }
 	private int listLeft() { return panelX + PanelRenderer.FRAME_BORDER; }
 	private int listRight() { return panelX + panelWidth - PanelRenderer.FRAME_BORDER - 1; }
 	private int listBottom() { return panelY + panelHeight - PanelRenderer.FRAME_BORDER - 1; }
@@ -152,7 +152,7 @@ public abstract class DamageListPanel extends AbstractStatPanel {
 
 		int b = PanelRenderer.FRAME_BORDER;
 		int tX1 = panelX + b;
-		int tY1 = panelY + b + StatHeader.TOTAL_HEIGHT;
+		int tY1 = panelY + b;
 		int tX2 = panelX + panelWidth - b - 1;
 		int tY2 = tY1 + TOOLBAR_H;
 		guiGraphics.fill(tX1, tY1, tX2, tY2, COLOUR_TOOLBAR_BACKGROUND);

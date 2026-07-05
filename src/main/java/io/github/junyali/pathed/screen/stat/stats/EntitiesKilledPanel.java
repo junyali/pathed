@@ -35,11 +35,6 @@ public class EntitiesKilledPanel extends IconCountStatPanel<ResourceLocation> {
 	}
 
 	@Override
-	protected ItemStack headerIcon() {
-		return new ItemStack(Items.IRON_SWORD);
-	}
-
-	@Override
 	protected Map<ResourceLocation, Integer> data() {
 		Player player = Minecraft.getInstance().player;
 		if (player == null) return Collections.emptyMap();

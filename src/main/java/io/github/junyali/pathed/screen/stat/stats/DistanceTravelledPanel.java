@@ -1,14 +1,11 @@
 package io.github.junyali.pathed.screen.stat.stats;
 
 import io.github.junyali.pathed.attachment.ProgressionAttachment;
-import io.github.junyali.pathed.screen.common.PanelRenderer;
 import io.github.junyali.pathed.screen.stat.AbstractStatPanel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 import java.util.List;
 import java.util.Locale;
@@ -29,11 +26,6 @@ public class DistanceTravelledPanel extends AbstractStatPanel {
 	}
 
 	@Override
-	protected ItemStack headerIcon() {
-		return new ItemStack(Items.COMPASS);
-	}
-
-	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 		renderFrame(guiGraphics);
 
@@ -44,7 +36,7 @@ public class DistanceTravelledPanel extends AbstractStatPanel {
 		double blocks = fixed / 100.0;
 		int left = panelX + PADDING + 3;
 		int right = panelX + panelWidth - PADDING - 3;
-		int top = contentTop() + PADDING;
+		int top = contentTop();
 		int bottom = panelY + panelHeight - PADDING - 3;
 		int width = right - left;
 		int height = bottom - top;
@@ -102,6 +94,6 @@ public class DistanceTravelledPanel extends AbstractStatPanel {
 		guiGraphics.fill(x, y, x + w, y + 1, CARD_BORDER_LOW);
 		guiGraphics.fill(x, y + h - 1, x + w, y + h, CARD_BORDER_HIGH);
 		guiGraphics.drawString(font, label, x + 4, y + 3, COLOUR_TEXT_DIM, false);
-		guiGraphics.drawString(font, value, x + w - font.width(value) - 4, y + h - font.lineHeight - 3, COLOUR_ACCENT, true);
+		guiGraphics.drawString(font, value, x + w - font.width(value) - 4, y + h - font.lineHeight - 3, COLOUR_TEXT, true);
 	}
 }

@@ -23,11 +23,6 @@ public class DamageTakenPanel extends DamageListPanel {
 	}
 
 	@Override
-	protected ItemStack headerIcon() {
-		return new ItemStack(Items.SHIELD);
-	}
-
-	@Override
 	protected Map<ResourceLocation, Integer> rawData() {
 		Player player = Minecraft.getInstance().player;
 		if (player == null) return Collections.emptyMap();

@@ -27,11 +27,6 @@ public class BlocksBrokenPanel extends IconCountStatPanel<ResourceLocation> {
 	}
 
 	@Override
-	protected ItemStack headerIcon() {
-		return new ItemStack(Items.IRON_PICKAXE);
-	}
-
-	@Override
 	protected Map<ResourceLocation, Integer> data() {
 		Player player = Minecraft.getInstance().player;
 		if (player == null) return Collections.emptyMap();
