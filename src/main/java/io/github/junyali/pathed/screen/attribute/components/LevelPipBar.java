@@ -1,12 +1,22 @@
 package io.github.junyali.pathed.screen.attribute.components;
 
+import io.github.junyali.pathed.Pathed;
 import io.github.junyali.pathed.screen.attribute.AttributeScreen;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 
 public final class LevelPipBar {
 	public static final int SIZE = 8;
 	public static final int GAP = 3;
 	public static final int HEIGHT = SIZE;
+
+	private static final ResourceLocation PIPS = ResourceLocation.fromNamespaceAndPath(Pathed.MODID, "textures/gui/sprites/attributes/pips_sprite.png");
+	private static final int SHEET_W = 32;
+	private static final int SHEET_H = 8;
+	private static final int U_BACKGROUND = 0;
+	private static final int U_HOVER_OUTLINE = 8;
+	private static final int U_RED = 16;
+	private static final int U_GREEN = 24;
 
 	private LevelPipBar() {}
 
@@ -31,25 +41,17 @@ public final class LevelPipBar {
 			boolean available = i <= obtainedLevel;
 			boolean hovered = mouseX >= px && mouseX < px + SIZE && mouseY >= y && mouseY < y + SIZE;
 
-			int background;
-			int border;
+			guiGraphics.blit(PIPS, px, y, U_BACKGROUND, 0, SIZE, SIZE, SHEET_W, SHEET_H);
 
 			if (filled) {
-				background = AttributeScreen.COLOUR_TEXT_GOOD;
-				border = AttributeScreen.COLOUR_BORDER;
+				guiGraphics.blit(PIPS, px, y, U_GREEN, 0, SIZE, SIZE, SHEET_W, SHEET_H);
 			} else if (available) {
-				background = hovered ? AttributeScreen.COLOUR_PIP_HOVER : AttributeScreen.COLOUR_PIP_AVAILABLE;
-				border = AttributeScreen.COLOUR_TEXT_DIM;
-			} else {
-				background = AttributeScreen.COLOUR_PIP_DISABLED;
-				border = AttributeScreen.COLOUR_BORDER;
+				guiGraphics.blit(PIPS, px, y, U_RED, 0, SIZE, SIZE, SHEET_W, SHEET_H);
 			}
 
-			guiGraphics.fill(px, y, px + SIZE, y + SIZE, background);
-			guiGraphics.fill(px, y, px + SIZE, y + 1, border);
-			guiGraphics.fill(px, y + SIZE - 1, px + SIZE, y + SIZE, border);
-			guiGraphics.fill(px, y, px + 1, y + SIZE, border);
-			guiGraphics.fill(px + SIZE - 1, y, px + SIZE, y + SIZE, border);
+			if (hovered && available) {
+				guiGraphics.blit(PIPS, px, y, U_HOVER_OUTLINE, SIZE, SIZE, SIZE, SHEET_W, SHEET_H);
+			}
 		}
 	}
 }

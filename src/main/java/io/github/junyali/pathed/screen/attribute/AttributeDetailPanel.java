@@ -92,7 +92,7 @@ public class AttributeDetailPanel {
 
 		String levelLabel = Component.translatable("pathed.gui.attributes.detail.level").getString();
 		guiGraphics.drawString(font, levelLabel, cX, cY + 1, AttributeScreen.COLOUR_TEXT_DIM, false);
-		pipRowX = cX + font.width(levelLabel) + 8;
+		pipRowX = cX + font.width(levelLabel) + 4;
 		pipRowY = cY;
 
 		LevelPipBar.render(
