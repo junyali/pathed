@@ -12,8 +12,8 @@ public final class AttributeChip {
 	private static final int PADDING = 3;
 	private static final float STATUS_SCALE = 0.85f;
 
-	private static final int[] ROWAN_VALUES = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
-	private static final String[] ROWAN_NUMERALS = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+	private static final int[] ROMAN_VALUES = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+	private static final String[] ROMAN_NUMERALS = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
 
 	private AttributeChip() {}
 
@@ -89,10 +89,10 @@ public final class AttributeChip {
 	private static String toRoman(int n) {
 		if (n <= 0) return "0";
 		StringBuilder stringBuilder = new StringBuilder();
-		for (int i = 0; i < ROWAN_VALUES.length; i++) {
-			while (n >= ROWAN_VALUES[i]) {
-				stringBuilder.append(ROWAN_NUMERALS[i]);
-				n -= ROWAN_VALUES[i];
+		for (int i = 0; i < ROMAN_VALUES.length; i++) {
+			while (n >= ROMAN_VALUES[i]) {
+				stringBuilder.append(ROMAN_NUMERALS[i]);
+				n -= ROMAN_VALUES[i];
 			}
 		}
 		return stringBuilder.toString();
