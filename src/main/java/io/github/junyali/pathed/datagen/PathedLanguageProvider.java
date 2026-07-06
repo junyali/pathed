@@ -59,6 +59,8 @@ public class PathedLanguageProvider extends LanguageProvider {
 		add("pathed.gui.attributes.tab.all", "All");
 		add("pathed.gui.attributes.list.empty", "Nothing here yet");
 		add("pathed.gui.attributes.list.locked", "Locked");
+		add("pathed.gui.attributes.list.active", "Active");
+		add("pathed.gui.attributes.list.inactive", "Inactive");
 		add("pathed.gui.attributes.detail.no_selection", "Select an attribute");
 		add("pathed.gui.attributes.detail.level", "Level");
 		add("pathed.gui.attributes.detail.locked", "Locked");

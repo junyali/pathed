@@ -10,6 +10,10 @@ import net.minecraft.network.chat.Component;
 public final class AttributeChip {
 	private static final int ICON_SIZE = 16;
 	private static final int PADDING = 3;
+	private static final float STATUS_SCALE = 0.85f;
+
+	private static final int[] ROWAN_VALUES = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+	private static final String[] ROWAN_NUMERALS = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
 
 	private AttributeChip() {}
 
@@ -34,22 +38,63 @@ public final class AttributeChip {
 		guiGraphics.renderItem(attr.getIcon(), iconX, iconY);
 
 		Font font = Minecraft.getInstance().font;
-		int badgeW = AttributeStatusBadge.widthFor(active, conflict, obtained, font);
 		int textX = iconX + ICON_SIZE + 4;
-		int textW = w - PADDING * 2 - ICON_SIZE - 4 - badgeW - 3;
+		int contentRight = x + w - PADDING;
 
-		String name = font.plainSubstrByWidth(
-				Component.translatable(attr.getNameKey()).getString(),
-				textW
-		);
+		int currentLevel = screen.getPendingLevel(attr);
+		boolean showLevelBox = attr.getMaxLevel() > 1 && currentLevel >= 1;
+		String roman = showLevelBox ? toRoman(currentLevel) : "";
+		int boxH = font.lineHeight + 1;
+		int boxW = showLevelBox ? Math.max(boxH, font.width(roman) + 4) : 0;
+		int gapBeforeBox = showLevelBox ? 4 : 0;
+
+		int nameMaxW = contentRight - textX - gapBeforeBox - boxW;
+		String name = font.plainSubstrByWidth(Component.translatable(attr.getNameKey()).getString(), nameMaxW);
 
 		int textColour = obtained ? AttributeScreen.COLOUR_TEXT : AttributeScreen.COLOUR_TEXT_MUTED;
 		guiGraphics.drawString(font, name, textX, y + 3, textColour, false);
 
-		String subtext = obtained ? "Level " + screen.getPendingLevel(attr) + " / " + attr.getMaxLevel() : Component.translatable("pathed.gui.attributes.list.locked").getString();
+		if (showLevelBox) {
+			int boxX = textX + font.width(name) + gapBeforeBox;
+			int boxY = y + 2;
+			guiGraphics.fill(boxX, boxY, boxX + boxW, boxY + boxH, AttributeScreen.COLOUR_SLOT_BG);
+			guiGraphics.fill(boxX, boxY, boxX + boxW, boxY + 1, AttributeScreen.COLOUR_BORDER);
+			guiGraphics.fill(boxX, boxY + boxH - 1, boxX + boxW, boxY + boxH, AttributeScreen.COLOUR_BORDER);
+			guiGraphics.fill(boxX, boxY, boxX + 1, boxY + boxH, AttributeScreen.COLOUR_BORDER);
+			guiGraphics.fill(boxX + boxW - 1, boxY, boxX + boxW, boxY + boxH, AttributeScreen.COLOUR_BORDER);
+			guiGraphics.drawString(font, roman, boxX + (boxW - font.width(roman)) / 2, boxY + 1, AttributeScreen.COLOUR_TEXT_HIGHLIGHT, false);
+		}
 
-		guiGraphics.drawString(font, subtext, textX, y + 3 + font.lineHeight + 1, AttributeScreen.COLOUR_TEXT_DIM, false);
+		String status;
+		int statusColour;
+		if (!obtained) {
+			status = Component.translatable("pathed.gui.attributes.list.locked").getString();
+			statusColour = AttributeScreen.COLOUR_TEXT_DIM;
+		} else if (active) {
+			status = Component.translatable("pathed.gui.attributes.list.active").getString();
+			statusColour = AttributeScreen.COLOUR_TEXT_GOOD;
+		} else {
+			status = Component.translatable("pathed.gui.attributes.list.inactive").getString();
+			statusColour = AttributeScreen.COLOUR_TEXT_BAD;
+		}
 
-		AttributeStatusBadge.render(guiGraphics, x + w - PADDING - badgeW, y + (h - AttributeStatusBadge.HEIGHT) / 2, active, conflict, obtained);
+		int statusY = y + 3 + font.lineHeight + 1;
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(textX, statusY, 0);
+		guiGraphics.pose().scale(STATUS_SCALE, STATUS_SCALE, 1);
+		guiGraphics.drawString(font, status, 0, 0, statusColour, false);
+		guiGraphics.pose().popPose();
+	}
+
+	private static String toRoman(int n) {
+		if (n <= 0) return "0";
+		StringBuilder stringBuilder = new StringBuilder();
+		for (int i = 0; i < ROWAN_VALUES.length; i++) {
+			while (n >= ROWAN_VALUES[i]) {
+				stringBuilder.append(ROWAN_NUMERALS[i]);
+				n -= ROWAN_VALUES[i];
+			}
+		}
+		return stringBuilder.toString();
 	}
 }
