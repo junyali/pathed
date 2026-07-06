@@ -29,6 +29,12 @@ Pathed is a Minecraft progression mod aimed to add a twist on your vanilla journ
 
 ![Attribute](./demo/attribute.png)
 
+**Path from a glance**
+
+![Menu](./demo/menu.png)
+
+[Short Demo](https://youtu.be/Rl5hVcMpJc4)
+
 ## Features
 - This mod has 5 unique paths covering different gameplay mechanics (TBA). If you prefer the vanilla experience, the human option is always available!
 - You are locked to your tool (TBA). Combat, mining, harvesting - all in one tool no matter your path.
